@@ -17,12 +17,19 @@ const envSchema = z.object({
 
 });
 
-const parsed = envSchema.safeParse(process.env);
+const parsed = envSchema.safeParse({
+  NODE_ENV: process.env.NODE_ENV,
+  NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  NEXT_PUBLIC_FRONTEND_URL: process.env.NEXT_PUBLIC_FRONTEND_URL,
+  NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+  NEXT_PUBLIC_AUTH_URL: process.env.NEXT_PUBLIC_AUTH_URL,
+  NEXT_PUBLIC_TEST: process.env.NEXT_PUBLIC_TEST,
+});
 
 if (!parsed.success) {
   console.error("❌ Invalid environment variables:");
   console.error(parsed.error.format());
-  process.exit(1);
+  throw new Error("Invalid environment variables");
 }
 
 export const env = parsed.data;
