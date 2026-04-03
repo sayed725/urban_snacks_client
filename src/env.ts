@@ -1,21 +1,28 @@
-import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
-export const env = createEnv({
-  server: {
-    // Add server env vars
-    // IMGBB_API_KEY: z.string().optional(),
-  },
+const envSchema = z.object({
+  // Next.js standard
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
 
-  client: {
-    NEXT_PUBLIC_NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-    NEXT_PUBLIC_API_URL: z.string().url().default("http://localhost:5000/api/v1"),
-    NEXT_PUBLIC_BETTER_AUTH_URL: z.string().url().default("http://localhost:3000/api/auth"),
-  },
+  // Your public URLs (exposed to browser)
+  NEXT_PUBLIC_BACKEND_URL: z.string().url(),
+  NEXT_PUBLIC_FRONTEND_URL: z.string().url(),
+  NEXT_PUBLIC_API_URL: z.string().url(),
+  NEXT_PUBLIC_AUTH_URL: z.string().url(),
 
-  runtimeEnv: {
-    NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-    NEXT_PUBLIC_BETTER_AUTH_URL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
-  },
+  // Test variable (optional example)
+  NEXT_PUBLIC_TEST: z.string().default("test_value"),
+
 });
+
+const parsed = envSchema.safeParse(process.env);
+
+if (!parsed.success) {
+  console.error("❌ Invalid environment variables:");
+  console.error(parsed.error.format());
+  process.exit(1);
+}
+
+export const env = parsed.data;
