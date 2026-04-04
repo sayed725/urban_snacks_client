@@ -197,7 +197,7 @@ const RegisterForm = ({ redirectPath }: RegisterFormProps) => {
                         </span>
                     </div>
                 </div>
-
+            {/* social login */}
                 <Button variant="outline" className="w-full" onClick={async () => {
                     await authClient.signIn.social({
                         provider: "google",
