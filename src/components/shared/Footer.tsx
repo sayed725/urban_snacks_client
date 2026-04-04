@@ -1,0 +1,170 @@
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { 
+  FaEnvelope, 
+  FaMapMarkerAlt, 
+  FaPhoneAlt, 
+  FaAngleRight, 
+  FaChevronUp 
+} from "react-icons/fa";
+
+export default function Footer() {
+  return (
+    <footer className="w-full  pt-12 pb-3 bg-secondary text-secondary-foreground border-t">
+      {/* Main footer content */}
+      <div className="container mx-auto w-11/12 lg:w-full px-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-16">
+          {/* Logo + Brand */}
+          <div>
+            <Link href="/" className="flex items-center gap-3 mb-6">
+              <img
+                src="/assets/urban_snaks_logo.jpg"
+                alt="Urban Snacks Logo"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded"
+              />
+              <span className="text-3xl sm:text-4xl font-bold tracking-tight">
+                Urban Snacks
+              </span>
+            </Link>
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
+              Urban Snacks is your go-to destination for premium quality treats. We provide the best snacks to keep your cravings satisfied.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-xl font-semibold mb-6">Quick Links</h3>
+            <ul className="space-y-3 text-muted-foreground flex flex-wrap gap-5">
+              <li>
+                <Link 
+                  href="/" 
+                  className="hover:text-primary transition-colors"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/tutor" 
+                  className="hover:text-primary transition-colors"
+                >
+                  Tutors
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/blog" 
+                  className="hover:text-primary transition-colors"
+                >
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/contact" 
+                  className="hover:text-primary transition-colors"
+                >
+                  Contact
+                </Link>
+              </li>
+            </ul>
+
+            {/* Newsletter signup */}
+            <div className="mt-10">
+              <h4 className="text-lg font-medium mb-4">Stay Updated</h4>
+              <form className="flex flex-col sm:flex-row gap-3 max-w-md">
+                <Input
+                  type="email"
+                  placeholder="Your email address"
+                  required
+                  className="bg-transparent border-gray-500 focus:border-primary focus:ring-primary/30"
+                />
+                <Button 
+                  type="submit"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium whitespace-nowrap"
+                >
+                  Subscribe <FaAngleRight className="ml-2" />
+                </Button>
+              </form>
+            </div>
+          </div>
+
+          {/* Contact Info */}
+          <div>
+            <h3 className="text-xl font-semibold mb-6">Contact</h3>
+            <div className="space-y-4 text-muted-foreground">
+              <p className="flex items-start">
+                <FaMapMarkerAlt className="mr-3 mt-1 text-primary shrink-0" />
+                55 Main Street, 2nd block,<br className="sm:hidden" /> New York City
+              </p>
+              <p className="flex items-center">
+                <FaEnvelope className="mr-3 text-primary shrink-0" />
+                abusayedkhan.pro@gmail.com
+              </p>
+              <p className="flex items-center">
+                <FaPhoneAlt className="mr-3 text-primary shrink-0" />
+                +880 1627142598
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Back to top + Copyright */}
+      <div className="mt-16 border-t border-gray-800 pt-3">
+        <div className="container mx-auto px-6 lg:px-0">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-muted-foreground text-sm">
+            <p>
+              © {new Date().getFullYear()} <span className="text-primary font-semibold">Urban Snacks</span>. 
+              All rights reserved.
+            </p>
+
+            <div className="flex gap-6">
+              <a 
+                href="https://www.facebook.com/abu.ssayed.khan.2024" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                Facebook
+              </a>
+              <a 
+                href="https://github.com/sayed725" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                GitHub
+              </a>
+              <a 
+                href="https://www.linkedin.com/in/abu-sayed-khan-922801317" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                LinkedIn
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Back to top button */}
+      {/* <div className="fixed bottom-8 right-8 z-50 md:bottom-12 md:right-12">
+        <a 
+          href="#top" 
+          className="block"
+          aria-label="Back to top"
+        >
+          <Button 
+            size="icon" 
+            className="rounded-full bg-[#1cb89e] hover:bg-white text-black shadow-lg hover:shadow-xl transition-all duration-300 h-12 w-12"
+          >
+            <FaChevronUp className="h-5 w-5" />
+          </Button>
+        </a>
+      </div> */}
+    </footer>
+  );
+}

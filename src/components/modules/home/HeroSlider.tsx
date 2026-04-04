@@ -12,7 +12,7 @@ const slides = [
     subtitle: "Travel smart. Carry premium.",
     price: "$129.99",
     image:
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200",
+      "/assets/urban_snaks_cover_photo.jpg",
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const slides = [
     subtitle: "Pure sound. Zero wires.",
     price: "$199.99",
     image:
-      "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=1200",
+      "/assets/urban_snaks_photo1.jpg",
   },
   {
     id: 3,
@@ -28,7 +28,7 @@ const slides = [
     subtitle: "Timeless design for everyday style.",
     price: "$299.99",
     image:
-      "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=1200",
+      "/assets/urban_snaks_photo2.jpg",
   },
   {
     id: 4,
@@ -36,7 +36,7 @@ const slides = [
     subtitle: "Step into premium comfort.",
     price: "$159.99",
     image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200",
+      "/assets/urban_snaks_photo3.jpg",
   },
 ];
 

@@ -93,12 +93,12 @@ export default function Navbar() {
           {/* Logo – unchanged */}
           <Link href="/" className="flex items-center gap-3">
             <img
-              src="/public/assets/urban_snacks_logo.jpg"
+              src="/assets/urban_snaks_logo.jpg"
               alt="Urban Snacks Logo"
               className="h-8 w-8 sm:h-10 sm:w-10"
             />
             <span className="text-2xl font-bold tracking-tight sm:text-3xl">
-              Brainy
+              Urban Snacks
             </span>
           </Link>
 
