@@ -54,7 +54,7 @@ const AppField = ({
 
         <div className="relative">
             {
-                prepend && (<div className="absolute inset-y-0 left-0 items-center pl-3 pointer-events-none z-10">
+                prepend && (<div className="absolute inset-y-0 left-0 flex items-center pl-3 z-10">
                     {prepend}
                 </div>)
             }
@@ -78,7 +78,7 @@ const AppField = ({
             />
 
             {
-                append && (<div className="absolute inset-y-0 right-0 items-center pr-3 pointer-events-none z-10">
+                append && (<div className="absolute inset-y-0 right-0 flex items-center pr-2 z-10">
                     {append}
                 </div>)
             }

@@ -14,6 +14,10 @@ const envSchema = z.object({
 
   // Test variable (optional example)
   NEXT_PUBLIC_TEST: z.string().default("test_value"),
+  // google 
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
+  NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: z.string(),
+  NEXT_PUBLIC_GOOGLE_CALLBACK_URL: z.string(),
 
 });
 
@@ -24,6 +28,9 @@ const parsed = envSchema.safeParse({
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   NEXT_PUBLIC_AUTH_URL: process.env.NEXT_PUBLIC_AUTH_URL,
   NEXT_PUBLIC_TEST: process.env.NEXT_PUBLIC_TEST,
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+  NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
+  NEXT_PUBLIC_GOOGLE_CALLBACK_URL: process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL,
 });
 
 if (!parsed.success) {
