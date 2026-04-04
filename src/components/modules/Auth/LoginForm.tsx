@@ -10,11 +10,12 @@ import { ILoginPayload, loginZodSchema } from "@/zod/auth.validation";
 import { env } from "@/config/env";
 
 import { useForm } from "@tanstack/react-form";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface LoginFormProps {
     redirectPath?: string;
@@ -61,13 +62,81 @@ const LoginForm = ({ redirectPath }: LoginFormProps) => {
             }
         }
     })
+
+       const demoCredentials = {
+    admin: {
+      email: "admin@urbansnacks.com",
+      password: "admin@12345",
+    },
+    user: {
+      email: "normaluser123@gmail.com",
+      password: "123456",
+    }
+  };
     return (
         <Card className="w-full max-w-md mx-auto shadow-md">
             <CardHeader className="text-center">
-                <CardTitle className="text-2xl font-bold">Welcome Back!</CardTitle>
-                <CardDescription>
-                    Please enter your credentials to log in.
-                </CardDescription>
+              {/* Brand Header */}
+      <div className="flex flex-col items-center">
+        <div className="h-auto select-none flex items-center gap-2">
+            <img
+              src="/assets/urban_snaks_logo.jpg"
+              alt="Urban Snacks Logo"
+              className="h-8 w-8 sm:h-10 sm:w-10"
+            />
+          <span className="text-3xl font-bold">Urban Snacks</span>
+        </div>
+        <div className="text-center mt-1">
+          <p className="text-lg font-medium text-slate-600 dark:text-slate-300">
+           Login to Access your order dashboard
+          </p>
+        </div>
+        </div>
+        <CardDescription>
+          
+        <div className="mt-2 bg-white dark:bg-[#171717] shadow-lg shadow-muted rounded-[1.4rem]">
+          {/* Quick Login Section */}
+          <div className="space-y-2">
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
+              Quick Login{" "}
+              <span className="text-[10px] font-normal">
+                (For exploration purpose)
+              </span>
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  form.setFieldValue("email", demoCredentials.user.email);
+                  form.setFieldValue("password", demoCredentials.user.password);
+                }}
+                className="flex flex-col items-center justify-center p-2 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-primary/5 hover:border-primary/30 transition-all gap-1 group"
+              >
+                <User className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-primary" />
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:text-primary">
+                  User
+                </span>
+              </button>
+            
+              <button
+                type="button"
+                onClick={() => {
+                  form.setFieldValue("email", demoCredentials.admin.email);
+                  form.setFieldValue("password", demoCredentials.admin.password);
+                }}
+                className="flex flex-col items-center justify-center p-2 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-primary/5 hover:border-primary/30 transition-all gap-1 group"
+              >
+                <ShieldCheck className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-primary" />
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:text-primary">
+                  Admin
+                </span>
+              </button>
+            </div>
+          </div>
+         </div>
+    
+
+        </CardDescription>
             </CardHeader>
 
             <CardContent>
@@ -127,7 +196,7 @@ const LoginForm = ({ redirectPath }: LoginFormProps) => {
                         )}
                     </form.Field>
 
-                    <div className="text-right mt-2">
+                    <div className="text-right">
                         <Link
                             href="/forgot-password"
                             className="text-sm text-primary hover:underline underline-offset-4"
@@ -155,10 +224,10 @@ const LoginForm = ({ redirectPath }: LoginFormProps) => {
 
                 <div className="relative my-6">
                     <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-300"></div>
+                        <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white text-gray-500">
+                        <span className="px-2 bg-white dark:bg-card text-gray-500 dark:text-gray-400">
                             Or continue with
                         </span>
                     </div>
@@ -194,12 +263,12 @@ const LoginForm = ({ redirectPath }: LoginFormProps) => {
 
             <CardFooter className="justify-center border-t pt-4">
                 <p className="text-sm text-muted-foreground">
-                    Don&apos;t have an account?{" "}
+                    New to Urban Snacks?{" "}
                     <Link
                         href="/register"
                         className="text-primary font-medium hover:underline underline-offset-4"
                     >
-                        Sign Up for an account
+                        Create an Account
                     </Link>
                 </p>
             </CardFooter>

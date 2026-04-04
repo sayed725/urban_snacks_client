@@ -99,7 +99,7 @@ export function ImageUploadField({
       {!noLabel && (
         <Label
           htmlFor={field.name}
-          className={cn(hasError && "text-destructive", "text-slate-700")}
+          className={cn(hasError && "text-destructive", "text-slate-700 dark:text-slate-300")}
         >
           {label}
         </Label>
@@ -118,20 +118,20 @@ export function ImageUploadField({
           <div
             onClick={() => fileInputRef.current?.click()}
             className={cn(
-              "w-full h-32 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-slate-50 transition-all gap-2 group",
+              "w-full h-32 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all gap-2 group",
               hasError && "border-destructive",
               noPreviewClassName
             )}
           >
-            <UploadCloud className="w-8 h-8 text-slate-400 group-hover:text-primary transition-colors" />
-            <span className="text-sm font-medium text-slate-500 group-hover:text-primary">
+            <UploadCloud className="w-8 h-8 text-slate-400 dark:text-slate-500 group-hover:text-primary transition-colors" />
+            <span className="text-sm font-medium text-slate-500 dark:text-slate-400 group-hover:text-primary">
               Click to upload
             </span>
           </div>
         ) : (
           <div
             className={cn(
-              "relative w-full aspect-video max-h-[200px] border-2 border-slate-100 rounded-xl overflow-hidden group",
+              "relative w-full aspect-video max-h-[200px] border-2 border-slate-100 dark:border-slate-800 rounded-xl overflow-hidden group",
               previewClassName
             )}
           >

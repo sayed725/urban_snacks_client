@@ -46,7 +46,7 @@ const RegisterForm = ({ redirectPath }: RegisterFormProps) => {
                     email: value.email,
                     password: value.password,
                     image: value.image || undefined,
-                    phone: value.phone, 
+                    phone: value.phone,
                 });
 
                 if (error) {
@@ -69,10 +69,22 @@ const RegisterForm = ({ redirectPath }: RegisterFormProps) => {
     return (
         <Card className="w-full max-w-md mx-auto shadow-md">
             <CardHeader className="text-center">
-                <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
-                <CardDescription>
-                    Fill in your details below to get started.
-                </CardDescription>
+                {/* Brand Header */}
+                <div className="flex flex-col items-center">
+                    <div className="h-auto select-none flex items-center gap-2">
+                        <img
+                            src="/assets/urban_snaks_logo.jpg"
+                            alt="Urban Snacks Logo"
+                            className="h-8 w-8 sm:h-10 sm:w-10"
+                        />
+                        <span className="text-3xl font-bold">Urban Snacks</span>
+                    </div>
+                    <div className="text-center mt-1">
+                        <p className="text-lg font-medium text-slate-600 dark:text-slate-300">
+                            Welcome to Urban Snacks - Create your account
+                        </p>
+                    </div>
+                </div>
             </CardHeader>
 
             <CardContent>
@@ -87,6 +99,18 @@ const RegisterForm = ({ redirectPath }: RegisterFormProps) => {
                     }}
                     className="space-y-4"
                 >
+
+                    <form.Field
+                        name="image"
+                        validators={{ onChange: registerZodSchema.shape.image }}
+                    >
+                        {(field) => (
+                            <ImageUploadField
+                                field={field}
+                                label="Profile Image (Optional)"
+                            />
+                        )}
+                    </form.Field>
                     <form.Field
                         name="name"
                         validators={{ onChange: registerZodSchema.shape.name }}
@@ -157,18 +181,6 @@ const RegisterForm = ({ redirectPath }: RegisterFormProps) => {
                             />
                         )}
                     </form.Field>
-                    
-                    <form.Field
-                        name="image"
-                        validators={{ onChange: registerZodSchema.shape.image }}
-                    >
-                        {(field) => (
-                            <ImageUploadField
-                                field={field}
-                                label="Profile Image (Optional)"
-                            />
-                        )}
-                    </form.Field>
 
                     {serverError && (
                         <Alert variant={"destructive"}>
@@ -189,15 +201,15 @@ const RegisterForm = ({ redirectPath }: RegisterFormProps) => {
 
                 <div className="relative my-6">
                     <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-300"></div>
+                        <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white text-gray-500">
+                        <span className="px-2 bg-white dark:bg-card text-gray-500 dark:text-gray-400">
                             Or continue with
                         </span>
                     </div>
                 </div>
-            {/* social login */}
+                {/* social login */}
                 <Button variant="outline" className="w-full" onClick={async () => {
                     await authClient.signIn.social({
                         provider: "google",
@@ -226,7 +238,7 @@ const RegisterForm = ({ redirectPath }: RegisterFormProps) => {
                 </Button>
             </CardContent>
 
-            <CardFooter className="justify-center border-t pt-4">
+            <CardFooter className="justify-center border-t">
                 <p className="text-sm text-muted-foreground">
                     Already have an account?{" "}
                     <Link
