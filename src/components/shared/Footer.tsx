@@ -11,7 +11,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="w-full  pt-12 pb-3 bg-secondary text-secondary-foreground border-t">
+    <footer className="pt-12 pb-3 bg-secondary text-secondary-foreground border-t">
       {/* Main footer content */}
       <div className="container mx-auto w-11/12 lg:w-full px-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-16">
@@ -19,7 +19,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex items-center gap-3 mb-6">
               <img
-                src="/assets/urban_snaks_logo.jpg"
+                src="/assets/urban_snaks_logo.png"
                 alt="Urban Snacks Logo"
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded"
               />

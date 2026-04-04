@@ -74,13 +74,13 @@ const LoginForm = ({ redirectPath }: LoginFormProps) => {
     }
   };
     return (
-        <Card className="w-full max-w-md mx-auto shadow-md">
+        <Card className="w-full max-w-md mx-auto shadow-md my-10">
             <CardHeader className="text-center">
               {/* Brand Header */}
       <div className="flex flex-col items-center">
         <div className="h-auto select-none flex items-center gap-2">
             <img
-              src="/assets/urban_snaks_logo.jpg"
+              src="/assets/urban_snaks_logo.png"
               alt="Urban Snacks Logo"
               className="h-8 w-8 sm:h-10 sm:w-10"
             />

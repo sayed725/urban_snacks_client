@@ -21,7 +21,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Menu, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, ShoppingCart } from "lucide-react";
 import { ModeToggle } from "@/components/layout/ModeToggle";
 import { authClient } from "@/lib/auth-client";
 
@@ -93,7 +93,7 @@ export default function Navbar() {
           {/* Logo – unchanged */}
           <Link href="/" className="flex items-center gap-3">
             <img
-              src="/assets/urban_snaks_logo.jpg"
+              src="/assets/urban_snaks_logo.png"
               alt="Urban Snacks Logo"
               className="h-8 w-8 sm:h-10 sm:w-10"
             />
@@ -109,10 +109,10 @@ export default function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative text-sm font-medium transition-colors hover:text-primary",
+                  "relative text-sm  font-medium transition-colors hover:text-primary",
                   pathname === item.href
                     ? "text-primary font-bold"
-                    : "text-primary/70",
+                    : "text-black dark:text-white",
                   "after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
                 )}
               >
@@ -170,14 +170,23 @@ export default function Navbar() {
               </DropdownMenu>
             ) : (
               <>
-                <Button asChild variant="outline" className="bg-primary text-secondary font-semibold hover:text-primary hover:bg-secondary hover:border-primary">
-                  <Link href="/login">Login</Link>
+                <Button asChild variant="outline" className="bg-primary dark:bg-primary text-secondary font-semibold hover:text-white dark:hover:bg-primary hover:bg-primary hover:border-primary dark:text-white">
+                  <Link href="/login">Login / Register</Link>
                 </Button>
-                <Button asChild variant="outline" className="bg-primary text-secondary font-semibold hover:text-primary hover:bg-secondary hover:border-primary">
-                  <Link href="/register">Register</Link>
-                </Button>
+            
               </>
             )}
+                     {/* Cart */}
+          <Link href="/cart" className="relative group">
+            <div className="p-2 rounded-full transition-colors border border-primary dark:hover:border-white">
+              <ShoppingCart className="h-6 w-6 lg:h-7 lg:w-7 text-slate-700 dark:text-white hover:text-primary " />
+              {/* {items.length > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-2 ring-white">
+                  {items.length}
+                </span>
+              )} */}
+            </div>
+          </Link>
           </div>
 
           {/* Mobile Menu Trigger – unchanged structure */}
@@ -207,11 +216,13 @@ export default function Navbar() {
                     onClick={closeMobileMenu}
                   >
                     <img
-                      src="/brainy_logo-removebg-preview.png"
-                      alt="Brainy Logo"
-                      className="h-10 w-10"
+                      src="/assets/urban_snaks_logo.png"
+                      alt="Urban Snacks Logo"
+                      className="h-8 w-8 sm:h-10 sm:w-10"
                     />
-                    <span className="text-2xl font-bold">Brainy</span>
+                    <span className="text-2xl font-bold tracking-tight sm:text-3xl">
+                      Urban Snacks
+                    </span>
                   </Link>
                 </SheetHeader>
 
@@ -264,16 +275,12 @@ export default function Navbar() {
                       <>
                         <Button asChild variant="outline" className="w-full bg-primary text-secondary font-semibold hover:text-primary hover:bg-secondary hover:border-primary">
                           <Link href="/login" onClick={closeMobileMenu}>
-                            Login
-                          </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="w-full bg-primary text-secondary font-semibold hover:text-primary hover:bg-secondary hover:border-primary">
-                          <Link href="/register" onClick={closeMobileMenu}>
-                            Register
+                            Login / Register
                           </Link>
                         </Button>
                       </>
                     )}
+
                   </div>
                 </nav>
               </SheetContent>
