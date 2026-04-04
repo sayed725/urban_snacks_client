@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { authClient } from "@/lib/auth-client";
 import { IRegisterPayload, registerZodSchema } from "@/zod/auth.validation";
 import { env } from "@/config/env";
+import { ImageUploadField } from "@/components/shared/form/image-upload-field";
 
 import { useForm } from "@tanstack/react-form";
 import { Eye, EyeOff } from "lucide-react";
@@ -162,10 +163,9 @@ const RegisterForm = ({ redirectPath }: RegisterFormProps) => {
                         validators={{ onChange: registerZodSchema.shape.image }}
                     >
                         {(field) => (
-                            <AppField
+                            <ImageUploadField
                                 field={field}
-                                label="Profile Image URL (Optional)"
-                                placeholder="https://example.com/avatar.jpg"
+                                label="Profile Image (Optional)"
                             />
                         )}
                     </form.Field>

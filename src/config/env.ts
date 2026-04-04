@@ -19,6 +19,9 @@ const envSchema = z.object({
   NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: z.string(),
   NEXT_PUBLIC_GOOGLE_CALLBACK_URL: z.string(),
 
+  // imgbb
+  NEXT_PUBLIC_IMGBB_API_KEY: z.string(),
+
 });
 
 const parsed = envSchema.safeParse({
@@ -31,6 +34,7 @@ const parsed = envSchema.safeParse({
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
   NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
   NEXT_PUBLIC_GOOGLE_CALLBACK_URL: process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL,
+  NEXT_PUBLIC_IMGBB_API_KEY: process.env.NEXT_PUBLIC_IMGBB_API_KEY,
 });
 
 if (!parsed.success) {
