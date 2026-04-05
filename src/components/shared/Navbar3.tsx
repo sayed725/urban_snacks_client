@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -21,35 +21,28 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Menu, LogOut, LayoutDashboard, ShoppingCart } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, ShoppingCart, Truck } from "lucide-react";
 import { ModeToggle } from "@/components/layout/ModeToggle";
 import { authClient } from "@/lib/auth-client";
+import { useCartStore } from "@/store/cart.store";
 
 const menuItems = [
   { title: "Home", href: "/" },
-  { title: "Tutors", href: "/tutors" },
-  { title: "Blog", href: "/blog" },
-  { title: "Contact", href: "/contact" },
+  { title: "Products", href: "/products" },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { totalItems } = useCartStore();
 
   const {
     data: session,
     isPending, // loading state
-    error,
-    refetch,
   } = authClient.useSession();
 
-  // useEffect(() => {
-  //   refetch(); // force refresh when landing here
-  // }, []);
-
-  console.log("Session in Navbar", session, isPending, error);
-
   const isAuthenticated = !!session?.user;
+  const userRole = session?.user?.role;
   const userInitial =
     session?.user?.name?.charAt(0)?.toUpperCase() ||
     session?.user?.email?.charAt(0)?.toUpperCase() ||
@@ -57,13 +50,12 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     await authClient.signOut();
-    // Optional: refetch(); // if you want to force refresh
-    // router.push("/login"); // if you have useRouter
+    window.location.href = "/";
   };
 
-  // console.log("Fresh session after refetch:", session?.user);
-
   const closeMobileMenu = () => setIsOpen(false);
+
+  const dashboardHref = userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders";
 
   if (isPending) {
     return (
@@ -72,7 +64,6 @@ export default function Navbar() {
           <div className="h-10 flex items-center justify-between">
             <div className="w-24 h-8 bg-muted animate-pulse rounded" />
             <div className="hidden lg:flex gap-8">
-              <div className="w-16 h-5 bg-muted animate-pulse rounded" />
               <div className="w-16 h-5 bg-muted animate-pulse rounded" />
               <div className="w-16 h-5 bg-muted animate-pulse rounded" />
             </div>
@@ -87,50 +78,74 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 border-b bg-secondary w-full">
+    <nav className="sticky top-0 z-50 border-b bg-secondary w-full shadow-sm">
       <div className="container mx-auto w-11/12 lg:w-full px-0 py-3">
         <div className="flex items-center justify-between">
-          {/* Logo – unchanged */}
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <img
               src="/assets/urban_snaks_logo.png"
               alt="Urban Snacks Logo"
-              className="h-8 w-8 sm:h-10 sm:w-10"
+              className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm"
             />
-            <span className="text-2xl font-bold tracking-tight sm:text-3xl">
+            <span className="text-2xl font-bold tracking-tight sm:text-3xl text-primary">
               Urban Snacks
             </span>
           </Link>
 
-          {/* Desktop Navigation – unchanged */}
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8 flex-1 justify-center">
             {menuItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative text-sm  font-medium transition-colors hover:text-primary",
+                  "relative text-sm font-medium transition-colors hover:text-primary",
                   pathname === item.href
                     ? "text-primary font-bold"
-                    : "text-black dark:text-white",
+                    : "text-foreground",
                   "after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
                 )}
               >
                 {item.title}
               </Link>
             ))}
+            {isAuthenticated && userRole !== "ADMIN" && (
+                <Link
+                  href="/my-orders"
+                  className={cn(
+                    "relative text-sm font-medium transition-colors hover:text-primary",
+                    pathname.startsWith("/my-orders")
+                      ? "text-primary font-bold"
+                      : "text-foreground",
+                    "after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
+                  )}
+                >
+                  My Orders
+                </Link>
+            )}
           </div>
 
-          {/* Desktop Right Side – now uses real session */}
+          {/* Desktop Right Side */}
           <div className="hidden lg:flex items-center gap-4">
             <ModeToggle />
+
+            {/* Cart */}
+            <Link href="/cart" className="relative group flex items-center justify-center p-2 rounded-full transition-colors border shadow-sm bg-background hover:border-primary">
+                <ShoppingCart className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
+                {totalItems() > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-primary text-secondary text-[10px] font-bold h-5 min-w-5 flex items-center justify-center px-1.5 rounded-full shadow-sm ring-2 ring-background">
+                    {totalItems()}
+                  </span>
+                )}
+            </Link>
 
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="relative h-10 w-10 rounded-full"
+                    className="relative h-10 w-10 rounded-full border shadow-sm"
                   >
                     <Avatar className="h-10 w-10">
                       <AvatarFallback className="bg-primary text-secondary font-bold">
@@ -139,28 +154,25 @@ export default function Navbar() {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>{session?.user?.name}</DropdownMenuLabel>
-                  <DropdownMenuLabel>{session?.user?.email}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {/* <DropdownMenuItem asChild>
-                    <Link href="/profile">Profile</Link>
-                  </DropdownMenuItem> */}
-                  <DropdownMenuItem asChild>
-                    <Link  href={
-                            session?.user?.role === "tutor"
-                              ? "/tutor-dashboard"
-                              : session?.user?.role === "admin"
-                                ? "/admin-dashboard"
-                                : "/dashboard"
-                          }>
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Dashboard
+                <DropdownMenuContent align="end" className="w-56 mt-1 rounded-xl">
+                  <DropdownMenuLabel className="font-normal border-b pb-2 mb-1">
+                     <p className="font-semibold">{session?.user?.name || "User"}</p>
+                     <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
+                  </DropdownMenuLabel>
+                  
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link href={dashboardHref}>
+                      {userRole === "ADMIN" ? (
+                         <><LayoutDashboard className="mr-2 h-4 w-4" /> Admin Dashboard</>
+                      ) : (
+                         <><Truck className="mr-2 h-4 w-4" /> Track Orders</>
+                      )}
                     </Link>
                   </DropdownMenuItem>
+                  
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    className="text-red-600 focus:bg-red-50 dark:focus:bg-red-500"
+                    className="text-red-600 focus:bg-red-50 dark:focus:bg-red-950 cursor-pointer"
                     onClick={handleLogout}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
@@ -169,47 +181,32 @@ export default function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <>
-                <Button asChild variant="outline" className="bg-primary dark:bg-primary text-secondary font-semibold hover:text-white dark:hover:bg-primary hover:bg-primary hover:border-primary dark:text-white">
-                  <Link href="/login">Login / Register</Link>
-                </Button>
-            
-              </>
+              <Button asChild className="bg-primary text-secondary font-semibold hover:bg-primary/90 rounded-full px-6 shadow-sm">
+                <Link href="/login">Login</Link>
+              </Button>
             )}
-                     {/* Cart */}
-          <Link href="/cart" className="relative group">
-            <div className="p-2 rounded-full transition-colors border border-primary dark:hover:border-white">
-              <ShoppingCart className="h-6 w-6 lg:h-7 lg:w-7 text-slate-700 dark:text-white hover:text-primary " />
-              {/* {items.length > 0 && (
-                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-2 ring-white">
-                  {items.length}
-                </span>
-              )} */}
-            </div>
-          </Link>
           </div>
 
-          {/* Mobile Menu Trigger – unchanged structure */}
-          <div className="flex items-center gap-2 lg:hidden">
+          {/* Mobile Menu Trigger */}
+          <div className="flex items-center gap-3 lg:hidden">
+            <Link href="/cart" className="relative group mr-2">
+                <ShoppingCart className="h-6 w-6 text-foreground" />
+                {totalItems() > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-secondary text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full ring-2 ring-background">
+                    {totalItems()}
+                  </span>
+                )}
+            </Link>
             <ModeToggle />
-            {isAuthenticated && (
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-primary text-secondary text-sm font-bold">
-                  {userInitial}
-                </AvatarFallback>
-              </Avatar>
-            )}
+            
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-10 w-10" />
+                <Button variant="ghost" size="icon" className="border shadow-sm">
+                  <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-75] sm:w-100">
-                <SheetTitle className="sr-only">
-                  Main Navigation Menu
-                </SheetTitle>
-                <SheetHeader className="mb-8">
+              <SheetContent side="right" className="w-[85vw] sm:w-[400px]">
+                <SheetHeader className="mb-8 border-b pb-4 text-left">
                   <Link
                     href="/"
                     className="flex items-center gap-3"
@@ -217,16 +214,16 @@ export default function Navbar() {
                   >
                     <img
                       src="/assets/urban_snaks_logo.png"
-                      alt="Urban Snacks Logo"
-                      className="h-8 w-8 sm:h-10 sm:w-10"
+                      alt="Logo"
+                      className="h-8 w-8 rounded-sm"
                     />
-                    <span className="text-2xl font-bold tracking-tight sm:text-3xl">
+                    <span className="text-xl font-bold tracking-tight text-primary">
                       Urban Snacks
                     </span>
                   </Link>
                 </SheetHeader>
 
-                <nav className="flex flex-col gap-6 ml-5">
+                <nav className="flex flex-col gap-6 px-2">
                   {menuItems.map((item) => (
                     <Link
                       key={item.href}
@@ -236,51 +233,70 @@ export default function Navbar() {
                         "text-lg font-medium transition-colors",
                         pathname === item.href
                           ? "text-primary font-bold"
-                          : "text-primary hover:opacity-80",
+                          : "text-foreground hover:text-primary",
                       )}
                     >
                       {item.title}
                     </Link>
                   ))}
+                  
+                  {isAuthenticated && userRole !== "ADMIN" && (
+                      <Link
+                        href="/my-orders"
+                        onClick={closeMobileMenu}
+                        className={cn(
+                          "text-lg font-medium transition-colors",
+                          pathname.startsWith("/my-orders")
+                            ? "text-primary font-bold"
+                            : "text-foreground hover:text-primary",
+                        )}
+                      >
+                        My Orders
+                      </Link>
+                  )}
 
-                  <div className="border-t pt-6 mt-6 space-y-3">
+                  <div className="border-t pt-6 mt-2 space-y-4">
                     {isAuthenticated ? (
                       <>
                         <Link
-                          href={
-                            session?.user?.role === "tutor"
-                              ? "/tutor-dashboard"
-                              : session?.user?.role === "admin"
-                                ? "/admin-dashboard"
-                                : "/dashboard"
-                          }
+                          href={dashboardHref}
                           onClick={closeMobileMenu}
-                          className="flex items-center gap-3 text-lg"
+                          className="flex items-center gap-3 text-lg font-medium p-3 rounded-lg bg-muted/50 hover:bg-muted"
                         >
-                          <LayoutDashboard className="h-5 w-5" />
-                          Dashboard
+                          {userRole === "ADMIN" ? <LayoutDashboard className="h-5 w-5 text-primary" /> : <Truck className="h-5 w-5 text-primary" />}
+                          {userRole === "ADMIN" ? "Admin Dashboard" : "Track My Orders"}
                         </Link>
+                        
+                        <div className="pt-4 flex items-center gap-3 px-3">
+                           <Avatar className="h-10 w-10 border">
+                             <AvatarFallback className="bg-primary text-secondary font-bold">
+                               {userInitial}
+                             </AvatarFallback>
+                           </Avatar>
+                           <div>
+                              <p className="font-bold text-sm leading-none">{session?.user?.name}</p>
+                              <p className="text-xs text-muted-foreground mt-1">{session?.user?.email}</p>
+                           </div>
+                        </div>
+
                         <button
                           onClick={() => {
                             handleLogout();
                             closeMobileMenu();
                           }}
-                          className="flex items-center gap-3 text-lg text-red-600 w-full text-left"
+                          className="flex items-center gap-3 text-lg font-medium text-red-600 w-full text-left p-3 rounded-lg hover:bg-red-50 mt-2"
                         >
                           <LogOut className="h-5 w-5" />
                           Log Out
                         </button>
                       </>
                     ) : (
-                      <>
-                        <Button asChild variant="outline" className="w-full bg-primary text-secondary font-semibold hover:text-primary hover:bg-secondary hover:border-primary">
-                          <Link href="/login" onClick={closeMobileMenu}>
-                            Login / Register
-                          </Link>
-                        </Button>
-                      </>
+                      <Button asChild className="w-full h-12 text-lg bg-primary text-secondary font-semibold">
+                        <Link href="/login" onClick={closeMobileMenu}>
+                          Login to continue
+                        </Link>
+                      </Button>
                     )}
-
                   </div>
                 </nav>
               </SheetContent>

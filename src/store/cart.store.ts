@@ -6,8 +6,9 @@ export interface IItem {
   id: string;
   name: string;
   price: number;
-  stockQuantity: number;
   image?: string | null;
+  weight?: string | null;
+  category?: { id: string; name: string } | null;
 }
 
 export interface CartItem extends IItem {
@@ -35,10 +36,6 @@ export const useCartStore = create<CartState>()(
         );
 
         if (existingItem) {
-          if (existingItem.quantity + quantity > product.stockQuantity) {
-            toast.error("Cannot add more than available stock");
-            return;
-          }
           set({
             items: currentItems.map((item) =>
               item.id === product.id
@@ -48,10 +45,6 @@ export const useCartStore = create<CartState>()(
           });
           toast.success("Cart updated");
         } else {
-          if (quantity > product.stockQuantity) {
-            toast.error("Cannot add more than available stock");
-            return;
-          }
           set({ items: [...currentItems, { ...product, quantity }] });
           toast.success("Added to cart");
         }
@@ -61,11 +54,6 @@ export const useCartStore = create<CartState>()(
         toast.success("Removed from cart");
       },
       updateQuantity: (itemId, quantity) => {
-        const item = get().items.find((i) => i.id === itemId);
-        if (item && quantity > item.stockQuantity) {
-          toast.error("Cannot exceed available stock");
-          return;
-        }
         set({
           items: get().items.map((item) =>
             item.id === itemId

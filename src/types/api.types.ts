@@ -1,17 +1,19 @@
-export interface ApiResponse<TData = unknown> {
-    success: boolean;
-    message: string;
-    data : TData;
-    meta ?: PaginationMeta;
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  message: string;
+  data: T;
 }
 
-export interface PaginationMeta {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
+export interface PaginatedResponse<T = unknown> {
+  success: boolean;
+  message: string;
+  data: T[];
+  meta: IMeta;
 }
-export interface ApiErrorResponse {
-    success: boolean;
-    message: string;
+
+export interface IMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPage: number;
 }

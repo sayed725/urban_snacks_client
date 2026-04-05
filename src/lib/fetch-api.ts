@@ -1,6 +1,5 @@
 import { env } from "@/config/env";
 
-
 type FetchOptions = RequestInit & {
   params?: Record<string, string | number | boolean | undefined>;
 };
@@ -11,15 +10,16 @@ export const fetchApi = async <T = unknown>(
 ): Promise<T> => {
   const { params, headers: customHeaders, ...restOptions } = options;
 
-  // Determine base URL
-  const isServer = typeof window === "undefined";
-  const baseUrl = isServer ? env.NEXT_PUBLIC_API_URL : "";
+  // Always use the backend base URL (works on both server and client)
+  const baseUrl = env.NEXT_PUBLIC_API_URL;
 
-  // Append query parameters
-  let fullPath = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  // Build path
+  const path = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+
+  // Append query parameters using URLSearchParams directly
+  let fullUrl = `${baseUrl}${path}`;
   if (params) {
-    const safeBase = baseUrl || "http://localhost";
-    const searchParams = new URL(fullPath, safeBase).searchParams;
+    const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined) {
         searchParams.append(key, String(value));
@@ -27,11 +27,9 @@ export const fetchApi = async <T = unknown>(
     });
     const queryString = searchParams.toString();
     if (queryString) {
-      fullPath = `${fullPath.split("?")[0]}?${queryString}`;
+      fullUrl = `${fullUrl}?${queryString}`;
     }
   }
-
-  const url = isServer ? `${baseUrl}${fullPath}` : fullPath;
 
   // Merge headers
   const headers = new Headers(customHeaders);
@@ -40,6 +38,7 @@ export const fetchApi = async <T = unknown>(
   }
 
   // Handle server-side cookie forwarding
+  const isServer = typeof window === "undefined";
   if (isServer) {
     const { headers: nextHeaders } = await import("next/headers");
     const cookie = (await nextHeaders()).get("cookie");
@@ -48,10 +47,10 @@ export const fetchApi = async <T = unknown>(
     }
   }
 
-  const response = await fetch(url, {
+  const response = await fetch(fullUrl, {
     ...restOptions,
     headers,
-    ...(isServer ? {} : { credentials: "include" }),
+    credentials: "include",
   });
 
   if (!response.ok) {
