@@ -25,7 +25,7 @@ export default function CartPage() {
         <p className="text-muted-foreground mb-8 max-w-md">
           Looks like you haven't added any delicious snacks to your cart yet. Head back to the store to explore our collection.
         </p>
-        <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-secondary font-bold">
+        <Button asChild className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold text-lg px-8 py-6 hover:scale-105 border-0">
           <Link href="/products">Browse Snacks</Link>
         </Button>
       </div>
@@ -114,7 +114,7 @@ export default function CartPage() {
                 </div>
              </div>
 
-             <Button asChild size="lg" className="w-full h-14 text-lg font-bold bg-primary hover:bg-primary/90 text-secondary shadow-lg shadow-primary/20">
+             <Button asChild className="w-full h-14 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-bold text-lg hover:scale-[1.02] border-0">
                 <Link href="/checkout">
                   Proceed to Checkout <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>

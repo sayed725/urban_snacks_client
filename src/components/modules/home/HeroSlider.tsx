@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,35 +9,31 @@ import { Button } from "@/components/ui/button";
 const slides = [
   {
     id: 1,
-    title: "Premium Leather Backpack",
-    subtitle: "Travel smart. Carry premium.",
-    price: "$129.99",
-    image:
-      "/assets/urban_snaks_cover_photo.jpg",
+    title: "Crave-Worthy Snacks",
+    subtitle: "Discover the perfect bite for every moment. Sweet, salty, and spicy treats curated just for you.",
+    price: "Welcome to Urban Snacks",
+    image: "/assets/urban_snaks_cover_photo.jpg",
   },
   {
     id: 2,
-    title: "Wireless Earbuds Pro",
-    subtitle: "Pure sound. Zero wires.",
-    price: "$199.99",
-    image:
-      "/assets/urban_snaks_photo1.jpg",
+    title: "Spicy & Crunchy Delights",
+    subtitle: "Turn up the heat with our selection of fiery snacks that pack a punch.",
+    price: "Trending Now! 🌶️",
+    image: "/assets/urban_snaks_photo1.jpg",
   },
   {
     id: 3,
-    title: "Minimalist Watch",
-    subtitle: "Timeless design for everyday style.",
-    price: "$299.99",
-    image:
-      "/assets/urban_snaks_photo2.jpg",
+    title: "Sweet Tooth Satisfaction",
+    subtitle: "Indulge in premium chocolates, candies, and freshly baked goods.",
+    price: "Our Bestsellers",
+    image: "/assets/urban_snaks_photo2.jpg",
   },
   {
     id: 4,
-    title: "Designer Sneakers",
-    subtitle: "Step into premium comfort.",
-    price: "$159.99",
-    image:
-      "/assets/urban_snaks_photo3.jpg",
+    title: "Healthy & Wholesome",
+    subtitle: "Nutritious options that don't compromise on flavor. Fuel your daily hustle.",
+    price: "Staff Picks",
+    image: "/assets/urban_snaks_photo3.jpg",
   },
 ];
 
@@ -80,8 +77,8 @@ export default function HeroSlider() {
                   <p className="text-2xl font-semibold">
                     {slide.price}
                   </p>
-                  <Button className="mt-4 bg-white text-black hover:bg-gray-200">
-                    Shop Now
+                  <Button asChild className="mt-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold text-lg px-8 py-6 hover:scale-105 border-0">
+                    <Link href="/products">Shop Now</Link>
                   </Button>
                 </div>
               </div>

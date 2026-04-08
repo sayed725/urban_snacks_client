@@ -111,7 +111,7 @@ export default function ProductsPage() {
                  <div className="text-6xl mb-4">🍩</div>
                  <h2 className="text-2xl font-bold">No snacks found</h2>
                  <p className="text-muted-foreground mt-2">Try adjusting your search or filters.</p>
-                 <Button className="mt-6" variant="outline" onClick={() => { setSearchTerm(""); setSelectedCategory(""); setIsSpicy(false); }}>
+                 <Button className="mt-6 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold px-6 hover:scale-105 border-0" onClick={() => { setSearchTerm(""); setSelectedCategory(""); setIsSpicy(false); }}>
                     Clear Filters
                  </Button>
              </div>
@@ -148,7 +148,7 @@ export default function ProductsPage() {
                          </div>
                          <Button 
                            onClick={() => addItem(product as any, 1)}
-                           className="bg-primary hover:bg-primary/90 text-secondary font-semibold shrink-0"
+                           className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-md hover:shadow-orange-500/25 transition-all duration-300 font-semibold shrink-0 hover:scale-105 border-0"
                          >
                            <ShoppingCart className="w-4 h-4 mr-2" /> Add
                          </Button>
