@@ -21,6 +21,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetDescription,
 } from "@/components/ui/sheet";
 import { Menu, LogOut, LayoutDashboard, ShoppingCart, Truck } from "lucide-react";
 import { ModeToggle } from "@/components/layout/ModeToggle";
@@ -77,8 +78,8 @@ export default function Navbar() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300 border-b",
         isScrolled 
-          ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-white/20 dark:border-white/10 shadow-2xl py-2" 
-          : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-transparent py-4"
+          ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-white/20 dark:border-white/10 shadow-2xl py-1 lg:py-3" 
+          : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-transparent py-1 lg:py-3"
       )}
     >
       {/* Auth-style Background Glow Overlay */}
@@ -261,6 +262,8 @@ export default function Navbar() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[85vw] sm:w-[400px]">
                 <SheetHeader className="mb-8 border-b pb-4 text-left">
+                  <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
+                  <SheetDescription className="sr-only">Access navigation links, cart, and account settings.</SheetDescription>
                   <Link
                     href="/"
                     className="flex items-center gap-3"

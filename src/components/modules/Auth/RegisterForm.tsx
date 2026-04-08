@@ -81,7 +81,7 @@ const RegisterForm = ({ redirectPath }: RegisterFormProps) => {
     });
 
     return (
-        <div className="relative flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-full max-w-md mx-auto my-10">
+        <div className="rrelative flex items-center justify-center px-4 sm:px-6 lg:px-8 w-full max-w-[500px] mx-auto my-10">
             {/* Background Glow */}
             <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-orange-400/20 via-transparent to-transparent blur-3xl pointer-events-none" />
 
@@ -249,7 +249,7 @@ const RegisterForm = ({ redirectPath }: RegisterFormProps) => {
                         </motion.div>
                     </CardContent>
 
-                    <CardFooter className="justify-center pt-2 pb-8 relative z-10">
+                    <CardFooter className="justify-center pb-8 relative z-10">
                         <p className="text-sm text-slate-500 dark:text-slate-400">
                             Already have an account?{" "}
                             <Link href="/login" className="font-semibold text-orange-500 hover:text-orange-600 transition-colors">
