@@ -16,8 +16,8 @@ export default function Footer() {
       <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-orange-600/5 pointer-events-none" />
       
       {/* Main footer content */}
-      <div className="container mx-auto w-11/12 lg:w-full px-0 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-16">
+      <div className="mx-auto w-11/12 px-0 relative z-10">
+        <div className="flex flex-col md:flex-row justify-between items-start lg:items-center gap-10 lg:gap-16">
           {/* Logo + Brand */}
           <div>
             <Link href="/" className="flex items-center gap-3 mb-6">
@@ -37,7 +37,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-semibold mb-6">Quick Links</h3>
+            <h3 className="text-xl font-semibold mb-6 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">Quick Links</h3>
             <ul className="space-y-3 text-muted-foreground flex flex-wrap gap-5">
               <li>
                 <Link 
@@ -59,7 +59,7 @@ export default function Footer() {
 
             {/* Newsletter signup */}
             <div className="mt-10">
-              <h4 className="text-lg font-medium mb-4">Stay Updated</h4>
+              <h4 className="text-lg font-medium mb-4 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">Stay Updated</h4>
               <form className="flex flex-col sm:flex-row gap-3 max-w-md">
                 <Input
                   type="email"
@@ -79,7 +79,7 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-xl font-semibold mb-6">Contact</h3>
+            <h3 className="text-xl font-semibold mb-6 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">Contact</h3>
             <div className="space-y-4 text-muted-foreground">
               <p className="flex items-start">
                 <FaMapMarkerAlt className="mr-3 mt-1 text-primary shrink-0" />
@@ -100,7 +100,7 @@ export default function Footer() {
 
       {/* Back to top + Copyright */}
       <div className="mt-16 border-t border-gray-800 pt-3">
-        <div className="container mx-auto px-6 lg:px-0">
+        <div className="w-11/12 mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-muted-foreground text-sm">
             <p>
               © {new Date().getFullYear()} <span className="text-primary font-semibold">Urban Snacks</span>. 

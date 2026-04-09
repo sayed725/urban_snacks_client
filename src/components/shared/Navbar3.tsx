@@ -84,7 +84,7 @@ export default function Navbar() {
       {/* Auth-style Background Glow Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-orange-600/5 pointer-events-none" />
       
-      <div className="container mx-auto w-11/12 lg:w-full px-0 relative z-10">
+      <div className=" mx-auto w-11/12  px-0 relative z-10">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">

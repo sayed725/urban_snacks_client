@@ -142,7 +142,7 @@ export default function HeroSlider() {
       </div>
 
       {/* Navigation Controls */}
-      <div className="absolute bottom-10 right-6 md:right-12 flex items-center gap-6 z-20">
+      <div className="absolute bottom-10 right-6 md:right-12 flex items-center gap-6 z-20 ">
         <div className="flex gap-4">
           <button
             onClick={prevSlide}
