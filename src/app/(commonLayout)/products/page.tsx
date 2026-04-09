@@ -40,7 +40,7 @@ export default function ProductsPage() {
     <div className="container mx-auto py-12 px-4 min-h-screen">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Our Snacks</h1>
+          <h1 className="text-3xl md:text-5xl font-black mb-2 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">Our Snacks</h1>
           <p className="text-muted-foreground mt-2">Find the perfectly curated snacks for your cravings</p>
         </div>
         

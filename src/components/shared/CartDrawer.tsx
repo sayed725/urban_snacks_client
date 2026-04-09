@@ -35,6 +35,22 @@ export function CartDrawer({ className, isMobile = false }: CartDrawerProps) {
     }
   };
 
+  if (!mounted) {
+    return (
+      <button
+        className={cn(
+          "relative group flex items-center justify-center transition-all outline-none",
+          isMobile 
+            ? "mr-1 p-2 rounded-full border border-transparent hover:bg-orange-50 dark:hover:bg-orange-500/10" 
+            : "p-2.5 rounded-full border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-black/50 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:border-orange-200 dark:hover:border-orange-500/30 shadow-sm hover:shadow",
+          className
+        )}
+      >
+        <ShoppingCart className="h-5 w-5 text-slate-700 dark:text-slate-300 group-hover:text-orange-500 transition-colors" />
+      </button>
+    );
+  }
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
@@ -49,7 +65,7 @@ export function CartDrawer({ className, isMobile = false }: CartDrawerProps) {
         >
           <ShoppingCart className="h-5 w-5 text-slate-700 dark:text-slate-300 group-hover:text-orange-500 transition-colors" />
           <AnimatePresence>
-            {mounted && totalItems() > 0 && (
+            {totalItems() > 0 && (
               <motion.span
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}

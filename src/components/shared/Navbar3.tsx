@@ -36,10 +36,12 @@ const menuItems = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
@@ -163,7 +165,7 @@ export default function Navbar() {
               <CartDrawer isMobile={false} />
             </motion.div>
 
-            {isPending ? (
+            {isPending || !mounted ? (
               <div className="flex items-center gap-2">
                  <div className="h-10 w-10 bg-slate-200/50 dark:bg-slate-800/50 rounded-full animate-pulse" />
               </div>
@@ -223,15 +225,16 @@ export default function Navbar() {
             </motion.div>
             <ModeToggle />
             
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button variant="ghost" size="icon" className="border border-slate-200 dark:border-slate-800 shadow-sm rounded-full bg-white/50 dark:bg-black/50">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </motion.div>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[85vw] sm:w-[400px]">
+            {mounted && (
+              <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                <SheetTrigger asChild>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button variant="ghost" size="icon" className="border border-slate-200 dark:border-slate-800 shadow-sm rounded-full bg-white/50 dark:bg-black/50">
+                      <Menu className="h-5 w-5" />
+                    </Button>
+                  </motion.div>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[85vw] sm:w-[400px]">
                 <SheetHeader className="mb-8 border-b pb-4 text-left">
                   <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
                   <SheetDescription className="sr-only">Access navigation links, cart, and account settings.</SheetDescription>
@@ -341,7 +344,8 @@ export default function Navbar() {
                   </div>
                 </nav>
               </SheetContent>
-            </Sheet>
+              </Sheet>
+            )}
           </div>
         </div>
       </div>

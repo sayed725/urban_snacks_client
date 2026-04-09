@@ -9,6 +9,21 @@ import { ArrowLeft, MapPin, CreditCard, Box, PackageCheck } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { OrderStatus } from "@/features/order/order.type";
+import { motion } from "framer-motion";
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 }
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 export default function OrderDetailPage() {
   const { orderId } = useParams() as { orderId: string };
@@ -52,14 +67,21 @@ export default function OrderDetailPage() {
   };
 
   return (
-    <div className="container mx-auto py-12 px-4 min-h-screen">
-      <Link href="/my-orders" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors">
-         <ArrowLeft className="w-4 h-4 mr-2" /> Back to My Orders
-      </Link>
+    <motion.div 
+      initial="initial"
+      animate="animate"
+      variants={staggerContainer}
+      className="container mx-auto py-12 px-4 min-h-screen"
+    >
+      <motion.div variants={fadeInUp}>
+        <Link href="/my-orders" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors">
+           <ArrowLeft className="w-4 h-4 mr-2" /> Back to My Orders
+        </Link>
+      </motion.div>
 
       <div className="flex flex-col lg:flex-row gap-8">
          <div className="flex-1 space-y-8">
-            <div className="bg-card border rounded-3xl p-6 sm:p-8 shadow-sm">
+            <motion.div variants={fadeInUp} className="bg-card border rounded-3xl p-6 sm:p-8 shadow-sm">
                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-6 mb-6">
                   <div>
                      <h1 className="text-2xl font-bold flex items-center gap-3">
@@ -77,7 +99,7 @@ export default function OrderDetailPage() {
                </div>
 
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                  <div>
+                  <motion.div variants={fadeInUp}>
                      <h3 className="font-bold flex items-center gap-2 mb-4 text-lg">
                         <MapPin className="w-5 h-5 text-primary" /> Delivery Address
                      </h3>
@@ -94,9 +116,9 @@ export default function OrderDetailPage() {
                            </div>
                         )}
                      </div>
-                  </div>
+                  </motion.div>
 
-                  <div>
+                  <motion.div variants={fadeInUp}>
                      <h3 className="font-bold flex items-center gap-2 mb-4 text-lg">
                         <CreditCard className="w-5 h-5 text-primary" /> Payment details
                      </h3>
@@ -126,18 +148,26 @@ export default function OrderDetailPage() {
                             </div>
                         </div>
                      </div>
-                  </div>
+                  </motion.div>
                </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-card border rounded-3xl p-6 sm:p-8 shadow-sm">
+            <motion.div variants={fadeInUp} className="bg-card border rounded-3xl p-6 sm:p-8 shadow-sm">
                <h3 className="font-bold flex items-center gap-2 mb-6 text-xl">
                   <PackageCheck className="w-6 h-6 text-primary" /> Order Items
                </h3>
                
-               <div className="space-y-4">
+               <motion.div 
+                  variants={staggerContainer}
+                  className="space-y-4"
+                >
                   {order.orderItems.map((oi: any) => (
-                     <div key={oi.id} className="flex gap-4 p-4 rounded-2xl border bg-background items-center">
+                     <motion.div 
+                        key={oi.id} 
+                        variants={fadeInUp}
+                        whileHover={{ scale: 1.01 }}
+                        className="flex gap-4 p-4 rounded-2xl border bg-background items-center transition-all"
+                      >
                         <div className="w-20 h-20 bg-secondary rounded-xl overflow-hidden shrink-0 border">
                            {oi.item?.image ? (
                               <img src={oi.item.image} alt={oi.item.name} className="w-full h-full object-cover" />
@@ -159,12 +189,12 @@ export default function OrderDetailPage() {
                               </div>
                            </div>
                         </div>
-                     </div>
+                     </motion.div>
                   ))}
-               </div>
-            </div>
+               </motion.div>
+            </motion.div>
          </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

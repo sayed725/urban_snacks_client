@@ -9,6 +9,22 @@ import { PackageOpen, Clock, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { OrderStatus } from "@/features/order/order.type";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+};
 
 export default function MyOrdersPage() {
   const { data: session, isPending: sessionLoading } = authClient.useSession();
@@ -68,17 +84,25 @@ export default function MyOrdersPage() {
 
   return (
     <div className="container mx-auto py-12 px-4 min-h-screen">
-      <div className="mb-10 text-center md:text-left">
+      <motion.div 
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="mb-10 text-center md:text-left"
+      >
          <h1 className="text-4xl font-black">My Orders</h1>
          <p className="text-muted-foreground mt-2">Track and manage your past snack orders</p>
-      </div>
+      </motion.div>
 
       {isLoading ? (
           <div className="space-y-4">
               {[1,2,3].map(i => <div key={i} className="h-40 bg-muted animate-pulse rounded-2xl" />)}
           </div>
       ) : orders.length === 0 ? (
-          <div className="bg-card border rounded-3xl py-20 text-center shadow-sm">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-card border rounded-3xl py-20 text-center shadow-sm"
+          >
              <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
                 <PackageOpen className="w-10 h-10 text-muted-foreground" />
              </div>
@@ -87,11 +111,21 @@ export default function MyOrdersPage() {
              <Button asChild size="lg" className="bg-primary text-secondary">
                 <Link href="/products">Browse Store</Link>
              </Button>
-          </div>
+          </motion.div>
       ) : (
-          <div className="space-y-6">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
              {orders.map((order: any) => (
-                <div key={order.id} className="bg-card border shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-shadow">
+                <motion.div 
+                  key={order.id} 
+                  variants={itemVariants}
+                  whileHover={{ y: -4 }}
+                  className="bg-card border shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-all"
+                >
                    {/* Order Header */}
                    <div className="bg-muted/30 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b">
                       <div className="flex flex-col md:flex-row gap-4 md:gap-8">
@@ -128,8 +162,12 @@ export default function MyOrdersPage() {
                           
                           <div className="flex flex-wrap gap-4 mb-4">
                               {order.orderItems.slice(0, 3).map((oi: any) => (
-                                 <div key={oi.id} className="relative group">
-                                     <div className="w-20 h-20 bg-secondary rounded-xl overflow-hidden border">
+                                 <motion.div 
+                                    key={oi.id} 
+                                    className="relative group"
+                                    whileHover={{ scale: 1.1 }}
+                                  >
+                                     <div className="w-20 h-20 bg-secondary rounded-xl overflow-hidden border transition-transform duration-300">
                                         {oi.item?.image ? (
                                            <img src={oi.item.image} className="w-full h-full object-cover" alt="item" />
                                         ) : (
@@ -139,7 +177,7 @@ export default function MyOrdersPage() {
                                      <div className="absolute -top-2 -right-2 bg-primary text-secondary text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-sm">
                                          {oi.quantity}
                                      </div>
-                                 </div>
+                                 </motion.div>
                               ))}
                               {order.orderItems.length > 3 && (
                                   <div className="w-20 h-20 bg-muted/50 rounded-xl border flex items-center justify-center font-bold text-muted-foreground">
@@ -177,9 +215,9 @@ export default function MyOrdersPage() {
                           )}
                       </div>
                    </div>
-                </div>
+                </motion.div>
              ))}
-          </div>
+          </motion.div>
       )}
     </div>
   );

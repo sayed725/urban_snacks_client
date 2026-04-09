@@ -1,34 +1,72 @@
+"use client";
+
 import { ShoppingBag, Star, Zap } from "lucide-react";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+    },
+  },
+};
 
 const FeatureCard = () => {
   return (
-      <section className="bg-secondary text-secondary-foreground py-10 border-y">
-         <div className="container mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-border">
-               <div className="px-4">
-                  <div className="flex justify-center mb-2 text-primary"><ShoppingBag className="w-8 h-8" /></div>
-                  <h3 className="font-bold">Premium Snacks</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Curated quality</p>
-               </div>
-               <div className="px-4">
-                  <div className="flex justify-center mb-2 text-primary"><Zap className="w-8 h-8" /></div>
-                  <h3 className="font-bold">Fast Delivery</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Right to your door</p>
-               </div>
-               <div className="px-4">
-                  <div className="flex justify-center mb-2 text-primary"><Star className="w-8 h-8" /></div>
-                  <h3 className="font-bold">Top Rated</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Loved by thousands</p>
-               </div>
-               <div className="px-4">
-                  <div className="flex justify-center mb-2 text-primary"><span className="text-3xl">🛡️</span></div>
-                  <h3 className="font-bold">Secure Checkout</h3>
-                  <p className="text-sm text-muted-foreground mt-1">100% protected</p>
-               </div>
+    <section className="bg-secondary text-secondary-foreground py-10 border-y overflow-hidden">
+      <div className="container mx-auto">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-10%" }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-border"
+        >
+          <motion.div variants={itemVariants} className="px-4">
+            <div className="flex justify-center mb-2 text-primary">
+              <ShoppingBag className="w-8 h-8" />
             </div>
-         </div>
-      </section>
-  )
-}
+            <h3 className="font-bold">Premium Snacks</h3>
+            <p className="text-sm text-muted-foreground mt-1">Curated quality</p>
+          </motion.div>
+          <motion.div variants={itemVariants} className="px-4">
+            <div className="flex justify-center mb-2 text-primary">
+              <Zap className="w-8 h-8" />
+            </div>
+            <h3 className="font-bold">Fast Delivery</h3>
+            <p className="text-sm text-muted-foreground mt-1">Right to your door</p>
+          </motion.div>
+          <motion.div variants={itemVariants} className="px-4">
+            <div className="flex justify-center mb-2 text-primary">
+              <Star className="w-8 h-8" />
+            </div>
+            <h3 className="font-bold">Top Rated</h3>
+            <p className="text-sm text-muted-foreground mt-1">Loved by thousands</p>
+          </motion.div>
+          <motion.div variants={itemVariants} className="px-4 border-l-0 md:border-l">
+            <div className="flex justify-center mb-2 text-primary">
+              <span className="text-3xl">🛡️</span>
+            </div>
+            <h3 className="font-bold">Secure Checkout</h3>
+            <p className="text-sm text-muted-foreground mt-1">100% protected</p>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
 
-export default FeatureCard
+export default FeatureCard;
