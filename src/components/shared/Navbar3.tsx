@@ -77,8 +77,8 @@ export default function Navbar() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300 border-b",
         isScrolled 
-          ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-white/20 dark:border-white/10 shadow-2xl py-2 lg:py-3" 
-          : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-transparent py-2 lg:py-3"
+          ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-white/20 dark:border-white/10 shadow-2xl py-3 lg:py-3" 
+          : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-transparent py-3 lg:py-3"
       )}
     >
       {/* Auth-style Background Glow Overlay */}

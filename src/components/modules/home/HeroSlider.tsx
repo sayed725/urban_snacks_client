@@ -3,119 +3,182 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 const slides = [
   {
     id: 1,
-    title: "Crave-Worthy Snacks",
-    subtitle: "Discover the perfect bite for every moment. Sweet, salty, and spicy treats curated just for you.",
-    price: "Welcome to Urban Snacks",
+    title: "Urban Snacks Collection",
+    subtitle: "Discover the perfect bite for every moment. Sweet, salty, and savory treats curated from premium ingredients.",
+    badge: "Welcome to Urban Snacks 🎉",
     image: "/assets/urban_snaks_cover_photo.jpg",
   },
   {
     id: 2,
-    title: "Spicy & Crunchy Delights",
-    subtitle: "Turn up the heat with our selection of fiery snacks that pack a punch.",
-    price: "Trending Now! 🌶️",
+    title: "Fiery & Crunchy Delights",
+    subtitle: "Turn up the heat with our selection of bold, intensely flavored snacks that pack a serious punch.",
+    badge: "Trending Now 🌶️",
     image: "/assets/urban_snaks_photo1.jpg",
   },
   {
     id: 3,
     title: "Sweet Tooth Satisfaction",
-    subtitle: "Indulge in premium chocolates, candies, and freshly baked goods.",
-    price: "Our Bestsellers",
+    subtitle: "Indulge your cravings with our artisanal chocolates, gourmet candies, and freshly baked goods.",
+    badge: "Our Bestsellers 🍫",
     image: "/assets/urban_snaks_photo2.jpg",
   },
   {
     id: 4,
     title: "Healthy & Wholesome",
-    subtitle: "Nutritious options that don't compromise on flavor. Fuel your daily hustle.",
-    price: "Staff Picks",
+    subtitle: "Guilt-free nutrition that doesn't compromise on flavor. Fuel your daily hustle with our organic selections.",
+    badge: "Staff Picks 🍃",
     image: "/assets/urban_snaks_photo3.jpg",
   },
 ];
 
 export default function HeroSlider() {
   const [current, setCurrent] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
+    if (isHovered) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [isHovered]);
+
+  const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
+  const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
-    <section className="relative w-full h-[80vh] overflow-hidden rounded-b-2xl">
-      {/* Slides */}
-      <div
-        className="flex h-full transition-transform duration-700"
-        style={{ transform: `translateX(-${current * 100}%)` }}
-      >
-        {slides.map((slide) => (
-          <div key={slide.id} className="min-w-full relative">
-            <Image
-              src={slide.image}
-              alt={slide.title}
-              fill
-              priority
-              className="object-cover"
-            />
+    <section 
+      className="relative w-full h-[90vh] md:h-[75vh] overflow-hidden bg-black"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={current}
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          className="absolute inset-0"
+        >
+          <Image
+            src={slides[current].image}
+            alt={slides[current].title}
+            fill
+            priority
+            className="object-cover"
+          />
+          {/* Enhanced Premium Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+        </motion.div>
+      </AnimatePresence>
 
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent">
-              <div className="h-full max-w-7xl mx-auto px-6 flex items-center">
-                <div className="text-white max-w-xl space-y-4">
-                  <h1 className="text-4xl md:text-6xl font-bold">
-                    {slide.title}
-                  </h1>
-                  <p className="text-lg md:text-xl text-gray-200">
-                    {slide.subtitle}
-                  </p>
-                  <p className="text-2xl font-semibold">
-                    {slide.price}
-                  </p>
-                  <Button asChild className="mt-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold text-lg px-8 py-6 hover:scale-105 border-0">
-                    <Link href="/products">Shop Now</Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="absolute inset-0 h-[90%] container mx-auto w-11/12 flex items-center z-10">
+        <div className="text-white max-w-2xl space-y-6">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="space-y-6"
+            >
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm font-medium tracking-wide text-orange-200 uppercase shadow-lg shadow-black/20"
+              >
+                <Sparkles className="w-4 h-4 text-orange-400" />
+                {slides[current].badge}
+              </motion.div>
+              
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="text-5xl md:text-7xl font-black leading-tight tracking-tight bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all"
+              >
+                {slides[current].title}
+              </motion.h1>
+              
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="text-lg md:text-xl text-gray-300 font-medium leading-relaxed max-w-xl"
+              >
+                {slides[current].subtitle}
+              </motion.p>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="pt-4"
+              >
+                <Button asChild className="group relative overflow-hidden bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-full shadow-xl shadow-orange-500/20 transition-all duration-300 font-bold text-lg lg:px-10 lg:py-7 hover:scale-[1.02] border-0">
+                  <Link href="/products">
+                    <span className="relative z-10 flex items-center gap-2">
+                       Shop the Collection
+                       <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </span>
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
+                  </Link>
+                </Button>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* Navigation */}
-      <button
-        onClick={() =>
-          setCurrent((current - 1 + slides.length) % slides.length)
-        }
-        className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/70 p-2 rounded-full"
-      >
-        <ChevronLeft />
-      </button>
+      {/* Navigation Controls */}
+      <div className="absolute bottom-10 right-6 md:right-12 flex items-center gap-6 z-20">
+        <div className="flex gap-4">
+          <button
+            onClick={prevSlide}
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white transition-all hover:scale-110 active:scale-95 shadow-lg shadow-black/20"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white transition-all hover:scale-110 active:scale-95 shadow-lg shadow-black/20"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
 
-      <button
-        onClick={() =>
-          setCurrent((current + 1) % slides.length)
-        }
-        className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/70 p-2 rounded-full"
-      >
-        <ChevronRight />
-      </button>
-
-      {/* Dots */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
+      {/* Hero Progress Dots */}
+      <div className="absolute bottom-12 left-6 md:left-12 flex gap-3 z-20">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`h-3 w-3 rounded-full transition ${
-              current === i ? "bg-white" : "bg-white/40"
-            }`}
-          />
+            className="group relative h-2.5 flex items-center cursor-pointer overflow-hidden rounded-full shadow-sm"
+            aria-label={`Go to slide ${i + 1}`}
+          >
+            <motion.div
+               animate={{ 
+                 width: current === i ? 40 : 10,
+                 backgroundColor: current === i ? "rgba(249, 115, 22, 1)" : "rgba(255, 255, 255, 0.4)" 
+               }}
+               transition={{ duration: 0.3 }}
+               className="h-full rounded-full"
+            />
+          </button>
         ))}
       </div>
     </section>

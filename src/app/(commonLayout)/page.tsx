@@ -27,7 +27,7 @@ export default function Home() {
   const featuredItems = featuredResponse?.data || [];
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="">
       {/* Hero Section */}
       <section className="w-full">
         <HeroSlider />
