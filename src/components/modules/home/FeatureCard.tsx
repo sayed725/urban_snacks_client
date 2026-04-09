@@ -2,8 +2,8 @@ import { ShoppingBag, Star, Zap } from "lucide-react";
 
 const FeatureCard = () => {
   return (
-      <section className="bg-secondary text-secondary-foreground py-8 border-y">
-         <div className="container mx-auto px-4">
+      <section className="bg-secondary text-secondary-foreground py-10 border-y">
+         <div className="container mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-border">
                <div className="px-4">
                   <div className="flex justify-center mb-2 text-primary"><ShoppingBag className="w-8 h-8" /></div>

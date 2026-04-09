@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { CartDrawer } from "@/components/shared/CartDrawer";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,10 +24,9 @@ import {
   SheetTrigger,
   SheetDescription,
 } from "@/components/ui/sheet";
-import { Menu, LogOut, LayoutDashboard, ShoppingCart, Truck } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, Truck } from "lucide-react";
 import { ModeToggle } from "@/components/layout/ModeToggle";
 import { authClient } from "@/lib/auth-client";
-import { useCartStore } from "@/store/cart.store";
 
 const menuItems = [
   { title: "Home", href: "/" },
@@ -38,7 +38,6 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { totalItems } = useCartStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,8 +77,8 @@ export default function Navbar() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300 border-b",
         isScrolled 
-          ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-white/20 dark:border-white/10 shadow-2xl py-1 lg:py-3" 
-          : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-transparent py-1 lg:py-3"
+          ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-white/20 dark:border-white/10 shadow-2xl py-2 lg:py-3" 
+          : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-transparent py-2 lg:py-3"
       )}
     >
       {/* Auth-style Background Glow Overlay */}
@@ -161,21 +160,7 @@ export default function Navbar() {
 
             {/* Cart */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link href="/cart" className="relative group flex items-center justify-center p-2.5 rounded-full transition-all border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-black/50 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:border-orange-200 dark:hover:border-orange-500/30 shadow-sm hover:shadow">
-                  <ShoppingCart className="h-5 w-5 text-slate-700 dark:text-slate-300 group-hover:text-orange-500 transition-colors" />
-                  <AnimatePresence>
-                    {totalItems() > 0 && (
-                      <motion.span 
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-[10px] font-bold h-5 min-w-5 flex items-center justify-center px-1.5 rounded-full shadow-md ring-2 ring-white dark:ring-black"
-                      >
-                        {totalItems()}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-              </Link>
+              <CartDrawer isMobile={false} />
             </motion.div>
 
             {isPending ? (
@@ -234,21 +219,7 @@ export default function Navbar() {
           {/* Mobile Menu Trigger */}
           <div className="flex items-center gap-3 lg:hidden">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link href="/cart" className="relative group mr-1 p-2 rounded-full border border-transparent hover:bg-orange-50 dark:hover:bg-orange-500/10 transition-colors">
-                  <ShoppingCart className="h-5 w-5 text-slate-700 dark:text-slate-300 group-hover:text-orange-500" />
-                  <AnimatePresence>
-                    {totalItems() > 0 && (
-                      <motion.span 
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0 }}
-                        className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full ring-2 ring-white dark:ring-black"
-                      >
-                        {totalItems()}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-              </Link>
+              <CartDrawer isMobile={true} />
             </motion.div>
             <ModeToggle />
             

@@ -5,7 +5,8 @@ import React from 'react'
 
 const FeatureCategory = ({catsLoading, categories}: {catsLoading: boolean, categories: any[]}) => {
   return (
-     <section className="py-20 px-4 container mx-auto">
+    <div className='bg-muted/30'>
+       <section className="py-10  container w-11/12 mx-auto">
         <div className="flex justify-between items-end mb-10">
            <div>
               <h2 className="text-3xl md:text-5xl font-black mb-2 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">Shop by Category</h2>
@@ -34,6 +35,7 @@ const FeatureCategory = ({catsLoading, categories}: {catsLoading: boolean, categ
             </div>
         )}
       </section>
+    </div>
   )
 }
 
