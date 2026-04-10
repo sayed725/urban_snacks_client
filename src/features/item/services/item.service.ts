@@ -9,10 +9,12 @@ export const getItems = async (
     params: {
       page: params?.page,
       limit: params?.limit ?? 20,
-      search: params?.search,
-      categoryId: params?.categoryId,
+      searchTerm: params?.searchTerm || params?.search,
+      "category.id": params?.categoryId,
       isFeatured: params?.isFeatured,
       isSpicy: params?.isSpicy,
+      sortBy: params?.sortBy,
+      sortOrder: params?.sortOrder,
     },
   });
 };

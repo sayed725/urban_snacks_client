@@ -35,9 +35,11 @@ export interface IItemPayload {
 export interface IGetItemsParams {
   page?: number;
   limit?: number;
-  search?: string;
+  searchTerm?: string;
+  search?: string; // Keep for backward compatibility if needed locally
   categoryId?: string;
   isFeatured?: boolean;
   isSpicy?: boolean;
-  orderBy?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }

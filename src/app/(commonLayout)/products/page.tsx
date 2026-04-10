@@ -7,15 +7,31 @@ import { useCartStore } from "@/store/cart.store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [isSpicy, setIsSpicy] = useState(false);
+  const [sortByOption, setSortByOption] = useState<string>("createdAt-desc");
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   const { addItem } = useCartStore();
 
@@ -25,12 +41,18 @@ export default function ProductsPage() {
   });
   const categories = catResponse?.data || [];
 
+  const sortParams = sortByOption.split("-");
+  const sortBy = sortParams[0];
+  const sortOrder = sortParams[1] as "asc" | "desc";
+
   const { data: itemResponse, isLoading } = useQuery({
-    queryKey: ["items", { search: searchTerm, categoryId: selectedCategory, isSpicy }],
+    queryKey: ["items", { search: debouncedSearchTerm, categoryId: selectedCategory, isSpicy, sortBy, sortOrder }],
     queryFn: () => getItems({ 
-      search: searchTerm || undefined, 
+      searchTerm: debouncedSearchTerm || undefined, 
       categoryId: selectedCategory || undefined,
       isSpicy: isSpicy ? true : undefined,
+      sortBy: sortBy,
+      sortOrder: sortOrder,
       limit: 50 
     }),
   });
@@ -44,14 +66,30 @@ export default function ProductsPage() {
           <p className="text-muted-foreground mt-2">Find the perfectly curated snacks for your cravings</p>
         </div>
         
-        <div className="flex w-full md:w-auto items-center gap-2 relative">
-           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-           <Input 
-             placeholder="Search snacks..." 
-             className="pl-9 w-full md:w-[300px]"
-             value={searchTerm}
-             onChange={(e) => setSearchTerm(e.target.value)}
-           />
+        <div className="flex w-full md:w-auto items-center gap-3 relative flex-wrap sm:flex-nowrap">
+           <div className="relative w-full sm:w-[250px] md:w-[300px]">
+             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+             <Input 
+               placeholder="Search snacks..." 
+               className="pl-9 w-full bg-background border-slate-200 dark:border-slate-800 focus-visible:ring-primary/20"
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+             />
+           </div>
+           
+           <div className="w-full sm:w-[180px]">
+             <Select value={sortByOption} onValueChange={setSortByOption}>
+               <SelectTrigger className="w-full bg-background border-slate-200 dark:border-slate-800">
+                 <SelectValue placeholder="Sort by" />
+               </SelectTrigger>
+               <SelectContent>
+                 <SelectItem value="createdAt-desc">Newest Arrivals</SelectItem>
+                 <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                 <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                 <SelectItem value="name-asc">Name: A to Z</SelectItem>
+               </SelectContent>
+             </Select>
+           </div>
         </div>
       </div>
 
