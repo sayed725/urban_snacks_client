@@ -30,7 +30,7 @@ export default function Footer() {
                 Urban Snacks
               </span>
             </Link>
-            <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
               Urban Snacks is your go-to destination for premium quality treats. We provide the best snacks to keep your cravings satisfied.
             </p>
           </div>
@@ -41,18 +41,26 @@ export default function Footer() {
             <ul className="space-y-3 text-muted-foreground flex flex-wrap gap-5">
               <li>
                 <Link 
-                  href="/" 
+                  href="/privacy-policy" 
                   className="hover:text-primary transition-colors"
                 >
-                  Home
+                  Privacy Policy
                 </Link>
               </li>
               <li>
                 <Link 
-                  href="/products" 
+                  href="/shipping-policy" 
                   className="hover:text-primary transition-colors"
                 >
-                  Products
+                 Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/terms-conditions" 
+                  className="hover:text-primary transition-colors"
+                >
+                 Terms & Conditions
                 </Link>
               </li>
             </ul>

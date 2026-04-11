@@ -148,7 +148,7 @@ export default function MyOrdersPage() {
                       <div className="flex items-center gap-3">
                          <div className="text-right">
                              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Order No.</p>
-                             <p className="font-bold text-primary mt-0.5">#{order.orderNumber}</p>
+                             <p className="font-bold text-primary mt-0.5">{order.orderNumber}</p>
                          </div>
                       </div>
                    </div>
@@ -199,7 +199,7 @@ export default function MyOrdersPage() {
                              <Link href={`/my-orders/${order.id}`}>View Details</Link>
                           </Button>
                           
-                          {order.status === "PLACED" && (
+                          {/* {order.status === "PLACED" && (
                               <Button 
                                 variant="outline" 
                                 className="w-full text-destructive border-red-200 hover:bg-red-50 hover:text-destructive font-bold"
@@ -212,7 +212,7 @@ export default function MyOrdersPage() {
                               >
                                  <AlertCircle className="w-4 h-4 mr-2" /> Cancel Order
                               </Button>
-                          )}
+                          )} */}
                       </div>
                    </div>
                 </motion.div>
