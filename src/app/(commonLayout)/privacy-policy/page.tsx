@@ -205,7 +205,7 @@ const PrivacyPolicyPage = () => {
                         </div>
                     </div>
                     <p className="mt-12 text-sm text-stone-400 italic">
-                        Last updated: March 8, 2025
+                        Last updated: April 12, 2026
                     </p>
                 </section>
             </div>
