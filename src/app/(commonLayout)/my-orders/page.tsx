@@ -10,6 +10,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { OrderStatus } from "@/features/order/order.type";
 import { motion } from "framer-motion";
+import moment from "moment";
+import OrdersLoadingSkeleton from "./_ordersLoadingSkeleton";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -49,23 +51,21 @@ export default function MyOrdersPage() {
     },
   });
 
-  if (sessionLoading) {
-     return <div className="container mx-auto py-24 text-center">Loading...</div>;
-  }
 
-  if (!session) {
-     return (
-        <div className="container mx-auto py-32 text-center max-w-md">
-           <h1 className="text-3xl font-bold mb-4">You are not logged in</h1>
-           <p className="text-muted-foreground mb-8 text-lg">
-             Please log in to view your order history.
-           </p>
-           <Button asChild size="lg" className="w-full bg-primary text-secondary">
-             <Link href="/login">Login</Link>
-           </Button>
-        </div>
-     );
-  }
+
+//   if (!session) {
+//      return (
+//         <div className="container mx-auto py-32 text-center max-w-md">
+//            <h1 className="text-3xl font-bold mb-4">You are not logged in</h1>
+//            <p className="text-muted-foreground mb-8 text-lg">
+//              Please log in to view your order history.
+//            </p>
+//            <Button asChild size="lg" className="w-full bg-primary text-secondary">
+//              <Link href="/login">Login</Link>
+//            </Button>
+//         </div>
+//      );
+//   }
 
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
@@ -83,7 +83,7 @@ export default function MyOrdersPage() {
   };
 
   return (
-    <div className="container mx-auto py-12 px-4 min-h-screen">
+    <div className="container w-11/12 mx-auto py-10  min-h-screen">
       <motion.div 
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
@@ -93,10 +93,8 @@ export default function MyOrdersPage() {
          <p className="text-muted-foreground mt-2">Track and manage your past snack orders</p>
       </motion.div>
 
-      {isLoading ? (
-          <div className="space-y-4">
-              {[1,2,3].map(i => <div key={i} className="h-40 bg-muted animate-pulse rounded-2xl" />)}
-          </div>
+      {isLoading || sessionLoading ? (
+          <OrdersLoadingSkeleton />
       ) : orders.length === 0 ? (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -109,7 +107,7 @@ export default function MyOrdersPage() {
              <h2 className="text-2xl font-bold mb-2">No orders found</h2>
              <p className="text-muted-foreground mb-8">You haven't placed any orders yet. Time for a snack break!</p>
              <Button asChild size="lg" className="bg-primary text-secondary">
-                <Link href="/products">Browse Store</Link>
+                <Link href="/products">Browse Products</Link>
              </Button>
           </motion.div>
       ) : (
@@ -133,7 +131,7 @@ export default function MyOrdersPage() {
                             <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Order Placed</p>
                             <p className="font-medium flex items-center gap-1 mt-0.5">
                                 <Clock className="w-3.5 h-3.5" /> 
-                                {new Date(order.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric'})}
+                                {moment(order.createdAt).fromNow()}
                             </p>
                          </div>
                          <div>
