@@ -7,6 +7,7 @@ import { ArrowRight, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 import { motion } from 'framer-motion'
+import SectionHeader from '@/components/shared/SectionHeader';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -44,11 +45,13 @@ const FeatureSnacks = ({ featuredLoading, featuredItems }: { featuredLoading: bo
               whileInView="visible"
               viewport={{ once: true, margin: "-10%" }}
               variants={headerVariants}
-              className="text-center mb-12 max-w-2xl mx-auto"
+              className="text-center mb-10 max-w-2xl mx-auto"
             >
-               <Badge className="mb-4 bg-amber-500 text-white border-none py-1 px-3">Top Picks</Badge>
-               <h2 className="text-3xl md:text-5xl font-black mb-4 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">Trending Snacks</h2>
-               <p className="text-muted-foreground text-lg">Our most popular and highly demanded treats that everyone is talking about.</p>
+               <SectionHeader
+                  title="Trending Snacks"
+                  description="Our most popular and highly demanded treats that everyone is talking about."
+                  badge="Top Picks"
+               />
             </motion.div>
 
             {featuredLoading ? (
@@ -105,7 +108,7 @@ const FeatureSnacks = ({ featuredLoading, featuredItems }: { featuredLoading: bo
                transition={{ delay: 0.3, duration: 0.5 }}
                className="text-center mt-12"
             >
-               <Button asChild size="lg" className="rounded-full px-8 h-14 text-lg bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold border-0">
+               <Button asChild size="lg" className="rounded-md px-8 h-14 text-lg bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold border-0">
                   <Link href="/products">Explore Full Catalog <ArrowRight className="w-5 h-5 ml-2" /></Link>
                </Button>
             </motion.div>

@@ -5,6 +5,7 @@ import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 import { motion } from 'framer-motion'
+import SectionHeader from '@/components/shared/SectionHeader';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -44,8 +45,10 @@ const FeatureCategory = ({catsLoading, categories}: {catsLoading: boolean, categ
           className="flex justify-between items-end mb-10"
         >
            <div>
-              <h2 className="text-3xl md:text-5xl font-black mb-2 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">Shop by Category</h2>
-              <p className="text-muted-foreground">Find exactly what you're craving today.</p>
+              <SectionHeader
+                 title="Shop by Category"
+                 description="Find exactly what you're craving today."
+              />
            </div>
            <Button asChild variant="ghost" className="hidden sm:flex bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white hover:text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold border-0">
               <Link href="/products">View All <ArrowRight className="w-4 h-4 ml-2" /></Link>

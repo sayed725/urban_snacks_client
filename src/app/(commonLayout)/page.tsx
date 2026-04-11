@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import FeatureCard from "@/components/modules/home/FeatureCard";
 import FeatureCategory from "@/components/modules/home/FeatureCategory";
 import FeatureSnacks from "@/components/modules/home/FeatureSnacks";
+import HowItWorks from "@/components/modules/home/HowItWorks";
 
 export default function Home() {
   const { data: catResponse, isLoading: catsLoading } = useQuery({
@@ -41,6 +42,9 @@ export default function Home() {
 
       {/* Featured Snacks */}
      <FeatureSnacks featuredLoading={featuredLoading} featuredItems={featuredItems} />
+
+      {/* How It Works Section */}
+      <HowItWorks />
     </div>
   );
 }

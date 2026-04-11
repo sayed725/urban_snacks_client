@@ -18,13 +18,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
 
-export default function ProductsPage() {
+function ProductsContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryParam || "");
   const [isSpicy, setIsSpicy] = useState(false);
   const [sortByOption, setSortByOption] = useState<string>("createdAt-desc");
+
+  useEffect(() => {
+    setSelectedCategory(categoryParam || "");
+  }, [categoryParam]);
+
+  const updateCategory = (id: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (id) {
+      params.set("category", id);
+    } else {
+      params.delete("category");
+    }
+    router.replace(`/products?${params.toString()}`);
+    setSelectedCategory(id);
+  };
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -107,7 +128,7 @@ export default function ProductsPage() {
                    <div className="space-y-2">
                       <div 
                          className={`cursor-pointer px-3 py-2 rounded-md transition-colors text-sm ${selectedCategory === "" ? "bg-primary text-secondary font-medium" : "hover:bg-muted"}`}
-                         onClick={() => setSelectedCategory("")}
+                         onClick={() => updateCategory("")}
                       >
                          All Snacks
                       </div>
@@ -115,7 +136,7 @@ export default function ProductsPage() {
                          <div 
                            key={cat.id} 
                            className={`cursor-pointer px-3 py-2 rounded-md transition-colors text-sm ${selectedCategory === cat.id ? "bg-primary text-secondary font-medium" : "hover:bg-muted"}`}
-                           onClick={() => setSelectedCategory(cat.id)}
+                           onClick={() => updateCategory(cat.id)}
                          >
                            {cat.name}
                          </div>
@@ -149,7 +170,7 @@ export default function ProductsPage() {
                  <div className="text-6xl mb-4">🍩</div>
                  <h2 className="text-2xl font-bold">No snacks found</h2>
                  <p className="text-muted-foreground mt-2">Try adjusting your search or filters.</p>
-                 <Button className="mt-6 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold px-6 hover:scale-105 border-0" onClick={() => { setSearchTerm(""); setSelectedCategory(""); setIsSpicy(false); }}>
+                 <Button className="mt-6 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold px-6 hover:scale-105 border-0" onClick={() => { setSearchTerm(""); updateCategory(""); setIsSpicy(false); }}>
                     Clear Filters
                  </Button>
              </div>
@@ -199,5 +220,13 @@ export default function ProductsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto py-20 text-center">Loading snacks...</div>}>
+      <ProductsContent />
+    </Suspense>
   );
 }
