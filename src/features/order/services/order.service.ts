@@ -15,6 +15,11 @@ export const getAllOrders = async (
       page: params?.page,
       limit: params?.limit ?? 20,
       status: params?.status,
+      searchTerm: params?.searchTerm,
+      paymentMethod: params?.paymentMethod,
+      paymentStatus: params?.paymentStatus,
+      sortBy: params?.sortBy,
+      sortOrder: params?.sortOrder,
     },
   });
 };

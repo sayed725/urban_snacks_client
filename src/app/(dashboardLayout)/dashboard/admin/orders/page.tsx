@@ -5,7 +5,7 @@ import { getAllOrders, changeOrderStatus, deleteOrder, createOrder } from "@/fea
 import { getItems } from "@/features/item/services/item.service";
 import { OrderStatus } from "@/features/order/order.type";
 import { Button } from "@/components/ui/button";
-import { Eye, Trash2, Plus, X, Minus } from "lucide-react";
+import { Eye, Trash2, Plus, X, Minus, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -16,8 +16,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useDebounce } from "@/hooks/use-debounce";
+import OrdersLoadingSkeleton from "./_ordersLoadingSkeleton";
 
 const CreateOrderForm = ({ onSubmit, isPending, onCancel, items }: any) => {
   const [formData, setFormData] = useState({
@@ -172,9 +181,28 @@ export default function AdminOrders() {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
+  // Filters and Pagination State
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState("all");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [page, setPage] = useState(1);
+
   const { data: response, isLoading } = useQuery({
-    queryKey: ["admin-orders"],
-    queryFn: () => getAllOrders({ limit: 100 }),
+    queryKey: ["admin-orders", page, debouncedSearch, statusFilter, paymentMethodFilter, paymentStatusFilter, sortBy, sortOrder],
+    queryFn: () => getAllOrders({ 
+      limit: 10, 
+      page, 
+      searchTerm: debouncedSearch,
+      status: statusFilter === "all" ? undefined : statusFilter,
+      paymentMethod: paymentMethodFilter === "all" ? undefined : paymentMethodFilter,
+      paymentStatus: paymentStatusFilter === "all" ? undefined : paymentStatusFilter,
+      sortBy,
+      sortOrder
+    }),
   });
 
   const { data: itemsResponse } = useQuery({
@@ -183,6 +211,7 @@ export default function AdminOrders() {
   });
 
   const orders = response?.data || [];
+  const meta = (response as any)?.meta;
   const items = itemsResponse?.data || [];
 
   const statusMutation = useMutation({
@@ -242,7 +271,19 @@ export default function AdminOrders() {
     return status === "PAID" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700";
   };
 
-  if (isLoading) return <div>Loading orders...</div>;
+  const resetFilters = () => {
+    setSearch("");
+    setStatusFilter("all");
+    setPaymentMethodFilter("all");
+    setPaymentStatusFilter("all");
+    setSortBy("createdAt");
+    setSortOrder("desc");
+    setPage(1);
+  };
+
+  const isFiltered = search !== "" || statusFilter !== "all" || paymentMethodFilter !== "all" || paymentStatusFilter !== "all" || sortBy !== "createdAt" || sortOrder !== "desc";
+
+  if (isLoading) return <OrdersLoadingSkeleton />;
 
   return (
     <div className="space-y-6">
@@ -272,6 +313,87 @@ export default function AdminOrders() {
             )}
           </DialogContent>
         </Dialog>
+      </div>
+
+      {/* Filters and Search */}
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex-1 relative">
+          <Input
+            placeholder="Search by order number, customer name..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            className="pr-10"
+          />
+          {search && (
+            <button 
+              onClick={() => { setSearch(""); setPage(1); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <XCircle className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+           <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Order Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Orders</SelectItem>
+                <SelectItem value="PLACED">Placed</SelectItem>
+                <SelectItem value="PROCESSING">Processing</SelectItem>
+                <SelectItem value="SHIPPED">Shipped</SelectItem>
+                <SelectItem value="DELIVERED">Delivered</SelectItem>
+                <SelectItem value="CANCELLED">Cancelled</SelectItem>
+              </SelectContent>
+           </Select>
+
+           <Select value={paymentMethodFilter} onValueChange={(v) => { setPaymentMethodFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Payment Method" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Methods</SelectItem>
+                <SelectItem value="COD">Cash on Delivery</SelectItem>
+                <SelectItem value="STRIPE">Stripe</SelectItem>
+              </SelectContent>
+           </Select>
+
+           <Select value={paymentStatusFilter} onValueChange={(v) => { setPaymentStatusFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Payment Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="PAID">Paid</SelectItem>
+                <SelectItem value="UNPAID">Unpaid</SelectItem>
+              </SelectContent>
+           </Select>
+
+           <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
+              const [by, order] = v.split('-');
+              setSortBy(by);
+              setSortOrder(order as "asc" | "desc");
+              setPage(1);
+           }}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+                <SelectItem value="totalAmount-desc">Price: High to Low</SelectItem>
+                <SelectItem value="totalAmount-asc">Price: Low to High</SelectItem>
+              </SelectContent>
+           </Select>
+
+           {isFiltered && (
+             <Button variant="outline" onClick={resetFilters} className="text-muted-foreground hover:text-foreground px-2">
+                <XCircle className="h-4 w-4 mr-2" />
+                Clear
+             </Button>
+           )}
+        </div>
       </div>
 
       <div className="border bg-card rounded-xl overflow-hidden shadow-sm">
@@ -369,6 +491,32 @@ export default function AdminOrders() {
            </table>
         </div>
       </div>
+
+      {meta && meta.totalPage > 1 && (
+        <div className="mt-4 border-t pt-6 bg-card border rounded-xl overflow-hidden shadow-sm pb-6">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <span className="text-sm text-muted-foreground px-4">
+                  Page {page} of {meta.totalPage}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setPage(p => Math.min(meta.totalPage, p + 1))}
+                  className={page === meta.totalPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">

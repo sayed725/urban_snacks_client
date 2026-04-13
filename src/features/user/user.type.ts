@@ -10,3 +10,13 @@ export interface IUser {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IGetUsersParams {
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
+  role?: string;
+  status?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}

@@ -1,15 +1,19 @@
 import { fetchApi } from "@/lib/fetch-api";
 import { ApiResponse } from "@/types/api.types";
-import { IUser } from "../user.type";
+import { IUser, IGetUsersParams } from "../user.type";
 
-export const getAllUsers = async (params?: {
-  page?: number;
-  limit?: number;
-}): Promise<{ data: IUser[]; total: number }> => {
+export const getAllUsers = async (
+  params?: IGetUsersParams
+): Promise<{ data: IUser[]; total: number }> => {
   return fetchApi("/api/v1/users", {
     params: {
       page: params?.page,
       limit: params?.limit ?? 50,
+      searchTerm: params?.searchTerm,
+      role: params?.role,
+      status: params?.status,
+      sortBy: params?.sortBy,
+      sortOrder: params?.sortOrder,
     },
   });
 };

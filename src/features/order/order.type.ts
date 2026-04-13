@@ -77,4 +77,9 @@ export interface IGetOrdersParams {
   page?: number;
   limit?: number;
   status?: string;
+  searchTerm?: string;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }

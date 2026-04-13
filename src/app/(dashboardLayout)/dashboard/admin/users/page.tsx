@@ -13,12 +13,42 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 
+import { Input } from "@/components/ui/input";
+import { XCircle } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { useState } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
+import UsersLoadingSkeleton from "./_usersLoadingSkeleton";
+
 export default function AdminUsers() {
   const queryClient = useQueryClient();
 
+  // Filters and Pagination State
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [page, setPage] = useState(1);
+
   const { data: response, isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => getAllUsers(),
+    queryKey: ["users", page, debouncedSearch, roleFilter, statusFilter, sortBy, sortOrder],
+    queryFn: () => getAllUsers({ 
+      limit: 10, 
+      page, 
+      searchTerm: debouncedSearch,
+      role: roleFilter === "all" ? undefined : roleFilter,
+      status: statusFilter === "all" ? undefined : statusFilter,
+      sortBy,
+      sortOrder
+    }),
   });
 
   const users = response?.data || [];
@@ -47,7 +77,20 @@ export default function AdminUsers() {
     }
   };
 
-  if (isLoading) return <div>Loading users...</div>;
+  const meta = (response as any)?.meta;
+
+  const resetFilters = () => {
+    setSearch("");
+    setRoleFilter("all");
+    setStatusFilter("all");
+    setSortBy("createdAt");
+    setSortOrder("desc");
+    setPage(1);
+  };
+
+  const isFiltered = search !== "" || roleFilter !== "all" || statusFilter !== "all" || sortBy !== "createdAt" || sortOrder !== "desc";
+
+  if (isLoading) return <UsersLoadingSkeleton />;
 
   return (
     <div className="space-y-6">
@@ -55,6 +98,74 @@ export default function AdminUsers() {
         <div>
           <h1 className="text-2xl font-bold">User Management</h1>
           <p className="text-muted-foreground text-sm">Manage user accounts and access</p>
+        </div>
+      </div>
+
+      {/* Filters and Search */}
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex-1 relative">
+          <Input
+            placeholder="Search by name, email..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            className="pr-10"
+          />
+          {search && (
+            <button 
+              onClick={() => { setSearch(""); setPage(1); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <XCircle className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+           <Select value={roleFilter} onValueChange={(v) => { setRoleFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="All Roles" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value="ADMIN">Admin</SelectItem>
+                <SelectItem value="USER">User</SelectItem>
+              </SelectContent>
+           </Select>
+
+           <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="All Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="ACTIVE">Active</SelectItem>
+                <SelectItem value="INACTIVE">Inactive</SelectItem>
+                <SelectItem value="BANNED">Banned</SelectItem>
+              </SelectContent>
+           </Select>
+
+           <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
+              const [by, order] = v.split('-');
+              setSortBy(by);
+              setSortOrder(order as "asc" | "desc");
+              setPage(1);
+           }}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+                <SelectItem value="name-asc">Name: A to Z</SelectItem>
+                <SelectItem value="name-desc">Name: Z to A</SelectItem>
+              </SelectContent>
+           </Select>
+
+           {isFiltered && (
+             <Button variant="outline" onClick={resetFilters} className="text-muted-foreground hover:text-foreground px-2">
+                <XCircle className="h-4 w-4 mr-2" />
+                Clear
+             </Button>
+           )}
         </div>
       </div>
 
@@ -126,6 +237,32 @@ export default function AdminUsers() {
            </table>
         </div>
       </div>
+
+      {meta && meta.totalPage > 1 && (
+        <div className="mt-4 border-t pt-6 bg-card border rounded-xl overflow-hidden shadow-sm pb-6">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <span className="text-sm text-muted-foreground px-4">
+                  Page {page} of {meta.totalPage}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setPage(p => Math.min(meta.totalPage, p + 1))}
+                  className={page === meta.totalPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 }
