@@ -79,7 +79,7 @@ export function AppSidebar() {
 
   const publicItems = [
     { title: "Home", href: "/", icon: Home },
-    { title: "Store", href: "/products", icon: ShoppingBag },
+    { title: "Products", href: "/products", icon: ShoppingBag },
   ];
 
   return (

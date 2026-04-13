@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
+import { ImageUploadField } from "@/components/shared/form/image-upload-field";
+
 
 export default function AdminCategories() {
   const queryClient = useQueryClient();
@@ -29,7 +31,9 @@ export default function AdminCategories() {
     isActive: true,
     isFeatured: false,
     description: "",
+    image: "",
   });
+
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["categories"],
@@ -44,8 +48,9 @@ export default function AdminCategories() {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       toast.success("Category created successfully");
       setIsCreateOpen(false);
-      setFormData({ name: "", subName: "", isActive: true, isFeatured: false, description: "" });
+      setFormData({ name: "", subName: "", isActive: true, isFeatured: false, description: "", image: "" });
     },
+
     onError: (error: any) => {
       toast.error(error.message || "Failed to create category");
     },
@@ -92,8 +97,10 @@ export default function AdminCategories() {
       isActive: cat.isActive,
       isFeatured: cat.isFeatured,
       description: cat.description || "",
+      image: cat.image || "",
     });
     setIsEditOpen(true);
+
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -132,6 +139,17 @@ export default function AdminCategories() {
                   onChange={(e) => setFormData({ ...formData, subName: e.target.value })}
                 />
               </div>
+              <div className="space-y-2 col-span-2">
+                <ImageUploadField
+                  field={{
+                    name: "image",
+                    state: { value: formData.image, meta: { isTouched: false, errors: [] } },
+                    handleChange: (val: string) => setFormData({ ...formData, image: val })
+                  } as any}
+                  label="Category Image"
+                />
+              </div>
+
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Active Status</label>
                 <Switch
@@ -248,6 +266,17 @@ export default function AdminCategories() {
                   onChange={(e) => setFormData({ ...formData, subName: e.target.value })}
                 />
               </div>
+              <div className="space-y-2 col-span-2">
+                <ImageUploadField
+                   field={{
+                       name: "image",
+                       state: { value: formData.image, meta: { isTouched: false, errors: [] } },
+                       handleChange: (val: string) => setFormData({ ...formData, image: val })
+                   } as any}
+                   label="Category Image"
+                />
+              </div>
+
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Active Status</label>
                 <Switch
