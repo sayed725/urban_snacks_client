@@ -339,10 +339,18 @@ export default function AdminOrders() {
                                 size="icon" 
                                 className="text-destructive border-red-200 hover:bg-red-50 hover:text-destructive"
                                 onClick={() => {
-                                   if (confirm(`Are you sure you want to delete order ${order.orderNumber}?`)) {
-                                      deleteMutation.mutate(order.id);
-                                   }
-                                }}
+                          toast.error("Confirm Deletion", {
+                            description: `Are you sure you want to delete order ${order.orderNumber}?`,
+                            action: {
+                              label: "Delete",
+                              onClick: () => deleteMutation.mutate(order.id),
+                            },
+                            cancel: {
+                              label: "Cancel",
+                              onClick: () => {},
+                            },
+                          });
+                        }}
                              >
                                 <Trash2 className="w-4 h-4" />
                              </Button>
