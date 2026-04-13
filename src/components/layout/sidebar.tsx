@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import {
   ChevronsUpDown,
   Home,
@@ -36,13 +38,18 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 export function AppSidebar() {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
   const pathname = usePathname();
   const router = useRouter();
 
+  if (isPending) {
+    return <SidebarLoadingSkeleton />;
+  }
+
   if (!user) return null;
   const role = user.role;
+
 
   const managementItems = [
     {
@@ -207,6 +214,69 @@ export function AppSidebar() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}
+
+function SidebarLoadingSkeleton() {
+  return (
+    <Sidebar collapsible="icon" variant="sidebar" className="border-r">
+      <SidebarHeader>
+        <div className="flex flex-col gap-3 px-4 py-4">
+          <Skeleton className="w-full h-[60px] rounded-md" />
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent>
+        {/* Placeholder for Management Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>
+            <Skeleton className="h-4 w-24" />
+          </SidebarGroupLabel>
+          <SidebarMenu>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <SidebarMenuItem key={i}>
+                <SidebarMenuButton>
+                  <Skeleton className="h-5 w-5 rounded-md" />
+                  <Skeleton className="h-4 w-32" />
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* Placeholder for Quick Links Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>
+            <Skeleton className="h-4 w-20" />
+          </SidebarGroupLabel>
+          <SidebarMenu>
+            {[1, 2].map((i) => (
+              <SidebarMenuItem key={i}>
+                <SidebarMenuButton>
+                  <Skeleton className="h-5 w-5 rounded-md" />
+                  <Skeleton className="h-4 w-24" />
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg">
+              <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
+              <div className="grid flex-1 gap-2 leading-tight">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-2 w-32" />
+              </div>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
