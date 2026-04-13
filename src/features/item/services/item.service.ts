@@ -4,7 +4,7 @@ import { IItem, IItemPayload, IGetItemsParams } from "../item.type";
 
 export const getItems = async (
   params?: IGetItemsParams
-): Promise<{ data: IItem[]; total: number }> => {
+): Promise<PaginatedResponse<IItem>> => {
   return fetchApi("/api/v1/items", {
     params: {
       page: params?.page,

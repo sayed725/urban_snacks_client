@@ -24,71 +24,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ImageUploadField } from "@/components/shared/form/image-upload-field";
-
-const FormContent = ({ formData, setFormData, categories, onSubmit, isPending, buttonText, onCancel }: any) => (
-  <form onSubmit={onSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
-    <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-            <label className="text-sm font-medium">Name <span className="text-red-500">*</span></label>
-            <Input required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-        </div>
-        <div className="space-y-2">
-            <label className="text-sm font-medium">Category <span className="text-red-500">*</span></label>
-            <Select value={formData.categoryId} onValueChange={(v) => setFormData({ ...formData, categoryId: v })}>
-                <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                    {categories.map((c: any) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-        </div>
-        <div className="space-y-2">
-            <label className="text-sm font-medium">Price ($) <span className="text-red-500">*</span></label>
-            <Input type="number" step="0.01" required value={formData.price} onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })} />
-        </div>
-        <div className="space-y-2">
-            <label className="text-sm font-medium">Weight <span className="text-red-500">*</span></label>
-            <Input required placeholder="e.g. 500g" value={formData.weight} onChange={(e) => setFormData({ ...formData, weight: e.target.value })} />
-        </div>
-        <div className="space-y-2 col-span-2">
-            <ImageUploadField
-                field={{
-                    name: "image",
-                    state: { value: formData.image, meta: { isTouched: false, errors: [] } },
-                    handleChange: (val: string) => setFormData({ ...formData, image: val })
-                } as any}
-                label="Product Image"
-            />
-        </div>
-    </div>
-
-    <div className="grid grid-cols-3 gap-4 pt-2">
-        <div className="flex items-center space-x-2">
-            <Switch checked={formData.isActive} onCheckedChange={(c) => setFormData({ ...formData, isActive: c })} />
-            <label className="text-sm">Active</label>
-        </div>
-        <div className="flex items-center space-x-2">
-            <Switch checked={formData.isFeatured} onCheckedChange={(c) => setFormData({ ...formData, isFeatured: c })} />
-            <label className="text-sm">Featured</label>
-        </div>
-        <div className="flex items-center space-x-2">
-            <Switch checked={formData.isSpicy} onCheckedChange={(c) => setFormData({ ...formData, isSpicy: c })} />
-            <label className="text-sm text-red-500 font-bold">Spicy 🌶️</label>
-        </div>
-    </div>
-
-    <div className="pt-4 flex justify-end gap-2 border-t mt-6">
-        <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-        <Button type="submit" disabled={isPending}>
-            {isPending ? "Saving..." : buttonText}
-        </Button>
-    </div>
-  </form>
-);
-
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import AddItemForm from "@/components/modules/admin/items/AddItemForm";
+import ItemsLoadingSkeleton from "./_itemsLoadingSkeleton";
 
 export default function AdminItems() {
   const queryClient = useQueryClient();
@@ -108,9 +52,22 @@ export default function AdminItems() {
     description: "",
   });
 
+  const [search, setSearch] = useState("");
+  const [categoryIdFilter, setCategoryIdFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [page, setPage] = useState(1);
+
   const { data: itemResponse, isLoading: itemsLoading } = useQuery({
-    queryKey: ["items"],
-    queryFn: () => getItems({ limit: 100 }),
+    queryKey: ["items", page, search, categoryIdFilter, sortBy, sortOrder],
+    queryFn: () => getItems({
+      limit: 10,
+      page,
+      searchTerm: search,
+      categoryId: categoryIdFilter === "all" ? undefined : categoryIdFilter,
+      sortBy,
+      sortOrder
+    }),
   });
 
   const { data: catResponse } = useQuery({
@@ -119,7 +76,9 @@ export default function AdminItems() {
   });
 
   const items = itemResponse?.data || [];
+  const meta = itemResponse?.meta;
   const categories = catResponse?.data || [];
+
 
   const createMutation = useMutation({
     mutationFn: createItem,
@@ -174,8 +133,8 @@ export default function AdminItems() {
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.categoryId) {
-        toast.error("Please select a category");
-        return;
+      toast.error("Please select a category");
+      return;
     }
     createMutation.mutate(formData);
   };
@@ -183,8 +142,8 @@ export default function AdminItems() {
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.categoryId) {
-        toast.error("Please select a category");
-        return;
+      toast.error("Please select a category");
+      return;
     }
     updateMutation.mutate({ id: selectedItem.id, payload: formData });
   };
@@ -205,9 +164,8 @@ export default function AdminItems() {
     setIsEditOpen(true);
   };
 
-  if (itemsLoading) return <div>Loading items...</div>;
+  if (itemsLoading) return <ItemsLoadingSkeleton />;
 
-  if (itemsLoading) return <div>Loading items...</div>;
 
   return (
     <div className="space-y-6">
@@ -217,8 +175,8 @@ export default function AdminItems() {
           <p className="text-muted-foreground text-sm">Manage snacks and inventory</p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={(val) => {
-            if (val) resetForm();
-            setIsCreateOpen(val);
+          if (val) resetForm();
+          setIsCreateOpen(val);
         }}>
           <DialogTrigger asChild>
             <Button className="bg-primary text-secondary font-semibold hover:bg-primary/90">
@@ -230,104 +188,172 @@ export default function AdminItems() {
             <DialogHeader>
               <DialogTitle>Create New Item</DialogTitle>
             </DialogHeader>
-            <FormContent 
-                formData={formData}
-                setFormData={setFormData}
-                categories={categories}
-                onSubmit={handleCreateSubmit} 
-                isPending={createMutation.isPending} 
-                buttonText="Create Item"
-                onCancel={() => setIsCreateOpen(false)}
+            <AddItemForm
+              formData={formData}
+              setFormData={setFormData}
+              categories={categories}
+              onSubmit={handleCreateSubmit}
+              isPending={createMutation.isPending}
+              buttonText="Create Item"
+              onCancel={() => setIsCreateOpen(false)}
             />
           </DialogContent>
         </Dialog>
       </div>
 
+      {/* Filters and Search */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <Input
+            placeholder="Search items by name..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          />
+        </div>
+      <div className="flex gap-2">
+          <Select value={categoryIdFilter} onValueChange={(v) => { setCategoryIdFilter(v); setPage(1); }}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="All Categories" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map((c: any) => (
+              <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
+          const [by, order] = v.split('-');
+          setSortBy(by);
+          setSortOrder(order as "asc" | "desc");
+          setPage(1);
+        }}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sort By" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="createdAt-desc">Newest First</SelectItem>
+            <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+            <SelectItem value="price-desc">Price: High to Low</SelectItem>
+            <SelectItem value="price-asc">Price: Low to High</SelectItem>
+            <SelectItem value="name-asc">Name: A to Z</SelectItem>
+            <SelectItem value="name-desc">Name: Z to A</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      </div>
+
       <div className="border bg-card rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-           <table className="w-full text-sm text-left">
-              <thead className="bg-secondary text-secondary-foreground text-xs uppercase">
-                 <tr>
-                    <th className="px-6 py-4 w-16">Image</th>
-                    <th className="px-6 py-4">Name</th>
-                    <th className="px-6 py-4">Category</th>
-                    <th className="px-6 py-4 text-right">Price</th>
-                    <th className="px-6 py-4 text-center">Status</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
-                 </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                 {items.map((item: any) => (
-                    <tr key={item.id} className="hover:bg-muted/50 transition-colors">
-                       <td className="px-6 py-4">
-                           {item.image ? (
-                               <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-md border" />
-                           ) : (
-                               <div className="w-10 h-10 bg-muted rounded-md flex items-center justify-center border">
-                                   <ImageIcon className="w-4 h-4 text-muted-foreground" />
-                               </div>
-                           )}
-                       </td>
-                       <td className="px-6 py-4">
-                           <div className="font-semibold">{item.name}</div>
-                           <div className="text-xs text-muted-foreground">{item.weight} {item.isSpicy && '🌶️'}</div>
-                       </td>
-                       <td className="px-6 py-4 text-muted-foreground">{item.category?.name || "-"}</td>
-                       <td className="px-6 py-4 text-right font-bold text-emerald-600">${item.price}</td>
-                       <td className="px-6 py-4 text-center">
-                          {item.isActive ? (
-                             <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">Active</span>
-                          ) : (
-                             <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-bold">Inactive</span>
-                          )}
-                       </td>
-                       <td className="px-6 py-4 text-right">
-                          <div className="flex justify-end gap-2">
-                             <Button variant="outline" size="icon" onClick={() => openEdit(item)}>
-                                <Pencil className="w-4 h-4" />
-                             </Button>
-                             <Button 
-                                variant="outline" 
-                                size="icon" 
-                                className="text-destructive border-red-200 hover:bg-red-50 hover:text-destructive"
-                                onClick={() => {
-                                   if (confirm(`Are you sure you want to delete ${item.name}?`)) {
-                                      deleteMutation.mutate(item.id);
-                                   }
-                                }}
-                             >
-                                <Trash2 className="w-4 h-4" />
-                             </Button>
-                          </div>
-                       </td>
-                    </tr>
-                 ))}
-                 {items.length === 0 && (
-                    <tr>
-                       <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">
-                          No items found. Time to add some tasty snacks!
-                       </td>
-                    </tr>
-                 )}
-              </tbody>
-           </table>
+          <table className="w-full text-sm text-left">
+            <thead className="bg-secondary text-secondary-foreground text-xs uppercase">
+              <tr>
+                <th className="px-6 py-4 w-16">Image</th>
+                <th className="px-6 py-4">Name</th>
+                <th className="px-6 py-4">Category</th>
+                <th className="px-6 py-4 text-right">Price</th>
+                <th className="px-6 py-4 text-center">Status</th>
+                <th className="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {items.map((item: any) => (
+                <tr key={item.id} className="hover:bg-muted/50 transition-colors">
+                  <td className="px-6 py-4">
+                    {item.image ? (
+                      <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-md border" />
+                    ) : (
+                      <div className="w-10 h-10 bg-muted rounded-md flex items-center justify-center border">
+                        <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="font-semibold">{item.name}</div>
+                    <div className="text-xs text-muted-foreground">{item.weight} {item.isSpicy && '🌶️'}</div>
+                  </td>
+                  <td className="px-6 py-4 text-muted-foreground">{item.category?.name || "-"}</td>
+                  <td className="px-6 py-4 text-right font-bold text-emerald-600">${item.price}</td>
+                  <td className="px-6 py-4 text-center">
+                    {item.isActive ? (
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">Active</span>
+                    ) : (
+                      <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-bold">Inactive</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" size="icon" onClick={() => openEdit(item)}>
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="text-destructive border-red-200 hover:bg-red-50 hover:text-destructive"
+                        onClick={() => {
+                          if (confirm(`Are you sure you want to delete ${item.name}?`)) {
+                            deleteMutation.mutate(item.id);
+                          }
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {items.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">
+                    No items found. Time to add some tasty snacks!
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
+
+      {meta && meta.totalPage > 1 && (
+        <div className="mt-4 border-t pt-6 bg-card border rounded-xl overflow-hidden shadow-sm pb-6">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <span className="text-sm text-muted-foreground px-4">
+                  Page {page} of {meta.totalPage}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setPage(p => Math.min(meta.totalPage, p + 1))}
+                  className={page === meta.totalPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Item</DialogTitle>
           </DialogHeader>
-          <FormContent 
-                formData={formData}
-                setFormData={setFormData}
-                categories={categories}
-                onSubmit={handleEditSubmit} 
-                isPending={updateMutation.isPending} 
-                buttonText="Update Item"
-                onCancel={() => setIsEditOpen(false)}
-            />
+          <AddItemForm
+            formData={formData}
+            setFormData={setFormData}
+            categories={categories}
+            onSubmit={handleEditSubmit}
+            isPending={updateMutation.isPending}
+            buttonText="Update Item"
+            onCancel={() => setIsEditOpen(false)}
+          />
         </DialogContent>
       </Dialog>
     </div>
