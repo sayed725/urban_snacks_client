@@ -40,6 +40,7 @@ export interface IGetItemsParams {
   categoryId?: string;
   isFeatured?: boolean;
   isSpicy?: boolean;
+  isActive?: boolean;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }

@@ -15,7 +15,24 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { ImageUploadField } from "@/components/shared/form/image-upload-field";
+import CategoriesLoadingSkeleton from "./_categoriesLoadingSkeleton";
+import { XCircle } from "lucide-react";
+import { useDebounce } from "@/hooks/use-debounce";
 
 
 export default function AdminCategories() {
@@ -23,6 +40,15 @@ export default function AdminCategories() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
+
+  // Filters and Pagination State
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+  const [isActiveFilter, setIsActiveFilter] = useState<string>("all");
+  const [isFeaturedFilter, setIsFeaturedFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [page, setPage] = useState(1);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -36,11 +62,20 @@ export default function AdminCategories() {
 
 
   const { data: response, isLoading } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => getCategories(),
+    queryKey: ["categories", page, debouncedSearch, isActiveFilter, isFeaturedFilter, sortBy, sortOrder],
+    queryFn: () => getCategories({
+      page,
+      limit: 10,
+      searchTerm: debouncedSearch,
+      isActive: isActiveFilter === "all" ? undefined : isActiveFilter === "active",
+      isFeatured: isFeaturedFilter === "all" ? undefined : isFeaturedFilter === "featured",
+      sortBy,
+      sortOrder
+    }),
   });
 
   const categories = response?.data || [];
+  const meta = response?.meta;
 
   const createMutation = useMutation({
     mutationFn: createCategory,
@@ -103,7 +138,18 @@ export default function AdminCategories() {
 
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <CategoriesLoadingSkeleton />;
+
+  const resetFilters = () => {
+    setSearch("");
+    setIsActiveFilter("all");
+    setIsFeaturedFilter("all");
+    setSortBy("createdAt");
+    setSortOrder("desc");
+    setPage(1);
+  };
+
+  const isFiltered = search !== "" || isActiveFilter !== "all" || isFeaturedFilter !== "all" || sortBy !== "createdAt" || sortOrder !== "desc";
 
   return (
     <div className="space-y-6">
@@ -175,6 +221,73 @@ export default function AdminCategories() {
             </form>
           </DialogContent>
         </Dialog>
+      </div>
+
+      {/* Filters and Search */}
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex-1 relative">
+          <Input
+            placeholder="Search by name, subname..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            className="pr-10"
+          />
+          {search && (
+            <button 
+              onClick={() => { setSearch(""); setPage(1); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <XCircle className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+           <Select value={isActiveFilter} onValueChange={(v) => { setIsActiveFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+           </Select>
+
+           <Select value={isFeaturedFilter} onValueChange={(v) => { setIsFeaturedFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Featured" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Items</SelectItem>
+                <SelectItem value="featured">Featured</SelectItem>
+                <SelectItem value="non-featured">Regular</SelectItem>
+              </SelectContent>
+           </Select>
+
+           <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
+              const [by, order] = v.split('-');
+              setSortBy(by);
+              setSortOrder(order as "asc" | "desc");
+              setPage(1);
+           }}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+                <SelectItem value="name-asc">Name: A-Z</SelectItem>
+                <SelectItem value="name-desc">Name: Z-A</SelectItem>
+              </SelectContent>
+           </Select>
+
+           {isFiltered && (
+             <Button variant="outline" onClick={resetFilters} className="text-muted-foreground hover:text-foreground px-2">
+                <XCircle className="h-4 w-4 mr-2" />
+                Clear
+             </Button>
+           )}
+        </div>
       </div>
 
       <div className="border bg-card rounded-xl overflow-hidden shadow-sm">
@@ -252,6 +365,32 @@ export default function AdminCategories() {
            </table>
         </div>
       </div>
+
+      {meta && meta.totalPage > 1 && (
+        <div className="mt-4 border-t pt-6 bg-card border rounded-xl overflow-hidden shadow-sm pb-6">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <span className="text-sm text-muted-foreground px-4">
+                  Page {page} of {meta.totalPage}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setPage(p => Math.min(meta.totalPage, p + 1))}
+                  className={page === meta.totalPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent>

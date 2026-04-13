@@ -5,13 +5,21 @@ import { ICategory, ICategoryPayload } from "../category.type";
 export const getCategories = async (params?: {
   page?: number;
   limit?: number;
-  search?: string;
+  searchTerm?: string;
+  isFeatured?: boolean;
+  isActive?: boolean;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }): Promise<PaginatedResponse<ICategory>> => {
   return fetchApi("/api/v1/categories", {
     params: {
       page: params?.page,
       limit: params?.limit ?? 100,
-      search: params?.search,
+      searchTerm: params?.searchTerm,
+      isFeatured: params?.isFeatured,
+      isActive: params?.isActive,
+      sortBy: params?.sortBy,
+      sortOrder: params?.sortOrder,
     },
   });
 };

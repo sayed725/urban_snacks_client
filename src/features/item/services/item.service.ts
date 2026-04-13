@@ -13,6 +13,7 @@ export const getItems = async (
       "category.id": params?.categoryId,
       isFeatured: params?.isFeatured,
       isSpicy: params?.isSpicy,
+      isActive: params?.isActive,
       sortBy: params?.sortBy,
       sortOrder: params?.sortOrder,
     },

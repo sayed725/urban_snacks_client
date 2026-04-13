@@ -5,7 +5,7 @@ import { getItems, createItem, updateItem, deleteItem } from "@/features/item/se
 import { getCategories } from "@/features/category/services/category.service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Pencil, Trash2, ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, ImageIcon, XCircle } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -33,6 +33,8 @@ import {
 } from "@/components/ui/pagination";
 import AddItemForm from "@/components/modules/admin/items/AddItemForm";
 import ItemsLoadingSkeleton from "./_itemsLoadingSkeleton";
+import { useDebounce } from "@/hooks/use-debounce";
+
 
 export default function AdminItems() {
   const queryClient = useQueryClient();
@@ -53,18 +55,21 @@ export default function AdminItems() {
   });
 
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
   const [categoryIdFilter, setCategoryIdFilter] = useState("all");
+  const [isActiveFilter, setIsActiveFilter] = useState("all");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
 
   const { data: itemResponse, isLoading: itemsLoading } = useQuery({
-    queryKey: ["items", page, search, categoryIdFilter, sortBy, sortOrder],
+    queryKey: ["items", page, debouncedSearch, categoryIdFilter, isActiveFilter, sortBy, sortOrder],
     queryFn: () => getItems({
       limit: 10,
       page,
-      searchTerm: search,
+      searchTerm: debouncedSearch,
       categoryId: categoryIdFilter === "all" ? undefined : categoryIdFilter,
+      isActive: isActiveFilter === "all" ? undefined : isActiveFilter === "active",
       sortBy,
       sortOrder
     }),
@@ -164,6 +169,17 @@ export default function AdminItems() {
     setIsEditOpen(true);
   };
 
+  const resetFilters = () => {
+    setSearch("");
+    setCategoryIdFilter("all");
+    setIsActiveFilter("all");
+    setSortBy("createdAt");
+    setSortOrder("desc");
+    setPage(1);
+  };
+
+  const isFiltered = search !== "" || categoryIdFilter !== "all" || isActiveFilter !== "all" || sortBy !== "createdAt" || sortOrder !== "desc";
+
   if (itemsLoading) return <ItemsLoadingSkeleton />;
 
 
@@ -202,7 +218,7 @@ export default function AdminItems() {
       </div>
 
       {/* Filters and Search */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex-1">
           <Input
             placeholder="Search items by name..."
@@ -210,37 +226,58 @@ export default function AdminItems() {
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           />
         </div>
-      <div className="flex gap-2">
-          <Select value={categoryIdFilter} onValueChange={(v) => { setCategoryIdFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="All Categories" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((c: any) => (
-              <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
-          const [by, order] = v.split('-');
-          setSortBy(by);
-          setSortOrder(order as "asc" | "desc");
-          setPage(1);
-        }}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sort By" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="createdAt-desc">Newest First</SelectItem>
-            <SelectItem value="createdAt-asc">Oldest First</SelectItem>
-            <SelectItem value="price-desc">Price: High to Low</SelectItem>
-            <SelectItem value="price-asc">Price: Low to High</SelectItem>
-            <SelectItem value="name-asc">Name: A to Z</SelectItem>
-            <SelectItem value="name-desc">Name: Z to A</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+        <div className="flex flex-wrap gap-2">
+        
+           <Select value={categoryIdFilter} onValueChange={(v) => { setCategoryIdFilter(v); setPage(1); }}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map((c: any) => (
+                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={isActiveFilter} onValueChange={(v) => { setIsActiveFilter(v); setPage(1); }}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
+       
+
+          <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
+            const [by, order] = v.split('-');
+            setSortBy(by);
+            setSortOrder(order as "asc" | "desc");
+            setPage(1);
+          }}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort By" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt-desc">Newest First</SelectItem>
+              <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+              <SelectItem value="price-desc">Price: High to Low</SelectItem>
+              <SelectItem value="price-asc">Price: Low to High</SelectItem>
+              <SelectItem value="name-asc">Name: A to Z</SelectItem>
+              <SelectItem value="name-desc">Name: Z to A</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {isFiltered && (
+            <Button variant="outline" onClick={resetFilters} className="text-muted-foreground hover:text-foreground px-2">
+              <XCircle className="h-4 w-4 mr-2" />
+              Clear
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="border bg-card rounded-xl overflow-hidden shadow-sm">
@@ -299,7 +336,7 @@ export default function AdminItems() {
                             },
                             cancel: {
                               label: "Cancel",
-                              onClick: () => {}
+                              onClick: () => { }
                             }
                           });
                         }}
