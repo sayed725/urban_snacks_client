@@ -197,20 +197,7 @@ export default function MyOrdersPage() {
                              <Link href={`/my-orders/${order.id}`}>View Details</Link>
                           </Button>
                           
-                          {/* {order.status === "PLACED" && (
-                              <Button 
-                                variant="outline" 
-                                className="w-full text-destructive border-red-200 hover:bg-red-50 hover:text-destructive font-bold"
-                                disabled={cancelMutation.isPending}
-                                onClick={() => {
-                                   if (confirm("Are you sure you want to cancel this order?")) {
-                                       cancelMutation.mutate(order.id);
-                                   }
-                                }}
-                              >
-                                 <AlertCircle className="w-4 h-4 mr-2" /> Cancel Order
-                              </Button>
-                          )} */}
+                        
                       </div>
                    </div>
                 </motion.div>

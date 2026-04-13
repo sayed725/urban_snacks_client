@@ -16,7 +16,7 @@ import HowItWorks from "@/components/modules/home/HowItWorks";
 export default function Home() {
   const { data: catResponse, isLoading: catsLoading } = useQuery({
     queryKey: ["categories"],
-    queryFn: () => getCategories({ limit: 10 }),
+    queryFn: () => getCategories({ limit: 10, sortBy: "createdAt", sortOrder: "asc" }),
   });
   
   const { data: featuredResponse, isLoading: featuredLoading } = useQuery({

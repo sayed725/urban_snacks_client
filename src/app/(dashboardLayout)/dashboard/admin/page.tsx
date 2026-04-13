@@ -56,13 +56,13 @@ export default function AdminDashboardPage() {
   if (!stats) return <div className="p-8">Error loading statistics.</div>;
 
   return (
-    <div className="flex-1 space-y-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
+    <div className="flex-1 space-y-6 ">
+      <div className="flex justify-between items-center bg-card p-4 rounded-xl border">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">
+          <h2 className="text-2xl font-bold">
             Platform Insights
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Real-time overview of Urban Snacks operations and revenue.
           </p>
         </div>

@@ -23,6 +23,8 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 import {
   ChevronsUpDown,
@@ -33,17 +35,23 @@ import {
   ShoppingBag,
   Users,
   Box,
+  MessageSquare,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 export function AppSidebar() {
   const { data: session, isPending } = authClient.useSession();
+  const [mounted, setMounted] = useState(false);
   const user = session?.user;
   const pathname = usePathname();
   const router = useRouter();
 
-  if (isPending) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || isPending) {
     return <SidebarLoadingSkeleton />;
   }
 
@@ -82,6 +90,12 @@ export function AppSidebar() {
       icon: Users,
       roles: ["ADMIN"],
     },
+    {
+      title: "ManageReviews",
+      href: "/dashboard/admin/reviews",
+      icon: MessageSquare,
+      roles: ["ADMIN"],
+    }
   ].filter((item) => item.roles.includes(role as string));
 
   const publicItems = [
@@ -92,24 +106,24 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" variant="sidebar" className="border-r">
       <SidebarHeader>
-        <div className="flex flex-col gap-3 px-4 py-4">
-          <Link
-            href="/"
-            className="flex items-center justify-center rounded-lg w-full object-cover select-none"
-          >
-            <img
-              src="/assets/urban_snaks_logo.png"
-              alt="Logo"
-              className="rounded-sm w-full h-[60px] object-contain"
-            />
-          </Link>
-        </div>
+
+        <Link href="/" className="flex items-center gap-2 mb-1">
+          <img
+            src="/assets/urban_snaks_logo.png"
+            alt="Urban Snacks Logo"
+            className="w-10 h-10 rounded"
+          />
+          <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+            Urban Snacks
+          </span>
+        </Link>
+
       </SidebarHeader>
 
       <SidebarContent>
         {role === "ADMIN" && (
           <SidebarGroup>
-            <SidebarGroupLabel>Management</SidebarGroupLabel>
+            <SidebarGroupLabel>Admin Management</SidebarGroupLabel>
             <SidebarMenu>
               {managementItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
@@ -117,6 +131,12 @@ export function AppSidebar() {
                     asChild
                     tooltip={item.title}
                     isActive={pathname === item.href}
+                    // className={cn(
+                    //   "transition-all duration-300",
+                    //   pathname === item.href
+                    //     ? "bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full font-bold"
+                    //     : "text-slate-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/5 rounded-full"
+                    // )}
                   >
                     <Link href={item.href}>
                       <item.icon />
@@ -141,6 +161,12 @@ export function AppSidebar() {
                   asChild
                   tooltip={item.title}
                   isActive={pathname === item.href}
+                  className={cn(
+                    "transition-all duration-300",
+                    pathname === item.href
+                      ? "bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full font-bold"
+                      : "text-slate-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/5 rounded-full"
+                  )}
                 >
                   <Link href={item.href}>
                     <item.icon />
