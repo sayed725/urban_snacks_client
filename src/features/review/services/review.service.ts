@@ -9,6 +9,7 @@ export const getReviews = async (
     params: {
       page: params?.page,
       limit: params?.limit ?? 20,
+      searchTerm: params?.searchTerm,
       customerId: params?.customerId,
       rating: params?.rating,
       isActive: params?.isActive,

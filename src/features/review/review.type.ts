@@ -29,6 +29,7 @@ export interface IUpdateReviewPayload {
 export interface IGetReviewsParams {
   page?: number;
   limit?: number;
+  searchTerm?: string;
   customerId?: string;
   rating?: number;
   isActive?: boolean;

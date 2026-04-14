@@ -319,7 +319,7 @@ export default function AdminOrders() {
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex-1 relative">
           <Input
-            placeholder="Search by order number, customer name..."
+            placeholder="Search by order number, customer name,phone number..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="pr-10"
