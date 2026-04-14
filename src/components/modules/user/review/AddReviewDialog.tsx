@@ -71,11 +71,16 @@ export default function AddReviewDialog({ order, initialReview, trigger }: AddRe
             ? (values: ReviewFormValues) => updateReview(initialReview.id, values)
             : createReview,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["my-orders"] });
-            queryClient.invalidateQueries({ queryKey: ["my-reviews"] });
-            toast.success(isEditMode ? "Review updated successfully!" : "Review submitted successfully!");
-            setIsDialogOpen(false);
-            form.reset();
+             // Invalidate list queries
+             queryClient.invalidateQueries({ queryKey: ["my-orders"] });
+             queryClient.invalidateQueries({ queryKey: ["my-reviews"] });
+             
+             // Explicitly refetch the specific order to ensure UI updates immediately
+             queryClient.refetchQueries({ queryKey: ["order", order.id] });
+             
+             toast.success(isEditMode ? "Review updated successfully!" : "Review submitted successfully!");
+             setIsDialogOpen(false);
+             form.reset();
         },
         onError: (error: any) => {
             toast.error(error.message || `Failed to ${isEditMode ? "update" : "submit"} review`);

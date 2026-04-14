@@ -1,3 +1,5 @@
+import { IReview } from "../review/review.type";
+
 export enum OrderStatus {
   PLACED = "PLACED",
   CANCELLED = "CANCELLED",
@@ -42,6 +44,7 @@ export interface IOrder {
   createdAt: string;
   updatedAt: string;
   orderItems: IOrderItem[];
+  reviews?: IReview[];
   user?: {
     id: string;
     name: string;

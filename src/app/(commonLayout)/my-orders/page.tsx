@@ -205,7 +205,7 @@ export default function MyOrdersPage() {
                               </span>
                            </div>
 
-                           <Button asChild className="w-full bg-primary/10 text-primary hover:bg-primary/20 font-bold border-primary/20">
+                           <Button asChild className="w-full bg-primary/10 text-primary dark:text-white hover:bg-primary/20 font-bold border-primary/20">
                               <Link href={`/my-orders/${order.id}`}>View Details</Link>
                            </Button>
 
