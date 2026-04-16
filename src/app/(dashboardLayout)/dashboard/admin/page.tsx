@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { IAdminStats } from "@/features/stats/stats.type";
-import { getAdminStats } from "@/features/stats/services/stats.service";
+import { IAdminStats } from "@/types/stats.type";
+import { getAdminStats } from "@/services/stats.service";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowDownRight,

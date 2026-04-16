@@ -1,9 +1,9 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAllOrders, changeOrderStatus, deleteOrder, createOrder } from "@/features/order/services/order.service";
-import { getItems } from "@/features/item/services/item.service";
-import { OrderStatus } from "@/features/order/order.type";
+
+
+
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2, Plus, X, Minus, XCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -29,6 +29,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useDebounce } from "@/hooks/use-debounce";
 import OrdersLoadingSkeleton from "./_ordersLoadingSkeleton";
 import CreateOrderForm from "@/components/modules/admin/orders/CreateOrderForm";
+import { getItems } from "@/services/item.service";
+import { OrderStatus } from "@/types/order.type";
+import { createOrder, getAllOrders, deleteOrder, changeOrderStatus } from "@/services/order.service";
 
 
 

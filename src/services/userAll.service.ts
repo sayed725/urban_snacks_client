@@ -1,6 +1,6 @@
 import { fetchApi } from "@/lib/fetch-api";
 import { ApiResponse } from "@/types/api.types";
-import { IUser, IGetUsersParams } from "../user.type";
+import { IUser, IGetUsersParams } from "@/types/user.type";
 
 export const getAllUsers = async (
   params?: IGetUsersParams

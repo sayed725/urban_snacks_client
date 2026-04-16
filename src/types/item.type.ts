@@ -1,4 +1,4 @@
-import { ICategory } from "../category/category.type";
+import { ICategory } from "../../types/category.type";
 
 export interface IItem {
   id: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getItemById } from "@/features/item/services/item.service";
+import { getItemById } from "@/services/item.service";
 import { useCartStore } from "@/store/cart.store";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, ArrowLeft, CheckCircle2 } from "lucide-react";

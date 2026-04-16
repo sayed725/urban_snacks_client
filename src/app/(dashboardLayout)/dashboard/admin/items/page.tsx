@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getItems, createItem, updateItem, deleteItem } from "@/features/item/services/item.service";
-import { getCategories } from "@/features/category/services/category.service";
+import { getItems, createItem, updateItem, deleteItem } from "@/services/item.service";
+import { getCategories } from "@/services/category.service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Pencil, Trash2, ImageIcon, XCircle } from "lucide-react";
@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Switch } from "@/components/ui/switch";
+
 import {
   Select,
   SelectContent,
@@ -23,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ImageUploadField } from "@/components/shared/form/image-upload-field";
 import {
   Pagination,
   PaginationContent,
@@ -227,8 +226,8 @@ export default function AdminItems() {
           />
         </div>
         <div className="flex flex-wrap gap-2">
-        
-           <Select value={categoryIdFilter} onValueChange={(v) => { setCategoryIdFilter(v); setPage(1); }}>
+
+          <Select value={categoryIdFilter} onValueChange={(v) => { setCategoryIdFilter(v); setPage(1); }}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
@@ -250,7 +249,7 @@ export default function AdminItems() {
               <SelectItem value="inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
-       
+
 
           <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
             const [by, order] = v.split('-');

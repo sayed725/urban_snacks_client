@@ -1,23 +1,24 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMyOrders, cancelOrder } from "@/features/order/services/order.service";
+
 import { authClient } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PackageOpen, Clock, AlertCircle, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { OrderStatus } from "@/features/order/order.type";
 import { motion } from "framer-motion";
 import moment from "moment";
 import OrdersLoadingSkeleton from "./_ordersLoadingSkeleton";
 import AddReviewDialog from "@/components/modules/user/review/AddReviewDialog";
-import { getReviews } from "@/features/review/services/review.service";
 import { cn } from "@/lib/utils";
-import { createCheckoutSession } from "@/features/payment/services/payment.service";
-import { updatePaymentMethod } from "@/features/order/services/order.service";
+import { createCheckoutSession } from "@/services/payment.service";
+
 import { Truck, CreditCard } from "lucide-react";
+import { cancelOrder, getMyOrders, updatePaymentMethod } from "@/services/order.service";
+import { OrderStatus } from "@/types/order.type";
+import { getReviews } from "@/services/review.service";
 
 const containerVariants = {
    hidden: { opacity: 0 },
@@ -79,7 +80,7 @@ export default function MyOrdersPage() {
    });
 
    const switchMutation = useMutation({
-      mutationFn: ({ orderId, method }: { orderId: string; method: string }) => 
+      mutationFn: ({ orderId, method }: { orderId: string; method: string }) =>
          updatePaymentMethod(orderId, method),
       onSuccess: () => {
          queryClient.invalidateQueries({ queryKey: ["my-orders"] });
@@ -236,28 +237,28 @@ export default function MyOrdersPage() {
                               <Link href={`/my-orders/${order.id}`}>View Details</Link>
                            </Button>
 
-                           {order.paymentStatus === "UNPAID" && 
-                            order.paymentMethod === "STRIPE" && 
-                            order.status !== "CANCELLED" && (
-                              <div className="flex flex-col gap-2">
-                                 <Button 
-                                    onClick={() => retryMutation.mutate(order.id)}
-                                    disabled={retryMutation.isPending || switchMutation.isPending}
-                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-                                 >
-                                    <CreditCard className="w-4 h-4 mr-2" /> 
-                                    {retryMutation.isPending ? "Connecting..." : "Pay Now"}
-                                 </Button>
-                                 <Button 
-                                    onClick={() => switchMutation.mutate({ orderId: order.id, method: "COD" })}
-                                    disabled={retryMutation.isPending || switchMutation.isPending}
-                                    variant="outline"
-                                    className="w-full border-primary/20 text-primary font-bold"
-                                 >
-                                    <Truck className="w-4 h-4 mr-2" /> Switch to COD
-                                 </Button>
-                              </div>
-                           )}
+                           {order.paymentStatus === "UNPAID" &&
+                              order.paymentMethod === "STRIPE" &&
+                              order.status !== "CANCELLED" && (
+                                 <div className="flex flex-col gap-2">
+                                    <Button
+                                       onClick={() => retryMutation.mutate(order.id)}
+                                       disabled={retryMutation.isPending || switchMutation.isPending}
+                                       className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                                    >
+                                       <CreditCard className="w-4 h-4 mr-2" />
+                                       {retryMutation.isPending ? "Connecting..." : "Pay Now"}
+                                    </Button>
+                                    <Button
+                                       onClick={() => switchMutation.mutate({ orderId: order.id, method: "COD" })}
+                                       disabled={retryMutation.isPending || switchMutation.isPending}
+                                       variant="outline"
+                                       className="w-full border-primary/20 text-primary font-bold"
+                                    >
+                                       <Truck className="w-4 h-4 mr-2" /> Switch to COD
+                                    </Button>
+                                 </div>
+                              )}
 
                            {(() => {
                               const existingReview = reviews.find((r: any) =>

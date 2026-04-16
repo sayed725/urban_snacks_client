@@ -1,6 +1,6 @@
 import { fetchApi } from "@/lib/fetch-api";
 import { ApiResponse, PaginatedResponse } from "@/types/api.types";
-import { IItem, IItemPayload, IGetItemsParams } from "../item.type";
+import { IItem, IItemPayload, IGetItemsParams } from "@/types/item.type";
 
 export const getItems = async (
   params?: IGetItemsParams

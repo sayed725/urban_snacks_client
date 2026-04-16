@@ -1,25 +1,26 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getOrderById } from "@/features/order/services/order.service";
+
 import { authClient } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MapPin, CreditCard, Box, PackageCheck, Star, MessageSquare, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
-import { OrderStatus } from "@/features/order/order.type";
+
 import { motion } from "framer-motion";
 import OrderLoadingSkeleton from "./_orderLoadingSkeleton";
 import { cn } from "@/lib/utils";
-import { IReview } from "@/features/review/review.type";
+import { IReview } from "@/types/review.type";
 import AddReviewDialog from "@/components/modules/user/review/AddReviewDialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createCheckoutSession } from "@/features/payment/services/payment.service";
-import { updatePaymentMethod } from "@/features/order/services/order.service";
+import { createCheckoutSession } from "@/services/payment.service";
+
 import { toast } from "sonner";
 import { RefreshCw, Truck } from "lucide-react";
+import { OrderStatus } from "@/types/order.type";
+import { getOrderById, updatePaymentMethod } from "@/services/order.service";
 
 const fadeInUp = {
    initial: { opacity: 0, y: 20 },
@@ -186,29 +187,29 @@ export default function OrderDetailPage() {
                               </div>
                            </div>
 
-                           {order.paymentStatus === "UNPAID" && 
-                            order.paymentMethod === "STRIPE" && 
-                            order.status !== "CANCELLED" && (
-                              <div className="flex flex-col gap-3 mt-4 pt-4 border-t">
-                                 <Button 
-                                    onClick={() => retryMutation.mutate()}
-                                    disabled={retryMutation.isPending || switchMutation.isPending}
-                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 rounded-xl"
-                                 >
-                                    <RefreshCw className={`w-4 h-4 mr-2 ${retryMutation.isPending ? "animate-spin" : ""}`} /> 
-                                    {retryMutation.isPending ? "Connecting..." : "Pay Now with Card"}
-                                 </Button>
-                                 <Button 
-                                    onClick={() => switchMutation.mutate()}
-                                    disabled={retryMutation.isPending || switchMutation.isPending}
-                                    variant="outline"
-                                    className="w-full border-primary/20 text-primary font-bold h-12 rounded-xl"
-                                 >
-                                    <Truck className="w-4 h-4 mr-2" /> 
-                                    {switchMutation.isPending ? "Updating..." : "Switch to Cash on Delivery"}
-                                 </Button>
-                              </div>
-                           )}
+                           {order.paymentStatus === "UNPAID" &&
+                              order.paymentMethod === "STRIPE" &&
+                              order.status !== "CANCELLED" && (
+                                 <div className="flex flex-col gap-3 mt-4 pt-4 border-t">
+                                    <Button
+                                       onClick={() => retryMutation.mutate()}
+                                       disabled={retryMutation.isPending || switchMutation.isPending}
+                                       className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 rounded-xl"
+                                    >
+                                       <RefreshCw className={`w-4 h-4 mr-2 ${retryMutation.isPending ? "animate-spin" : ""}`} />
+                                       {retryMutation.isPending ? "Connecting..." : "Pay Now with Card"}
+                                    </Button>
+                                    <Button
+                                       onClick={() => switchMutation.mutate()}
+                                       disabled={retryMutation.isPending || switchMutation.isPending}
+                                       variant="outline"
+                                       className="w-full border-primary/20 text-primary font-bold h-12 rounded-xl"
+                                    >
+                                       <Truck className="w-4 h-4 mr-2" />
+                                       {switchMutation.isPending ? "Updating..." : "Switch to Cash on Delivery"}
+                                    </Button>
+                                 </div>
+                              )}
                         </div>
                      </motion.div>
                   </div>
@@ -225,9 +226,9 @@ export default function OrderDetailPage() {
                            <p className="hidden sm:block text-sm text-muted-foreground bg-muted px-3 py-1 rounded-full font-medium">
                               Submitted on {new Date(order.reviews[0].createdAt).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
                            </p>
-                           <AddReviewDialog 
-                              order={order} 
-                              initialReview={order.reviews[0]} 
+                           <AddReviewDialog
+                              order={order}
+                              initialReview={order.reviews[0]}
                               trigger={
                                  <Button variant="outline" size="sm" className="rounded-xl dark:text-white font-bold bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
                                     <Pencil className="w-4 h-4 mr-2" /> Edit Review

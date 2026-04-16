@@ -1,13 +1,9 @@
 "use client";
 
 import HeroSlider from "@/components/modules/home/HeroSlider";
-import { Button } from "@/components/ui/button";
-import { getCategories } from "@/features/category/services/category.service";
-import { getItems } from "@/features/item/services/item.service";
+import { getCategories } from "@/services/category.service";
+import { getItems } from "@/services/item.service";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import FeatureCard from "@/components/modules/home/FeatureCard";
 import FeatureCategory from "@/components/modules/home/FeatureCategory";
 import FeatureSnacks from "@/components/modules/home/FeatureSnacks";
@@ -18,7 +14,7 @@ export default function Home() {
     queryKey: ["categories"],
     queryFn: () => getCategories({ limit: 10, sortBy: "createdAt", sortOrder: "asc" }),
   });
-  
+
   const { data: featuredResponse, isLoading: featuredLoading } = useQuery({
     queryKey: ["items", { isFeatured: true }],
     queryFn: () => getItems({ isFeatured: true, limit: 6 }),
@@ -35,13 +31,13 @@ export default function Home() {
       </section>
 
       {/* Trust & Features Banner */}
-     <FeatureCard/>
+      <FeatureCard />
 
       {/* Featured Categories */}
       <FeatureCategory catsLoading={catsLoading} categories={categories} />
 
       {/* Featured Snacks */}
-     <FeatureSnacks featuredLoading={featuredLoading} featuredItems={featuredItems} />
+      <FeatureSnacks featuredLoading={featuredLoading} featuredItems={featuredItems} />
 
       {/* How It Works Section */}
       <HowItWorks />

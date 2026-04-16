@@ -1,6 +1,6 @@
 import { fetchApi } from "@/lib/fetch-api";
 import { ApiResponse, PaginatedResponse } from "@/types/api.types";
-import { ICategory, ICategoryPayload } from "../category.type";
+import { ICategory, ICategoryPayload } from "@/types/category.type";
 
 export const getCategories = async (params?: {
   page?: number;

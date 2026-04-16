@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAllUsers, updateUserStatus } from "@/features/user/services/user.service";
+
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
@@ -25,6 +25,7 @@ import {
 import { useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
 import UsersLoadingSkeleton from "./_usersLoadingSkeleton";
+import { getAllUsers, updateUserStatus } from "@/services/userAll.service";
 
 export default function AdminUsers() {
   const queryClient = useQueryClient();

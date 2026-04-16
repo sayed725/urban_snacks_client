@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getReviews, updateReviewStatus, deleteReview } from "@/features/review/services/review.service";
+import { getReviews, updateReviewStatus, deleteReview } from "@/services/review.service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Star, XCircle, MessageSquare, User, Package, Eye, Calendar } from "lucide-react";

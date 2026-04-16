@@ -24,9 +24,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { createReview, updateReview } from "../../../../features/review/services/review.service";
-import { IOrder } from "../../../../features/order/order.type";
-import { IReview } from "../../../../features/review/review.type";
+import { createReview, updateReview } from "@/services/review.service";
+import { IOrder } from "@/types/order.type";
+import { IReview } from "@/types/review.type";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
