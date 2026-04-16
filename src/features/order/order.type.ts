@@ -69,6 +69,7 @@ export interface ICreateOrderPayload {
   shippingCity: string;
   shippingPostalCode: string;
   paymentMethod: string;
+  paymentStatus?: string;
   additionalInfo?: string;
   orderItems: {
     itemId: string;
