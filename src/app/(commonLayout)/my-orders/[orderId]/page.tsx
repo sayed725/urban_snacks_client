@@ -15,6 +15,11 @@ import OrderLoadingSkeleton from "./_orderLoadingSkeleton";
 import { cn } from "@/lib/utils";
 import { IReview } from "@/features/review/review.type";
 import AddReviewDialog from "@/components/modules/user/review/AddReviewDialog";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createCheckoutSession } from "@/features/payment/services/payment.service";
+import { updatePaymentMethod } from "@/features/order/services/order.service";
+import { toast } from "sonner";
+import { RefreshCw, Truck } from "lucide-react";
 
 const fadeInUp = {
    initial: { opacity: 0, y: 20 },
@@ -39,6 +44,31 @@ export default function OrderDetailPage() {
       queryKey: ["order", orderId],
       queryFn: () => getOrderById(orderId),
       enabled: !!session,
+   });
+
+   const queryClient = useQueryClient();
+
+   const retryMutation = useMutation({
+      mutationFn: () => createCheckoutSession(orderId),
+      onSuccess: (res) => {
+         if (res.data?.url) {
+            window.location.href = res.data.url;
+         }
+      },
+      onError: (error: any) => {
+         toast.error(error.message || "Failed to initiate payment");
+      },
+   });
+
+   const switchMutation = useMutation({
+      mutationFn: () => updatePaymentMethod(orderId, "COD"),
+      onSuccess: () => {
+         queryClient.invalidateQueries({ queryKey: ["order", orderId] });
+         toast.success("Switched to Cash on Delivery!");
+      },
+      onError: (error: any) => {
+         toast.error(error.message || "Failed to switch payment method");
+      },
    });
 
    const order = response?.data;
@@ -155,6 +185,30 @@ export default function OrderDetailPage() {
                                  <span>${order.totalAmount}</span>
                               </div>
                            </div>
+
+                           {order.paymentStatus === "UNPAID" && 
+                            order.paymentMethod === "STRIPE" && 
+                            order.status !== "CANCELLED" && (
+                              <div className="flex flex-col gap-3 mt-4 pt-4 border-t">
+                                 <Button 
+                                    onClick={() => retryMutation.mutate()}
+                                    disabled={retryMutation.isPending || switchMutation.isPending}
+                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 rounded-xl"
+                                 >
+                                    <RefreshCw className={`w-4 h-4 mr-2 ${retryMutation.isPending ? "animate-spin" : ""}`} /> 
+                                    {retryMutation.isPending ? "Connecting..." : "Pay Now with Card"}
+                                 </Button>
+                                 <Button 
+                                    onClick={() => switchMutation.mutate()}
+                                    disabled={retryMutation.isPending || switchMutation.isPending}
+                                    variant="outline"
+                                    className="w-full border-primary/20 text-primary font-bold h-12 rounded-xl"
+                                 >
+                                    <Truck className="w-4 h-4 mr-2" /> 
+                                    {switchMutation.isPending ? "Updating..." : "Switch to Cash on Delivery"}
+                                 </Button>
+                              </div>
+                           )}
                         </div>
                      </motion.div>
                   </div>

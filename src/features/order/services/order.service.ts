@@ -75,3 +75,13 @@ export const deleteOrder = async (
     method: "DELETE",
   });
 };
+
+export const updatePaymentMethod = async (
+  orderId: string,
+  paymentMethod: string
+): Promise<ApiResponse<IOrder>> => {
+  return fetchApi(`/api/v1/orders/update-payment-method/${orderId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ paymentMethod }),
+  });
+};

@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { ShieldCheck, Truck, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
+import { createCheckoutSession } from "@/features/payment/services/payment.service";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -28,9 +29,27 @@ export default function CheckoutPage() {
     additionalInfo: "",
   });
 
+  const [paymentMethod, setPaymentMethod] = useState("COD");
+
   const orderMutation = useMutation({
     mutationFn: createOrder,
-    onSuccess: () => {
+    onSuccess: async (response) => {
+      const orderId = response.data?.id;
+
+      if (paymentMethod === "STRIPE" && orderId) {
+        try {
+          const res = await createCheckoutSession(orderId);
+          if (res.data?.url) {
+            window.location.href = res.data.url;
+            return;
+          } else {
+            toast.error("Failed to initialize payment gateway");
+          }
+        } catch (error: any) {
+          toast.error(error.message || "Failed to initiate payment.");
+        }
+      }
+
       toast.success("Order placed successfully!");
       clearCart();
       router.push("/my-orders");
@@ -77,7 +96,7 @@ export default function CheckoutPage() {
     e.preventDefault();
     const payload = {
       ...formData,
-      paymentMethod: "COD",
+      paymentMethod,
       orderItems: items.map(i => ({ itemId: i.id, quantity: i.quantity }))
     };
     orderMutation.mutate(payload);
@@ -139,12 +158,36 @@ export default function CheckoutPage() {
                    <h2 className="text-2xl font-bold">Payment Method</h2>
                 </div>
 
-                <div className="border-2 border-primary bg-primary/5 rounded-xl p-4 flex items-center justify-between cursor-pointer">
-                   <div className="flex items-center gap-4">
-                      <div className="w-5 h-5 rounded-full border-4 border-primary bg-background"></div>
-                      <div>
-                         <p className="font-bold text-lg">Cash on Delivery (COD)</p>
-                         <p className="text-sm text-primary font-medium">Pay securely when you receive your snacks.</p>
+                <div className="flex flex-col gap-4">
+                   {/* STRIPE Option */}
+                   <div 
+                      onClick={() => setPaymentMethod("STRIPE")}
+                      className={`border-2 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-colors ${paymentMethod === "STRIPE" ? "border-primary bg-primary/5" : "border-muted hover:border-primary/50"}`}
+                   >
+                      <div className="flex items-center gap-4">
+                         <div className={`w-5 h-5 rounded-full border-4 flex items-center justify-center ${paymentMethod === "STRIPE" ? "border-primary bg-background" : "border-muted bg-background"}`}>
+                           {paymentMethod === "STRIPE" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                         </div>
+                         <div>
+                            <p className="font-bold text-lg">Pay with Card / Stripe</p>
+                            <p className="text-sm text-muted-foreground font-medium">Securely pay with your credit or debit card.</p>
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* COD Option */}
+                   <div 
+                      onClick={() => setPaymentMethod("COD")}
+                      className={`border-2 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-colors ${paymentMethod === "COD" ? "border-primary bg-primary/5" : "border-muted hover:border-primary/50"}`}
+                   >
+                      <div className="flex items-center gap-4">
+                         <div className={`w-5 h-5 rounded-full border-4 flex items-center justify-center ${paymentMethod === "COD" ? "border-primary bg-background" : "border-muted bg-background"}`}>
+                           {paymentMethod === "COD" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                         </div>
+                         <div>
+                            <p className="font-bold text-lg">Cash on Delivery (COD)</p>
+                            <p className="text-sm text-muted-foreground font-medium">Pay securely when you receive your snacks.</p>
+                         </div>
                       </div>
                    </div>
                 </div>

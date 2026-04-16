@@ -15,6 +15,9 @@ import OrdersLoadingSkeleton from "./_ordersLoadingSkeleton";
 import AddReviewDialog from "@/components/modules/user/review/AddReviewDialog";
 import { getReviews } from "@/features/review/services/review.service";
 import { cn } from "@/lib/utils";
+import { createCheckoutSession } from "@/features/payment/services/payment.service";
+import { updatePaymentMethod } from "@/features/order/services/order.service";
+import { Truck, CreditCard } from "lucide-react";
 
 const containerVariants = {
    hidden: { opacity: 0 },
@@ -60,6 +63,30 @@ export default function MyOrdersPage() {
       },
       onError: (error: any) => {
          toast.error(error.message || "Failed to cancel order");
+      },
+   });
+
+   const retryMutation = useMutation({
+      mutationFn: createCheckoutSession,
+      onSuccess: (res) => {
+         if (res.data?.url) {
+            window.location.href = res.data.url;
+         }
+      },
+      onError: (error: any) => {
+         toast.error(error.message || "Failed to initiate payment");
+      },
+   });
+
+   const switchMutation = useMutation({
+      mutationFn: ({ orderId, method }: { orderId: string; method: string }) => 
+         updatePaymentMethod(orderId, method),
+      onSuccess: () => {
+         queryClient.invalidateQueries({ queryKey: ["my-orders"] });
+         toast.success("Switched to Cash on Delivery!");
+      },
+      onError: (error: any) => {
+         toast.error(error.message || "Failed to switch payment method");
       },
    });
 
@@ -208,6 +235,29 @@ export default function MyOrdersPage() {
                            <Button asChild className="w-full bg-primary/10 text-primary dark:text-white hover:bg-primary/20 font-bold border-primary/20">
                               <Link href={`/my-orders/${order.id}`}>View Details</Link>
                            </Button>
+
+                           {order.paymentStatus === "UNPAID" && 
+                            order.paymentMethod === "STRIPE" && 
+                            order.status !== "CANCELLED" && (
+                              <div className="flex flex-col gap-2">
+                                 <Button 
+                                    onClick={() => retryMutation.mutate(order.id)}
+                                    disabled={retryMutation.isPending || switchMutation.isPending}
+                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                                 >
+                                    <CreditCard className="w-4 h-4 mr-2" /> 
+                                    {retryMutation.isPending ? "Connecting..." : "Pay Now"}
+                                 </Button>
+                                 <Button 
+                                    onClick={() => switchMutation.mutate({ orderId: order.id, method: "COD" })}
+                                    disabled={retryMutation.isPending || switchMutation.isPending}
+                                    variant="outline"
+                                    className="w-full border-primary/20 text-primary font-bold"
+                                 >
+                                    <Truck className="w-4 h-4 mr-2" /> Switch to COD
+                                 </Button>
+                              </div>
+                           )}
 
                            {(() => {
                               const existingReview = reviews.find((r: any) =>
