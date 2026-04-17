@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import ProductCard from "@/components/shared/ProductCard";
+import SectionHeader from "@/components/shared/SectionHeader";
+import { getItems } from "@/services/item.service";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -36,6 +39,18 @@ export default function ProductDetailPage() {
   });
 
   const product = response?.data;
+
+  // New query for related products
+  const { data: relatedResponse } = useQuery({
+    queryKey: ["related-items", product?.categoryId, id],
+    queryFn: () => getItems({ 
+      categoryId: product?.categoryId, 
+      limit: 5, // Fetch 5 so we can filter out the current product and still have 4
+    }),
+    enabled: !!product?.categoryId,
+  });
+
+  const relatedItems = relatedResponse?.data?.filter((item: any) => item.id !== id).slice(0, 4) || [];
 
   if (isLoading) {
     return (
@@ -151,6 +166,38 @@ export default function ProductDetailPage() {
            </div>
         </div>
       </motion.div>
+
+      {/* Related Products Section */}
+      {relatedItems.length > 0 && (
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mt-24 space-y-12"
+        >
+          <div className="t max-w-2xl ">
+             <SectionHeader
+                title="You Might Also Like"
+                badge="Related Snacks"
+             />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {relatedItems.map((item: any, index: number) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 * index }}
+              >
+                <ProductCard product={item} />
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

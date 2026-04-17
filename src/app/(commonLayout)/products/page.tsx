@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
+import ProductCard from "@/components/shared/ProductCard";
 
 function ProductsContent() {
   const router = useRouter();
@@ -58,7 +59,7 @@ function ProductsContent() {
 
   const { data: catResponse } = useQuery({
     queryKey: ["categories"],
-    queryFn: () => getCategories(),
+    queryFn: () => getCategories({sortOrder: "asc"}),
   });
   const categories = catResponse?.data || [];
 
@@ -177,43 +178,7 @@ function ProductsContent() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
-                <div key={product.id} className="group flex flex-col border rounded-2xl overflow-hidden shadow-sm bg-card hover:shadow-xl transition-all duration-300">
-                  <Link href={`/products/${product.id}`} className="block relative h-48 w-full bg-secondary overflow-hidden">
-                    {product.image ? (
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      <div className="flex items-center justify-center w-full h-full text-muted-foreground">No Image</div>
-                    )}
-                    <div className="absolute top-2 right-2 flex flex-col gap-2">
-                      {product.isFeatured && <Badge className="bg-amber-500 text-white border-none shadow-md shadow-amber-500/20">Featured</Badge>}
-                      {product.isSpicy && <Badge className="bg-red-500 text-white border-none shadow-md shadow-red-500/20">Spicy 🌶️</Badge>}
-                    </div>
-                  </Link>
-                  <div className="p-5 flex flex-col flex-1">
-                    <div className="text-xs text-primary font-bold tracking-wider mb-1 uppercase">
-                      {product.category?.name}
-                    </div>
-                    <Link href={`/products/${product.id}`}>
-                      <h2 className="text-lg font-bold hover:text-primary transition-colors line-clamp-1">{product.name}</h2>
-                    </Link>
-                    <p className="text-sm text-muted-foreground mt-1 mb-4 flex-1 line-clamp-2">
-                      {product.description || `Delicious ${product.name} to satisfy your cravings.`}
-                    </p>
-
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t">
-                      <div className="flex flex-col">
-                        <span className="text-lg font-black text-emerald-600">${product.price}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase">{product.weight}</span>
-                      </div>
-                      <Button
-                        onClick={() => addItem(product as any, 1)}
-                        className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-md hover:shadow-orange-500/25 transition-all duration-300 font-semibold shrink-0 hover:scale-105 border-0"
-                      >
-                        <ShoppingCart className="w-4 h-4 mr-2" /> Add
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                <ProductCard key={product.id} product={product as any} />
               ))}
             </div>
           )}
