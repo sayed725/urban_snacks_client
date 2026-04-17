@@ -25,9 +25,9 @@ export async function proxy(request: NextRequest) {
   }
 
   // 2. If user is not logged in and trying to access protected routes, redirect to login
-  const isProtectedRoute = 
-    pathname.startsWith("/dashboard") || 
-    pathname.startsWith("/my-orders") || 
+  const isProtectedRoute =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/my-orders") ||
     pathname.startsWith("/checkout");
 
   if (isProtectedRoute && (!sessionToken && !session)) {
@@ -55,7 +55,7 @@ export async function proxy(request: NextRequest) {
     // 5. Protect User Routes (Optional: If admins shouldn't see user dashboard)
     if (USER_ROUTES.some((r) => pathname.startsWith(r))) {
       if (role !== "USER" && role !== "ADMIN") {
-         return NextResponse.redirect(new URL("/", request.url));
+        return NextResponse.redirect(new URL("/", request.url));
       }
     }
   }

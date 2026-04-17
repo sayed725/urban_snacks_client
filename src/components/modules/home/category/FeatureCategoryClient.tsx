@@ -33,7 +33,7 @@ const headerVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
 };
 
-const FeatureCategory = ({catsLoading, categories}: {catsLoading: boolean, categories: any[]}) => {
+const FeatureCategoryClient = ({categories}: {categories: any[]}) => {
   return (
     <div className='bg-muted/30 overflow-hidden'>
        <section className="py-10 container w-11/12 mx-auto">
@@ -55,34 +55,28 @@ const FeatureCategory = ({catsLoading, categories}: {catsLoading: boolean, categ
            </Button>
         </motion.div>
 
-        {catsLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-               {[1,2,3,4,5].map(i => <div key={i} className="h-32 bg-muted rounded-2xl animate-pulse" />)}
-            </div>
-        ) : (
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-10%" }}
-              className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"
-            >
-               {categories.map((cat, idx) => (
-                  <motion.div variants={itemVariants} key={cat.id}>
-                    <Link href={`/products?category=${cat.id}`} className="block group relative overflow-hidden rounded-2xl h-40 bg-secondary border hover:shadow-lg transition-all">
-                       {cat.image && <img src={cat.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" alt={cat.name} />}
-                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4">
-                          <h3 className="text-white font-bold text-lg">{cat.name}</h3>
-                          <p className="text-white/80 text-xs">{cat._count?.items || 0} items</p>
-                       </div>
-                    </Link>
-                  </motion.div>
-               ))}
-            </motion.div>
-        )}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-10%" }}
+          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"
+        >
+           {categories.map((cat) => (
+              <motion.div variants={itemVariants} key={cat.id}>
+                <Link href={`/products?category=${cat.id}`} className="block group relative overflow-hidden rounded-2xl h-40 bg-secondary border hover:shadow-lg transition-all">
+                   {cat.image && <img src={cat.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" alt={cat.name} />}
+                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4">
+                      <h3 className="text-white font-bold text-lg">{cat.name}</h3>
+                      <p className="text-white/80 text-xs">{cat._count?.items || 0} items</p>
+                   </div>
+                </Link>
+              </motion.div>
+           ))}
+        </motion.div>
       </section>
     </div>
   )
 }
 
-export default FeatureCategory
+export default FeatureCategoryClient

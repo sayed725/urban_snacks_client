@@ -1,7 +1,7 @@
 
 import { ApiResponse } from "@/types/api.types";
 import { cookies } from "next/headers";
-import { env } from "../config/env";
+import { env } from "@/config/env";
 
 
 

@@ -130,7 +130,7 @@ export default function Navbar() {
                 )}
               </Link>
             ))}
-            {isPending ? (
+            {isPending || !mounted ? (
               <div className="h-8 w-24 bg-slate-200/50 dark:bg-slate-800/50 rounded-full animate-pulse ml-2" />
             ) : isAuthenticated && userRole !== "ADMIN" && (
                 <Link
@@ -271,7 +271,7 @@ export default function Navbar() {
                     </Link>
                   ))}
                   
-                  {isPending ? (
+                  {isPending || !mounted ? (
                     <div className="h-6 w-28 bg-slate-200/50 dark:bg-slate-800/50 rounded-md animate-pulse" />
                   ) : isAuthenticated && userRole !== "ADMIN" && (
                       <Link
@@ -289,7 +289,7 @@ export default function Navbar() {
                   )}
 
                   <div className="border-t pt-6 mt-2 space-y-4">
-                    {isPending ? (
+                    {isPending || !mounted ? (
                       <div className="space-y-4">
                         <div className="h-12 w-full bg-slate-200/50 dark:bg-slate-800/50 rounded-lg animate-pulse" />
                         <div className="flex items-center gap-3 px-3 pt-4">

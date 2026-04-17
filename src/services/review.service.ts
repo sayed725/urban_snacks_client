@@ -1,6 +1,6 @@
 import { fetchApi } from "@/lib/fetch-api";
 import { ApiResponse, PaginatedResponse } from "@/types/api.types";
-import { IReview, ICreateReviewPayload, IGetReviewsParams, IUpdateReviewPayload } from "../review.type";
+import { IReview, ICreateReviewPayload, IGetReviewsParams, IUpdateReviewPayload } from "@/types/review.type";
 
 export const getReviews = async (
   params?: IGetReviewsParams

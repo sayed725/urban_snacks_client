@@ -5,7 +5,7 @@ import {
   IGetOrdersParams,
   IOrder,
   OrderStatus,
-} from "../order.type";
+} from "@/types/order.type";
 
 export const getAllOrders = async (
   params?: IGetOrdersParams

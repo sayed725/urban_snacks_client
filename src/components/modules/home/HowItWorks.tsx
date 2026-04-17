@@ -99,7 +99,7 @@ const HowItWorks = () => {
   };
 
   return (
-    <section className="bg-muted/30 py-10 ">
+    <section className="bg-muted/30 dark:bg-slate-900/50 py-10 ">
       <div className="container w-11/12 mx-auto">
         {/* Header */}
         <div className="pb-8 text-center flex flex-col items-center">
@@ -120,7 +120,7 @@ const HowItWorks = () => {
                   "transition-all duration-300 ease-in-out cursor-pointer",
                   index === activeStep
                     ? "w-10 h-3 bg-orange-500 rounded-full"
-                    : "w-3 h-3 bg-orange-200 rounded-full hover:bg-orange-300"
+                    : "w-3 h-3 bg-orange-200 dark:bg-orange-950/40 rounded-full hover:bg-orange-300 dark:hover:bg-orange-900/60"
                 )}
                 aria-label={`Go to step ${index + 1}`}
               />
@@ -138,17 +138,17 @@ const HowItWorks = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="bg-white rounded-3xl shadow-xl shadow-orange-500/5 p-8 border-2 border-orange-100  flex flex-col justify-center"
+              className="bg-white dark:bg-slate-950/50 backdrop-blur-xl rounded-3xl shadow-xl shadow-orange-500/[0.02] dark:shadow-orange-950/20 p-8 border-2 border-orange-100 dark:border-orange-900/20 flex flex-col justify-center"
             >
               <div className="flex items-center gap-4 mb-6">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 text-orange-500">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-900/20 text-orange-500">
                   {services[activeStep].icon}
                 </div>
                 <div>
                   <span className="text-sm md:text-base text-orange-500 font-bold uppercase tracking-wider">
                     Step {activeStep + 1}/6
                   </span>
-                  <h3 className="text-xl md:text-2xl lg:text-3xl font-bold mt-1 text-slate-800">
+                  <h3 className="text-xl md:text-2xl lg:text-3xl font-bold mt-1 text-slate-800 dark:text-slate-100">
                     {services[activeStep].title}
                   </h3>
                 </div>
@@ -162,10 +162,10 @@ const HowItWorks = () => {
                 <ul className="space-y-4">
                   {[1, 2, 3].map((item) => (
                     <li key={item} className="flex items-start gap-4">
-                      <div className="bg-orange-100 rounded-full p-1 mt-0.5">
+                      <div className="bg-orange-100 dark:bg-orange-900/30 rounded-full p-1 mt-0.5">
                         <CheckCircle2 className="h-4 w-4 text-orange-600 flex-shrink-0" />
                       </div>
-                      <span className="text-slate-700 md:text-sm lg:text-base font-medium">
+                      <span className="text-slate-700 dark:text-slate-300 md:text-sm lg:text-base font-medium">
                         {activeStep === 0 &&
                           item === 1 &&
                           "Find sweet, savory, or crunchy snacks"}
@@ -275,7 +275,7 @@ const HowItWorks = () => {
                 "p-3 lg:p-5 rounded-2xl transition-all duration-300 text-center flex flex-col items-center gap-3 cursor-pointer group",
                 activeStep === index
                   ? "bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-xl shadow-orange-500/30 scale-105 border-transparent"
-                  : "bg-white hover:bg-orange-50 border border-orange-100 hover:border-orange-300"
+                  : "bg-white dark:bg-slate-900/50 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-orange-100 dark:border-orange-900/50 hover:border-orange-300"
               )}
             >
               <div
@@ -283,14 +283,14 @@ const HowItWorks = () => {
                   "w-8 h-8 lg:w-12 lg:h-12 rounded-full flex items-center justify-center transition-colors shadow-sm",
                   activeStep === index
                     ? "bg-white/20 text-white"
-                    : "bg-orange-100 text-orange-600 group-hover:bg-orange-200"
+                    : "bg-orange-100 dark:bg-orange-900/20 text-orange-600 group-hover:bg-orange-200"
                 )}
               >
                 <span className="font-bold text-lg">{index + 1}</span>
               </div>
               <span className={cn(
                 "text-sm font-semibold",
-                activeStep === index ? "text-white" : "text-slate-700 group-hover:text-orange-700"
+                activeStep === index ? "text-white" : "text-slate-700 dark:text-slate-300 group-hover:text-orange-700"
               )}>
                 {service.title}
               </span>
