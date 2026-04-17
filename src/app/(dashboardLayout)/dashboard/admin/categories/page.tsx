@@ -22,17 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { ImageUploadField } from "@/components/shared/form/image-upload-field";
 import CategoriesLoadingSkeleton from "./_categoriesLoadingSkeleton";
 import { XCircle } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
+import USPagination from "@/components/shared/USPagination";
 
 
 export default function AdminCategories() {
@@ -367,28 +361,12 @@ export default function AdminCategories() {
       </div>
 
       {meta && meta.totalPage > 1 && (
-        <div className="mt-4 border-t pt-6 bg-card border rounded-xl overflow-hidden shadow-sm pb-6">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                />
-              </PaginationItem>
-              <PaginationItem>
-                <span className="text-sm text-muted-foreground px-4">
-                  Page {page} of {meta.totalPage}
-                </span>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => setPage(p => Math.min(meta.totalPage, p + 1))}
-                  className={page === meta.totalPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+        <div className="mt-4 bg-card border rounded-xl overflow-hidden shadow-sm">
+          <USPagination 
+            page={page} 
+            totalPage={meta.totalPage} 
+            onPageChange={(p) => setPage(p)} 
+          />
         </div>
       )}
 
