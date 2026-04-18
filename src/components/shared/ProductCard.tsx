@@ -32,9 +32,9 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
         href={`/products/${product.id}`}
         className="relative h-64 w-full bg-secondary overflow-hidden block"
       >
-        {product.image ? (
+        {product.mainImage || (product.image && product.image[0]) ? (
           <motion.img
-            src={product.image}
+            src={product.mainImage || product.image[0]}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />

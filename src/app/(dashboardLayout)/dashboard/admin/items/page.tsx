@@ -40,7 +40,9 @@ export default function AdminItems() {
     weight: "",
     price: 0,
     categoryId: "",
-    image: "",
+    mainImage: "",
+    semiTitle: "",
+    image: [] as string[],
     isActive: true,
     isFeatured: false,
     isSpicy: false,
@@ -120,7 +122,9 @@ export default function AdminItems() {
       weight: "",
       price: 0,
       categoryId: "",
-      image: "",
+      mainImage: "",
+      semiTitle: "",
+      image: [],
       isActive: true,
       isFeatured: false,
       isSpicy: false,
@@ -153,7 +157,9 @@ export default function AdminItems() {
       weight: item.weight || "",
       price: item.price || 0,
       categoryId: item.categoryId || "",
-      image: item.image || "",
+      mainImage: item.mainImage || "",
+      semiTitle: item.semiTitle || "",
+      image: Array.isArray(item.image) ? item.image : (item.image ? [item.image] : []),
       isActive: item.isActive,
       isFeatured: item.isFeatured,
       isSpicy: item.isSpicy || false,
@@ -290,8 +296,8 @@ export default function AdminItems() {
               {items.map((item: any) => (
                 <tr key={item.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-6 py-4">
-                    {item.image ? (
-                      <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-md border" />
+                    {item.mainImage || (item.image && item.image[0]) ? (
+                      <img src={item.mainImage || item.image[0]} alt={item.name} className="w-10 h-10 object-cover rounded-md border" />
                     ) : (
                       <div className="w-10 h-10 bg-muted rounded-md flex items-center justify-center border">
                         <ImageIcon className="w-4 h-4 text-muted-foreground" />

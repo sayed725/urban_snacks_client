@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import ProductCard from "@/components/shared/ProductCard";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { getItems } from "@/services/item.service";
+import { cn } from "@/lib/utils";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -32,6 +33,7 @@ export default function ProductDetailPage() {
   const { id } = useParams() as { id: string };
   const { addItem } = useCartStore();
   const [quantity, setQuantity] = useState(1);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["item", id],
@@ -91,24 +93,47 @@ export default function ProductDetailPage() {
         variants={fadeInUp}
         className="bg-card border rounded-3xl overflow-hidden shadow-lg shadow-muted flex flex-col md:flex-row"
       >
-        {/* Left: Image */}
-        <div className="w-full md:w-1/2 relative bg-secondary min-h-[400px]">
-          {product.image ? (
-            <motion.img 
-              initial={{ opacity: 0, scale: 1.05 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              src={product.image} 
-              alt={product.name} 
-              className="w-full h-full object-cover absolute inset-0" 
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground absolute inset-0">No Image Available</div>
-          )}
-          <div className="absolute top-6 left-6 flex flex-col gap-2">
-            {product.isFeatured && <Badge className="bg-amber-500 text-white border-none py-1.5 px-3 text-sm shadow-md">Featured</Badge>}
-            {product.isSpicy && <Badge className="bg-red-500 text-white border-none py-1.5 px-3 text-sm shadow-md">Spicy 🌶️</Badge>}
+        {/* Left: Image Container */}
+        <div className="w-full md:w-1/2 relative bg-secondary min-h-[500px] flex flex-col">
+          <div className="flex-1 relative overflow-hidden group">
+            {product.mainImage || (product.image && product.image[0]) ? (
+              <motion.img 
+                key={activeImage || product.mainImage || product.image[0]}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                src={activeImage || product.mainImage || product.image[0]} 
+                alt={product.name} 
+                className="w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-700" 
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground absolute inset-0">No Image Available</div>
+            )}
+            
+            {/* Badges Overlay */}
+            <div className="absolute top-6 left-6 flex flex-col gap-2 z-10">
+              {product.isFeatured && <Badge className="bg-amber-500 text-white border-none py-1.5 px-3 text-sm shadow-md">Best Seller</Badge>}
+              {product.isSpicy && <Badge className="bg-red-500 text-white border-none py-1.5 px-3 text-sm shadow-md">Spicy 🌶️</Badge>}
+            </div>
           </div>
+
+          {/* Optional: Gallery Thumbnails if multiple images exist */}
+          {((product.image && product.image.length > 0) || (product.mainImage && product.image && product.image.length > 0)) && (
+            <div className="p-4 bg-muted/30 border-t flex gap-2 overflow-x-auto overflow-y-hidden scrollbar-hide shrink-0">
+               {[product.mainImage, ...(Array.isArray(product.image) ? product.image : [])].filter(Boolean).map((img, i) => (
+                 <button 
+                  key={i} 
+                  onClick={() => setActiveImage(img as string)}
+                  className={cn(
+                    "relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all shrink-0",
+                    (activeImage || product.mainImage || (product.image && product.image[0])) === img ? "border-primary scale-105 shadow-md" : "border-transparent opacity-70 hover:opacity-100"
+                  )}
+                 >
+                   <img src={img as string} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
+                 </button>
+               ))}
+            </div>
+          )}
         </div>
 
         {/* Right: Info */}
@@ -116,7 +141,13 @@ export default function ProductDetailPage() {
            <motion.div variants={fadeInUp} className="text-primary font-bold tracking-wider mb-2 uppercase text-sm">
               {product.category?.name}
            </motion.div>
-           <motion.h1 variants={fadeInUp} className="text-4xl md:text-5xl font-black mb-4 leading-tight">{product.name}</motion.h1>
+           <motion.h1 variants={fadeInUp} className="text-4xl md:text-5xl font-black mb-2 leading-tight">{product.name}</motion.h1>
+           
+           {product.semiTitle && (
+             <motion.p variants={fadeInUp} className="text-xl font-medium text-orange-500/80 mb-4 italic">
+                "{product.semiTitle}"
+             </motion.p>
+           )}
            
            <motion.div variants={fadeInUp} className="flex items-center gap-4 mb-6">
               <span className="text-3xl font-bold text-emerald-600">${product.price}</span>

@@ -1,4 +1,4 @@
-import { ICategory } from "../../types/category.type";
+import { ICategory } from "./category.type";
 
 export interface IItem {
   id: string;
@@ -10,7 +10,9 @@ export interface IItem {
   price: number;
   expiryDate?: string | null;
   isActive: boolean;
-  image?: string | null;
+  mainImage?: string | null;
+  semiTitle?: string | null;
+  image: string[];
   description?: string | null;
   createdAt: string;
   updatedAt: string;
@@ -27,7 +29,9 @@ export interface IItemPayload {
   packSize?: number;
   isSpicy?: boolean;
   expiryDate?: string;
-  image?: string;
+  mainImage?: string;
+  semiTitle?: string;
+  image?: string[];
   description?: string;
   isActive?: boolean;
 }
