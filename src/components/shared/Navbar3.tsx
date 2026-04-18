@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CartDrawer } from "@/components/shared/CartDrawer";
@@ -72,10 +71,7 @@ export default function Navbar() {
 
 
   return (
-    <motion.nav 
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    <nav 
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300 border-b",
         isScrolled 
@@ -90,9 +86,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: -5 }}
-              whileTap={{ scale: 0.95 }}
+            <div
               className="relative"
             >
               <div className="absolute inset-0 bg-orange-500 rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
@@ -101,7 +95,7 @@ export default function Navbar() {
                 alt="Urban Snacks Logo"
                 className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm relative z-10 drop-shadow-sm"
               />
-            </motion.div>
+            </div>
             <span className="text-2xl font-bold tracking-tight sm:text-3xl bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">
               Urban Snacks
             </span>
@@ -122,10 +116,8 @@ export default function Navbar() {
               >
                 <span className="relative z-10">{item.title}</span>
                 {pathname === item.href && (
-                  <motion.div
-                    layoutId="navbar-indicator"
+                  <div
                     className="absolute inset-0 bg-orange-100 dark:bg-orange-500/10 rounded-full z-0"
-                    transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
                   />
                 )}
               </Link>
@@ -144,10 +136,8 @@ export default function Navbar() {
                 >
                   <span className="relative z-10">My Orders</span>
                   {pathname.startsWith("/my-orders") && (
-                    <motion.div
-                      layoutId="navbar-indicator"
+                    <div
                       className="absolute inset-0 bg-orange-100 dark:bg-orange-500/10 rounded-full z-0"
-                      transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
                     />
                   )}
                 </Link>
@@ -156,14 +146,12 @@ export default function Navbar() {
 
           {/* Desktop Right Side */}
           <div className="hidden lg:flex items-center gap-4">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <ModeToggle />
-            </motion.div>
+            <ModeToggle />
+
 
             {/* Cart */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <CartDrawer isMobile={false} />
-            </motion.div>
+            <CartDrawer isMobile={false} />
+
 
             {isPending || !mounted ? (
               <div className="flex items-center gap-2">
@@ -172,7 +160,7 @@ export default function Navbar() {
             ) : isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <div>
                     <Button
                       variant="ghost"
                       className="relative h-10 w-10 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm p-0 hover:border-orange-300 dark:hover:border-orange-500/50 transition-colors"
@@ -183,7 +171,7 @@ export default function Navbar() {
                       </AvatarFallback>
                     </Avatar>
                     </Button>
-                  </motion.div>
+                  </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 mt-2 rounded-xl border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-black/90 backdrop-blur-xl">
                   <DropdownMenuLabel className="font-normal border-b dark:border-slate-800 pb-2 mb-1">
@@ -220,19 +208,15 @@ export default function Navbar() {
 
           {/* Mobile Menu Trigger */}
           <div className="flex items-center gap-3 lg:hidden">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <CartDrawer isMobile={true} />
-            </motion.div>
+            <CartDrawer isMobile={true} />
             <ModeToggle />
             
             {mounted && (
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger asChild>
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button variant="ghost" size="icon" className="border border-slate-200 dark:border-slate-800 shadow-sm rounded-full bg-white/50 dark:bg-black/50">
-                      <Menu className="h-5 w-5" />
-                    </Button>
-                  </motion.div>
+                  <Button variant="ghost" size="icon" className="border border-slate-200 dark:border-slate-800 shadow-sm rounded-full bg-white/50 dark:bg-black/50">
+                    <Menu className="h-5 w-5" />
+                  </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[85vw] sm:w-[400px]">
                 <SheetHeader className="mb-8 border-b pb-4 text-left">
@@ -349,6 +333,6 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 }

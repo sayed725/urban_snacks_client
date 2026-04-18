@@ -36,48 +36,58 @@ export function ProductGridSkeleton({ count = 6 }: { count?: number }) {
   )
 }
 
+export function ProductsHeaderSkeleton() {
+  return (
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+      <div>
+        <Skeleton className="h-12 w-64 mb-2" /> {/* Title */}
+        <Skeleton className="h-4 w-80" /> {/* Subtitle */}
+      </div>
+
+      <div className="flex w-full md:w-auto items-center gap-3 flex-wrap sm:flex-nowrap">
+        <Skeleton className="h-10 w-full sm:w-[300px] rounded-md" /> {/* Search */}
+        <Skeleton className="h-10 w-full sm:w-[180px] rounded-md" /> {/* Sort */}
+      </div>
+    </div>
+  )
+}
+
+export function ProductsSidebarSkeleton() {
+  return (
+    <div className="w-full lg:w-64 shrink-0 space-y-6">
+      <div className="p-5 bg-card border rounded-xl shadow-sm space-y-6">
+        <div className="border-b pb-2">
+          <Skeleton className="h-6 w-24" /> {/* Filter header */}
+        </div>
+        
+        <div className="space-y-4">
+          <Skeleton className="h-4 w-20" /> {/* Category title */}
+          <div className="space-y-2">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Skeleton key={i} className="h-9 w-full rounded-md" />
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t pt-4 space-y-4">
+          <Skeleton className="h-4 w-24" /> {/* Preferences title */}
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-6 w-10 rounded-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ProductsLoadingSkeleton() {
   return (
     <div className="container mx-auto py-12 px-4 min-h-screen">
-      {/* Header Skeleton */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <Skeleton className="h-12 w-64 mb-2" /> {/* Title */}
-          <Skeleton className="h-4 w-80" /> {/* Subtitle */}
-        </div>
-
-        <div className="flex w-full md:w-auto items-center gap-3 flex-wrap sm:flex-nowrap">
-          <Skeleton className="h-10 w-full sm:w-[300px] rounded-md" /> {/* Search */}
-          <Skeleton className="h-10 w-full sm:w-[180px] rounded-md" /> {/* Sort */}
-        </div>
-      </div>
+      <ProductsHeaderSkeleton />
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar Skeleton */}
-        <div className="w-full lg:w-64 shrink-0 space-y-6">
-          <div className="p-5 bg-card border rounded-xl shadow-sm space-y-6">
-            <div className="border-b pb-2">
-              <Skeleton className="h-6 w-24" /> {/* Filter header */}
-            </div>
-            
-            <div className="space-y-4">
-              <Skeleton className="h-4 w-20" /> {/* Category title */}
-              <div className="space-y-2">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <Skeleton key={i} className="h-9 w-full rounded-md" />
-                ))}
-              </div>
-            </div>
-
-            <div className="border-t pt-4 space-y-4">
-              <Skeleton className="h-4 w-24" /> {/* Preferences title */}
-              <div className="flex justify-between items-center">
-                <Skeleton className="h-5 w-24" />
-                <Skeleton className="h-6 w-10 rounded-full" />
-              </div>
-            </div>
-          </div>
-        </div>
+        <ProductsSidebarSkeleton />
 
         {/* Product Grid Skeleton */}
         <div className="flex-1">

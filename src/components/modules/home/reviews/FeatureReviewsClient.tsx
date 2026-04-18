@@ -2,16 +2,8 @@
 
 import React from "react";
 import { motion, Variants } from "framer-motion";
-import { Star, Quote } from "lucide-react";
+import { Star, Quote, CheckCircle2 } from "lucide-react";
 import SectionHeader from "@/components/shared/SectionHeader";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  CarouselApi,
-} from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IReview } from "@/types/review.type";
@@ -40,131 +32,146 @@ const ReviewCard = ({ review }: { review: IReview }) => {
   const userInitial = review.customer?.name?.charAt(0) || "U";
   
   return (
-    <motion.div variants={itemVariants} className="h-full py-4">
-      <Card className="h-full border-white/20 dark:border-white/10 bg-white/70 dark:bg-black/40 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 rounded-[2rem] overflow-hidden group">
-        <CardContent className="p-8 flex flex-col h-full relative">
-          {/* Quote Decor */}
-          <div className="absolute top-6 right-8 text-orange-500/10 group-hover:text-orange-500/20 transition-colors duration-500">
-            <Quote size={80} fill="currentColor" />
-          </div>
-
-          {/* Rating */}
-          <div className="flex gap-1 mb-6 relative z-10">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                size={18}
-                className={cn(
-                  "transition-all duration-300",
-                  i < review.rating
-                    ? "fill-amber-500 text-amber-500 scale-110"
-                    : "text-slate-300 dark:text-slate-700"
-                )}
-              />
-            ))}
-          </div>
-
-          {/* Comment */}
-          <blockquote className="flex-grow mb-8 relative z-10">
-            <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed italic line-clamp-4">
-              "{review.comment}"
-            </p>
-          </blockquote>
-
-          {/* Author */}
-          <div className="flex items-center gap-4 mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 relative z-10">
-            <Avatar className="h-12 w-12 border-2 border-orange-500/30 group-hover:border-orange-500 transition-colors duration-500">
-              <AvatarImage src={review.customer?.image || ""} alt={review.customer?.name} />
-              <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white font-bold">
-                {userInitial}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-bold text-slate-900 dark:text-white group-hover:text-orange-500 transition-colors">
-                {review.customer?.name || "Happy Customer"}
-              </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Verified Buyer</p>
+    <motion.div 
+      variants={itemVariants} 
+      className="w-[350px] md:w-[450px] shrink-0"
+    >
+      <div className="relative group">
+        {/* Card Background Bloom */}
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-[2rem] opacity-0 group-hover:opacity-10 blur-xl transition duration-700" />
+        
+        <Card className="relative h-full border-white/20 dark:border-white/10 bg-white/80 dark:bg-black/40 backdrop-blur-2xl shadow-sm hover:shadow-2xl transition-all duration-500 rounded-[2rem] overflow-hidden">
+          <CardContent className="p-8 flex flex-col h-full relative">
+            {/* Quote Icon - subtle background element */}
+            <div className="absolute top-0 right-0 text-orange-500/5 group-hover:text-orange-500/10 transition-colors duration-500">
+              <Quote size={100} fill="currentColor" />
             </div>
-          </div>
-        </CardContent>
-      </Card>
+  
+            {/* Rating */}
+            <div className="flex gap-1 mb-5 relative z-10">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={14}
+                  className={cn(
+                    "transition-all duration-300",
+                    i < review.rating
+                      ? "fill-amber-500 text-amber-500"
+                      : "text-slate-200 dark:text-slate-800"
+                  )}
+                />
+              ))}
+            </div>
+  
+            {/* Comment */}
+            <div className="flex-grow mb-5 relative z-10">
+              <p className="text-lg md:text-xl text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
+                "{review.comment}"
+              </p>
+            </div>
+  
+            {/* Author Section */}
+            <div className="flex items-center gap-4 mt-auto pt-5 border-t border-slate-100 dark:border-slate-800/50 relative z-10">
+              <div className="relative">
+                <Avatar className="h-12 w-12 border-2 border-orange-500/20 group-hover:border-orange-500/50 transition-colors duration-500">
+                  <AvatarImage src={review.customer?.image || ""} alt={review.customer?.name} />
+                  <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white font-bold">
+                    {userInitial}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute -bottom-1 -right-1 bg-white dark:bg-black rounded-full p-0.5">
+                   <CheckCircle2 className="w-5 h-5 text-emerald-500 fill-white dark:fill-black" />
+                </div>
+              </div>
+              
+              <div>
+                <p className="font-bold text-slate-900 dark:text-white group-hover:text-orange-600 transition-colors duration-300 flex items-center gap-1.5">
+                  {review.customer?.name || "Happy Customer"}
+                </p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                   <span className="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500">
+                     Verified Buyer
+                   </span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </motion.div>
   );
 };
 
 const FeatureReviewsClient = ({ reviews }: { reviews: IReview[] }) => {
-  const [api, setApi] = React.useState<CarouselApi>();
-  const [isHovered, setIsHovered] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!api || isHovered) return;
-
-    const intervalId = setInterval(() => {
-      api.scrollNext();
-    }, 4000);
-
-    return () => clearInterval(intervalId);
-  }, [api, isHovered]);
-
   if (!reviews || reviews.length === 0) return null;
 
+  // Marquee Logic
+  const duplicateCount = 3; // Triple to ensure seamless loop on large screens
+  const marqueeReviews = [...Array(duplicateCount)].flatMap(() => reviews);
+
   return (
-    <section className="py-10 bg-gradient-to-b from-transparent via-orange-50/30 to-transparent dark:via-orange-950/10 overflow-hidden">
-      <div className="container mx-auto w-11/12">
+ <section className="py-10 bg-muted/30 dark:bg-slate-900/50">
+     <div className="container w-11/12 mx-auto relative overflow-hidden">
+      {/* Background Decorative Blobs */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="container-fluid relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-10%" }}
           variants={containerVariants}
-          className="space-y-16"
+          className="space-y-20"
         >
           {/* Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-4">
+          <div className="text-center max-w-2xl mx-auto px-4">
              <SectionHeader
-                title="What Our Foodies Say"
-                description="Real stories from our community about their favorite Urban Snacks moments. We take pride in every crunch and every smile."
-                badge="Customer Love"
+                title="The Wall of Love"
+                description="Real crunch stories from our snack-loving community."
+                badge="Social Proof"
              />
           </div>
 
-          {/* Carousel */}
-          <div 
-            className="relative px-4 sm:px-12"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <Carousel
-              setApi={setApi}
-              opts={{
-                align: "start",
-                loop: true,
+          {/* Infinite Marquee Marquee */}
+          <div className="relative flex overflow-hidden">
+            <motion.div
+              animate={{ x: ["0%", "-33.33%"] }} // Match the duplicateCount (1/3rd for 3x)
+              transition={{
+                duration: 40,
+                repeat: Infinity,
+                ease: "linear",
               }}
-              className="w-full"
+              className="flex gap-6 w-max"
+              whileHover={{ animationPlayState: "paused" }}
             >
-              <CarouselContent className="-ml-2 md:-ml-4">
-                {reviews.map((review) => (
-                  <CarouselItem key={review.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
-                    <ReviewCard review={review} />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              
-              <div className="hidden sm:block">
-                <CarouselPrevious className="absolute -left-4 lg:-left-6 h-12 w-12 rounded-full border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-black/80 backdrop-blur-md hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all shadow-lg" />
-                <CarouselNext className="absolute -right-4 lg:-right-6 h-12 w-12 rounded-full border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-black/80 backdrop-blur-md hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all shadow-lg" />
-              </div>
-            </Carousel>
+              {marqueeReviews.map((review, idx) => (
+                <ReviewCard key={`${review.id}-${idx}`} review={review} />
+              ))}
+            </motion.div>
+            
+            {/* Fade Gradients for Marquee Edges */}
+            <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-50/80 dark:from-slate-950/40 to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-50/80 dark:from-slate-950/40 to-transparent z-10 pointer-events-none" />
           </div>
 
-          {/* CTA Footer */}
-          {/* <motion.div variants={itemVariants} className="text-center pt-8">
-            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center justify-center gap-2">
-              Join <span className="text-orange-500 font-bold">5,000+</span> happy snackers across the city 🍿
+          {/* Social Proof Footer */}
+          <motion.div variants={itemVariants} className="flex flex-col items-center gap-4 text-center">
+            <div className="flex -space-x-3">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-10 w-10 rounded-full border-2 border-background bg-slate-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+                  <img src={`https://i.pravatar.cc/150?u=${i + 10}`} alt="User" />
+                </div>
+              ))}
+            </div>
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+              Join <span className="text-orange-600 font-bold">5,000+</span> happy snackers across the city 🍿
             </p>
-          </motion.div> */}
+          </motion.div>
         </motion.div>
       </div>
-    </section>
+    </div>
+ </section>
   );
 };
 

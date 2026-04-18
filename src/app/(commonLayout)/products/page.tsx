@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
 import Link from "next/link";
 import ProductCard from "@/components/shared/ProductCard";
-import ProductsLoadingSkeleton, { ProductGridSkeleton } from "./_productsLoadingSkeleton";
+import ProductsLoadingSkeleton, { ProductGridSkeleton, ProductsHeaderSkeleton, ProductsSidebarSkeleton } from "./_productsLoadingSkeleton";
 import ProductsSearchHeader from "../../../components/modules/products/ProductsSearchHeader";
 import ProductsSidebar from "../../../components/modules/products/ProductsSidebar";
 
@@ -72,10 +72,14 @@ export default async function ProductsPage({
 
   return (
     <div className="container mx-auto py-10 px-4 min-h-screen">
-      <ProductsSearchHeader />
+      <Suspense fallback={<ProductsHeaderSkeleton />}>
+        <ProductsSearchHeader />
+      </Suspense>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        <ProductsSidebar categories={categories} />
+        <Suspense fallback={<ProductsSidebarSkeleton />}>
+          <ProductsSidebar categories={categories} />
+        </Suspense>
 
         {/* Product Grid with Suspense */}
         <div className="flex-1">

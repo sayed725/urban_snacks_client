@@ -35,7 +35,7 @@ export default function ProductsSearchHeader() {
         }
         router.push(`/products?${params.toString()}`, { scroll: false })
       }
-    }, )
+    }, 500)
 
     return () => clearTimeout(delayDebounceFn)
   }, [searchTerm, searchParams, router, currentSearch])

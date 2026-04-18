@@ -256,10 +256,10 @@ const HowItWorks = () => {
                   </p>
                 </div>
               </div>
-              <img 
-                 src="https://images.unsplash.com/photo-1599490659213-e2b9527bd087?q=80&w=2070&auto=format&fit=crop" 
-                 alt="Snacks" 
-                 className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-30"
+              <img
+                src="https://images.unsplash.com/photo-1599490659213-e2b9527bd087?q=80&w=2070&auto=format&fit=crop"
+                alt="Snacks"
+                className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-30"
               />
             </motion.div>
           </AnimatePresence>
