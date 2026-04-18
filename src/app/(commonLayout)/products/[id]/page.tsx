@@ -4,36 +4,22 @@ import { useQuery } from "@tanstack/react-query";
 import { getItemById } from "@/services/item.service";
 import { useCartStore } from "@/store/cart.store";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ShoppingCart, ArrowLeft, CheckCircle2, Package, Flame, Sparkles, Weight, Calendar, Minus, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "@/components/shared/ProductCard";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { getItems } from "@/services/item.service";
 import { cn } from "@/lib/utils";
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
-};
-
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
 export default function ProductDetailPage() {
   const { id } = useParams() as { id: string };
   const { addItem } = useCartStore();
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["item", id],
@@ -42,26 +28,74 @@ export default function ProductDetailPage() {
 
   const product = response?.data;
 
-  // New query for related products
+  // Build gallery array from mainImage + image[]
+  const allImages: string[] = product
+    ? [product.mainImage, ...(Array.isArray(product.image) ? product.image : [])].filter(Boolean) as string[]
+    : [];
+
+  // Related products query
   const { data: relatedResponse } = useQuery({
     queryKey: ["related-items", product?.categoryId, id],
     queryFn: () => getItems({ 
       categoryId: product?.categoryId, 
-      limit: 5, // Fetch 5 so we can filter out the current product and still have 4
+      limit: 5,
     }),
     enabled: !!product?.categoryId,
   });
 
   const relatedItems = relatedResponse?.data?.filter((item: any) => item.id !== id).slice(0, 4) || [];
 
+  const nextImage = () => {
+    if (allImages.length > 1) {
+      setActiveImageIndex((prev) => (prev + 1) % allImages.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (allImages.length > 1) {
+      setActiveImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+    }
+  };
+
+  // Loading skeleton
   if (isLoading) {
     return (
-      <div className="container mx-auto py-12 px-4 min-h-screen pt-20 animate-pulse flex flex-col md:flex-row gap-10">
-        <div className="w-full md:w-1/2 h-[500px] bg-muted rounded-2xl"></div>
-        <div className="w-full md:w-1/2 space-y-4">
-          <div className="h-10 bg-muted rounded w-3/4"></div>
-          <div className="h-6 bg-muted rounded w-1/4"></div>
-          <div className="h-40 bg-muted rounded w-full"></div>
+      <div className="min-h-screen">
+        <div className="container mx-auto px-4 pt-8 pb-20">
+          <div className="h-6 bg-muted rounded w-32 mb-8 animate-pulse" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+            <div className="lg:sticky lg:top-24 space-y-4 animate-pulse">
+              <div className="aspect-square bg-muted rounded-3xl" />
+              <div className="flex gap-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="w-20 h-20 bg-muted rounded-xl" />
+                ))}
+              </div>
+            </div>
+            <div className="space-y-6 animate-pulse pt-4">
+              <div className="h-4 bg-muted rounded w-24" />
+              <div className="h-12 bg-muted rounded w-3/4" />
+              <div className="h-5 bg-muted rounded w-2/3" />
+              <div className="h-10 bg-muted rounded w-40" />
+              <div className="grid grid-cols-2 gap-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-20 bg-muted rounded-2xl" />
+                ))}
+              </div>
+              <div className="space-y-2">
+                <div className="h-4 bg-muted rounded w-32" />
+                <div className="h-4 bg-muted rounded w-full" />
+                <div className="h-4 bg-muted rounded w-full" />
+                <div className="h-4 bg-muted rounded w-5/6" />
+              </div>
+              <div className="h-px bg-muted w-full" />
+              <div className="flex items-center gap-4">
+                <div className="h-11 bg-muted rounded-xl w-36" />
+                <div className="h-6 bg-muted rounded w-32 ml-auto" />
+              </div>
+              <div className="h-14 bg-muted rounded-2xl w-full" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -69,166 +103,293 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="container mx-auto py-24 text-center">
-        <h1 className="text-3xl font-bold mb-4">Snack not found</h1>
-        <Button asChild><Link href="/products"><ArrowLeft className="w-4 h-4 mr-2" /> Back to Store</Link></Button>
+      <div className="min-h-screen flex items-center justify-center">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }} 
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center space-y-6"
+        >
+          <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto">
+            <Package className="w-10 h-10 text-muted-foreground" />
+          </div>
+          <h1 className="text-3xl font-bold">Snack not found</h1>
+          <p className="text-muted-foreground">The snack you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+          <Button asChild size="lg" className="rounded-xl">
+            <Link href="/products"><ArrowLeft className="w-4 h-4 mr-2" /> Back to Store</Link>
+          </Button>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <motion.div 
-      initial="initial"
-      animate="animate"
-      variants={staggerContainer}
-      className="container mx-auto py-12 px-4 min-h-screen pt-8"
-    >
-      <motion.div variants={fadeInUp}>
-        <Link href="/products" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Store
-        </Link>
-      </motion.div>
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4 pt-8 pb-20">
+        {/* Breadcrumb */}
+        <motion.div 
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <Link href="/products" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-10 transition-colors group">
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Store
+          </Link>
+        </motion.div>
 
-      <motion.div 
-        variants={fadeInUp}
-        className="bg-card border rounded-3xl overflow-hidden shadow-lg shadow-muted flex flex-col md:flex-row"
-      >
-        {/* Left: Image Container */}
-        <div className="w-full md:w-1/2 relative bg-secondary min-h-[500px] flex flex-col">
-          <div className="flex-1 relative overflow-hidden group">
-            {product.mainImage || (product.image && product.image[0]) ? (
-              <motion.img 
-                key={activeImage || product.mainImage || product.image[0]}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                src={activeImage || product.mainImage || product.image[0]} 
-                alt={product.name} 
-                className="w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-700" 
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground absolute inset-0">No Image Available</div>
-            )}
-            
-            {/* Badges Overlay */}
-            <div className="absolute top-6 left-6 flex flex-col gap-2 z-10">
-              {product.isFeatured && <Badge className="bg-amber-500 text-white border-none py-1.5 px-3 text-sm shadow-md">Best Seller</Badge>}
-              {product.isSpicy && <Badge className="bg-red-500 text-white border-none py-1.5 px-3 text-sm shadow-md">Spicy 🌶️</Badge>}
-            </div>
-          </div>
+        {/* Main Product Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+          
+          {/* Left: Image Gallery — Sticky */}
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="space-y-4 lg:sticky lg:top-24"
+          >
+            {/* Hero Image */}
+            <div className="relative aspect-square rounded-3xl overflow-hidden bg-secondary border border-white/10 shadow-2xl shadow-black/5 group">
+              <AnimatePresence mode="wait">
+                {allImages.length > 0 ? (
+                  <motion.img
+                    key={allImages[activeImageIndex]}
+                    initial={{ opacity: 0, scale: 1.05 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.4 }}
+                    src={allImages[activeImageIndex]}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                    <Package className="w-16 h-16 opacity-30" />
+                  </div>
+                )}
+              </AnimatePresence>
 
-          {/* Optional: Gallery Thumbnails if multiple images exist */}
-          {((product.image && product.image.length > 0) || (product.mainImage && product.image && product.image.length > 0)) && (
-            <div className="p-4 bg-muted/30 border-t flex gap-2 overflow-x-auto overflow-y-hidden scrollbar-hide shrink-0">
-               {[product.mainImage, ...(Array.isArray(product.image) ? product.image : [])].filter(Boolean).map((img, i) => (
-                 <button 
-                  key={i} 
-                  onClick={() => setActiveImage(img as string)}
-                  className={cn(
-                    "relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all shrink-0",
-                    (activeImage || product.mainImage || (product.image && product.image[0])) === img ? "border-primary scale-105 shadow-md" : "border-transparent opacity-70 hover:opacity-100"
-                  )}
-                 >
-                   <img src={img as string} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
-                 </button>
-               ))}
-            </div>
-          )}
-        </div>
-
-        {/* Right: Info */}
-        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col">
-           <motion.div variants={fadeInUp} className="text-primary font-bold tracking-wider mb-2 uppercase text-sm">
-              {product.category?.name}
-           </motion.div>
-           <motion.h1 variants={fadeInUp} className="text-4xl md:text-5xl font-black mb-2 leading-tight">{product.name}</motion.h1>
-           
-           {product.semiTitle && (
-             <motion.p variants={fadeInUp} className="text-xl font-medium text-orange-500/80 mb-4 italic">
-                "{product.semiTitle}"
-             </motion.p>
-           )}
-           
-           <motion.div variants={fadeInUp} className="flex items-center gap-4 mb-6">
-              <span className="text-3xl font-bold text-emerald-600">${product.price}</span>
-              <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
-                 Weight: {product.weight}
-              </span>
-           </motion.div>
-
-           <motion.p variants={fadeInUp} className="text-lg text-muted-foreground mb-8 leading-relaxed">
-             {product.description || "No description provided for this item. But trust us, it's delicious!"}
-           </motion.p>
-
-           <motion.div variants={fadeInUp} className="space-y-4 border-y py-6 mb-8">
-              <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                  <span className="font-medium text-emerald-600">Available In Stock</span>
+              {/* Badges */}
+              <div className="absolute top-2 left-2  z-10">
+                {product.isFeatured && (
+                  <Badge className="bg-amber-500/90 text-white backdrop-blur-md border-none py-1.5 px-3 text-xs font-bold tracking-wider uppercase shadow-lg shadow-amber-500/20">
+                    <Sparkles className="w-3 h-3 mr-1" /> Best Seller
+                  </Badge>
+                )}
               </div>
-           </motion.div>
 
-           <div className="mt-auto">
-              <motion.div variants={fadeInUp} className="flex items-center gap-4 mb-6">
-                 <span className="font-medium text-muted-foreground">Quantity:</span>
-                 <div className="flex items-center border rounded-lg h-12 w-32">
-                    <button 
-                      className="w-10 h-full flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-50"
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      disabled={quantity <= 1}
-                    >-</button>
-                    <div className="flex-1 text-center font-bold">{quantity}</div>
-                    <button 
-                      className="w-10 h-full flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-50"
-                      onClick={() => setQuantity(quantity + 1)}
-                    >+</button>
-                 </div>
-              </motion.div>
+              <div className="absolute top-2 right-2 z-10">
+                   {product.isSpicy && (
+                  <Badge className="bg-red-500/90 text-white backdrop-blur-md border-none py-1.5 px-3 text-xs font-bold tracking-wider uppercase shadow-lg shadow-red-500/20">
+                    <Flame className="w-3 h-3 mr-1" /> Spicy
+                  </Badge>
+                )}
+              </div>
 
-              <motion.div variants={fadeInUp} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              {/* Navigation arrows */}
+              {allImages.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 dark:bg-black/60 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg z-10"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 dark:bg-black/60 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg z-10"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+
+                  {/* Image counter */}
+                  <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full z-10">
+                    {activeImageIndex + 1} / {allImages.length}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Thumbnails */}
+            {allImages.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {allImages.map((img, i) => (
+                  <motion.button
+                    key={i}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActiveImageIndex(i)}
+                    className={cn(
+                      "relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 shadow-sm",
+                      activeImageIndex === i
+                        ? "border-primary ring-2 ring-primary/20 shadow-md"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                    )}
+                  >
+                    <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+                  </motion.button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+
+          {/* Right: Product Info */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+            className="flex flex-col pt-2"
+          >
+            {/* Category */}
+            <div className="text-primary font-bold tracking-widest uppercase text-xs mb-3">
+              {product.category?.name}
+            </div>
+
+            {/* Title */}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black leading-tight mb-3">
+              {product.name}
+            </h1>
+
+            {/* Semi-title */}
+            {product.semiTitle && (
+              <p className="text-lg text-muted-foreground/80 font-medium italic mb-5">
+                &ldquo;{product.semiTitle}&rdquo;
+              </p>
+            )}
+
+            {/* Price */}
+            <div className="flex items-baseline gap-3 mb-6">
+              <span className="text-4xl font-black text-emerald-600">${product.price}</span>
+            </div>
+
+            {/* Product Specs */}
+            <div className="grid grid-cols-2 gap-3 mb-8">
+              <div className="flex items-center gap-3 bg-muted/40 rounded-2xl px-4 py-3 border border-white/10">
+                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Weight className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">Weight</p>
+                  <p className="font-bold text-sm">{product.weight}</p>
+                </div>
+              </div>
+
+              {product.packSize && (
+                <div className="flex items-center gap-3 bg-muted/40 rounded-2xl px-4 py-3 border border-white/10">
+                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <Package className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">Pack Size</p>
+                    <p className="font-bold text-sm">{product.packSize} pcs</p>
+                  </div>
+                </div>
+              )}
+
+              {product.expiryDate && (
+                <div className="flex items-center gap-3 bg-muted/40 rounded-2xl px-4 py-3 border border-white/10">
+                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <Calendar className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">Best Before</p>
+                    <p className="font-bold text-sm">{new Date(product.expiryDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center gap-3 bg-emerald-500/5 rounded-2xl px-4 py-3 border border-emerald-500/10">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                </div>
+                <div>
+                  <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">Status</p>
+                  <p className="font-bold text-sm text-emerald-600">In Stock</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            {(product.description) && (
+              <div className="mb-8">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3">About this snack</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {product.description}
+                </p>
+              </div>
+            )}
+
+            {/* Add to Cart Section */}
+            <div className="mt-auto space-y-5 pt-6 border-t">
+              {/* Quantity Selector */}
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-semibold text-muted-foreground">Quantity</span>
+                <div className="flex items-center bg-muted/50 rounded-xl border overflow-hidden">
+                  <button
+                    className="w-11 h-11 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={quantity <= 1}
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <div className="w-14 h-11 flex items-center justify-center font-bold text-lg border-x">{quantity}</div>
+                  <button
+                    className="w-11 h-11 flex items-center justify-center hover:bg-muted transition-colors"
+                    onClick={() => setQuantity(quantity + 1)}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+                <span className="text-sm text-muted-foreground ml-auto font-medium">
+                  Total: <span className="text-foreground font-bold text-lg">${(product.price * quantity).toFixed(2)}</span>
+                </span>
+              </div>
+
+              {/* Add to Cart Button */}
+              <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
                 <Button 
-                   size="lg" 
-                   className="w-full h-14 text-lg font-bold bg-primary hover:bg-primary/90 text-secondary shadow-lg shadow-primary/20"
-                   onClick={() => addItem(product as any, quantity)}
+                  size="lg"
+                  className="w-full h-10 lg:h-14 text-lg font-bold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-2xl shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 transition-all duration-300 border-0"
+                  onClick={() => addItem(product as any, quantity)}
                 >
-                   <ShoppingCart className="w-5 h-5 mr-3" />
-                   Add to Cart
+                  <ShoppingCart className="w-5 h-5 mr-3" />
+                  Add to Cart — ${(product.price * quantity).toFixed(2)}
                 </Button>
               </motion.div>
-           </div>
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
 
-      {/* Related Products Section */}
-      {relatedItems.length > 0 && (
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mt-24 space-y-12"
-        >
-          <div className="t max-w-2xl ">
-             <SectionHeader
-                title="You Might Also Like"
-                badge="Related Snacks"
-             />
-          </div>
+        {/* Related Products Section */}
+        {relatedItems.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-28 space-y-12"
+          >
+            <div className="max-w-2xl">
+               <SectionHeader
+                  title="You Might Also Like"
+                  badge="Related Snacks"
+               />
+            </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {relatedItems.map((item: any, index: number) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 * index }}
-              >
-                <ProductCard product={item} />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      )}
-    </motion.div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {relatedItems.map((item: any, index: number) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 * index }}
+                >
+                  <ProductCard product={item} />
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
   );
 }

@@ -143,8 +143,8 @@ const AddItemForm = ({ formData, setFormData, categories, onSubmit, isPending, b
       </div>
 
       <div className="pt-2 flex justify-end gap-3 mt-6 pb-2">
-          <Button type="button" variant="outline" onClick={onCancel} className="rounded-xl px-6">Cancel</Button>
-          <Button type="submit" disabled={isPending} className="rounded-xl px-8 bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90">
+          <Button type="button" variant="outline" onClick={onCancel} className="rounded-xl px-6 ">Cancel</Button>
+          <Button type="submit" disabled={isPending} className="rounded-xl px-8 bg-primary text-secondary font-semibold hover:bg-primary/90">
               {isPending ? "Saving..." : buttonText}
           </Button>
       </div>
