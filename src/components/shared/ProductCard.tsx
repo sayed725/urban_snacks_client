@@ -45,18 +45,21 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
         )}
 
         {/* Badges */}
-        <div className="absolute top-4 right-4 flex flex-col gap-2">
-          {product.isFeatured && (
-            <Badge className="bg-amber-500/90 text-white backdrop-blur-md border-none px-3 py-1 text-[10px] font-bold tracking-wider uppercase shadow-lg shadow-amber-500/20">
-              <Sparkles className="w-3 h-3 mr-1" /> Best Seller
-            </Badge>
-          )}
+        <div className="absolute top-2 right-2 ">
           {product.isSpicy && (
             <Badge className="bg-red-500/90 text-white backdrop-blur-md border-none px-3 py-1 text-[10px] font-bold tracking-wider uppercase shadow-lg shadow-red-500/20">
               <Flame className="w-3 h-3 mr-1" /> Spicy
             </Badge>
-          )}
+          )}        
         </div>
+        <div className="absolute top-2 left-2 ">
+        {product.isFeatured && (
+            <Badge className="bg-amber-500/90 text-white backdrop-blur-md border-none px-3 py-1 text-[10px] font-bold tracking-wider uppercase shadow-lg shadow-amber-500/20">
+              <Sparkles className="w-3 h-3 mr-1" /> Best Seller
+            </Badge>
+          )}
+          </div>
+
 
         {/* Quick View Overlay (Visual only for premium feel) */}
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
