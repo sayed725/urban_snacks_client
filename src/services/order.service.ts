@@ -51,10 +51,12 @@ export const createOrder = async (
 };
 
 export const cancelOrder = async (
-  orderId: string
+  orderId: string,
+  cancelReason?: string
 ): Promise<ApiResponse<IOrder>> => {
   return fetchApi(`/api/v1/orders/cancel/${orderId}`, {
     method: "PATCH",
+    body: JSON.stringify({ cancelReason }),
   });
 };
 

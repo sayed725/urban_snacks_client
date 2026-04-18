@@ -18,13 +18,15 @@ import {
 } from "@/components/ui/select";
 import moment from "moment";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useDebounce } from "@/hooks/use-debounce";
 import OrdersLoadingSkeleton from "./_ordersLoadingSkeleton";
 import CreateOrderForm from "@/components/modules/admin/orders/CreateOrderForm";
 import { getItems } from "@/services/item.service";
 import { OrderStatus } from "@/types/order.type";
-import { createOrder, getAllOrders, deleteOrder, changeOrderStatus } from "@/services/order.service";
+import { createOrder, getAllOrders, deleteOrder, changeOrderStatus, cancelOrder } from "@/services/order.service";
 import USPagination from "@/components/shared/USPagination";
 
 
@@ -33,6 +35,9 @@ export default function AdminOrders() {
   const queryClient = useQueryClient();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
 
   // Filters and Pagination State
   const [search, setSearch] = useState("");
@@ -78,6 +83,20 @@ export default function AdminOrders() {
     },
   });
 
+  const cancelMutation = useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason: string }) => cancelOrder(id, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+      toast.success("Order cancelled successfully");
+      setIsCancelDialogOpen(false);
+      setCancellingOrderId(null);
+      setCancelReason("");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to cancel order");
+    },
+  });
+
   const createMutation = useMutation({
     mutationFn: createOrder,
     onSuccess: () => {
@@ -106,6 +125,11 @@ export default function AdminOrders() {
   };
 
   const handleStatusChange = (orderId: string, newStatus: string) => {
+    if (newStatus === "CANCELLED") {
+      setCancellingOrderId(orderId);
+      setIsCancelDialogOpen(true);
+      return;
+    }
     statusMutation.mutate({ id: orderId, status: newStatus as OrderStatus });
   };
 
@@ -355,6 +379,73 @@ export default function AdminOrders() {
         </div>
       )}
 
+      {/* Cancel Reason Dialog */}
+      <Dialog 
+        open={isCancelDialogOpen} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsCancelDialogOpen(false);
+            setCancellingOrderId(null);
+            setCancelReason("");
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-destructive flex items-center gap-2">
+              <XCircle className="h-5 w-5" />
+              Cancel Order
+            </DialogTitle>
+          </DialogHeader>
+          <DialogDescription>
+            Are you sure you want to cancel this order? This action cannot be undone.
+          </DialogDescription>
+            
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reason">Reason for cancellation</Label>
+              <Textarea
+                id="reason"
+                placeholder="Please enter the reason for cancelling this order..."
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                className="h-32"
+              />
+              <p className="text-xs text-muted-foreground">
+                This reason will be visible to the customer and stored for order history.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+                variant="outline" 
+                onClick={() => {
+                    setIsCancelDialogOpen(false);
+                    setCancellingOrderId(null);
+                    setCancelReason("");
+                }}
+            >
+              Back
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => {
+                if (!cancelReason.trim()) {
+                  toast.error("Please provide a reason for cancellation");
+                  return;
+                }
+                if (cancellingOrderId) {
+                  cancelMutation.mutate({ id: cancellingOrderId, reason: cancelReason });
+                }
+              }}
+              disabled={cancelMutation.isPending}
+            >
+              {cancelMutation.isPending ? "Cancelling..." : "Confirm Cancellation"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
@@ -381,6 +472,12 @@ export default function AdminOrders() {
                         <div className="mt-4">
                             <p className="font-semibold text-muted-foreground">Notes:</p>
                             <p className="bg-muted p-2 rounded-md italic">{selectedOrder.additionalInfo}</p>
+                        </div>
+                      )}
+                      {selectedOrder.cancelReason && (
+                        <div className="mt-4">
+                            <p className="font-semibold text-destructive">Cancellation Reason:</p>
+                            <p className="bg-red-50 dark:bg-red-900/10 p-2 rounded-md italic text-destructive border border-red-100 dark:border-red-900/20">{selectedOrder.cancelReason}</p>
                         </div>
                       )}
                   </div>
