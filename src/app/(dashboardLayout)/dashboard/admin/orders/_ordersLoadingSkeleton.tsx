@@ -37,8 +37,8 @@ const OrdersLoadingSkeleton = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <tr key={i}>
+              {[1, 2, 3, 4, 5, 6 ,7 ,8, 9 ,10].map((i) => (
+                <tr key={i}>  
                   <td className="px-6 py-4">
                     <div className="space-y-2">
                       <Skeleton className="h-5 w-24 font-semibold" />

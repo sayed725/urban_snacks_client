@@ -50,8 +50,8 @@ export default function CartPage() {
             {items.map((item) => (
               <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center p-4 bg-card border rounded-2xl gap-4 sm:gap-6 shadow-sm">
                 <div className="w-24 h-24 bg-secondary rounded-xl overflow-hidden shrink-0">
-                  {item.image ? (
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  {item.mainImage || item.image ? (
+                    <img src={item.mainImage || (Array.isArray(item.image) ? item.image[0] : item.image as string)} alt={item.name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground text-xs">No Image</div>
                   )}

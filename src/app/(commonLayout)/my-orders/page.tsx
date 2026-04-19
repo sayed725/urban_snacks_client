@@ -15,7 +15,7 @@ import AddReviewDialog from "@/components/modules/user/review/AddReviewDialog";
 import { cn } from "@/lib/utils";
 import { createCheckoutSession } from "@/services/payment.service";
 
-import { Truck, CreditCard } from "lucide-react";
+import { Truck, CreditCard, Ticket } from "lucide-react";
 import { cancelOrder, getMyOrders, updatePaymentMethod } from "@/services/order.service";
 import { OrderStatus } from "@/types/order.type";
 import { getReviews } from "@/services/review.service";
@@ -253,6 +253,13 @@ export default function MyOrdersPage() {
                                  {order.paymentStatus}
                               </span>
                            </div>
+
+                           {order.discountAmount > 0 && (
+                               <div className="flex items-center gap-2 mb-2">
+                                   <Ticket className="w-4 h-4 text-emerald-500" />
+                                   <span className="text-sm font-bold text-emerald-600">Saved ${order.discountAmount.toFixed(2)}</span>
+                               </div>
+                           )}
 
                            <Button asChild className="w-full bg-primary/10 text-primary dark:text-white hover:bg-primary/20 font-bold border-primary/20">
                               <Link href={`/my-orders/${order.id}`}>View Details</Link>

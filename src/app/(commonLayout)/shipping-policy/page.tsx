@@ -124,14 +124,14 @@ const ShippingPolicyPage = () => {
                         <div className="flex items-center gap-3 bg-white shadow-sm border p-4 rounded-2xl">
                             <Phone className="text-amber-500" size={20} />
                             <div>
-                                <p className="text-xs text-muted-foreground font-semibold uppercase">Call Us</p>
+                                <p className="text-xs text-muted-foreground font-semibold text-start uppercase">Call Us</p>
                                 <p className="font-bold">01627142598</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3 bg-white shadow-sm border p-4 rounded-2xl">
                             <Mail className="text-amber-500" size={20} />
                             <div>
-                                <p className="text-xs text-muted-foreground font-semibold uppercase">Email Us</p>
+                                <p className="text-xs text-muted-foreground font-semibold text-start uppercase">Email Us</p>
                                 <p className="font-bold">abusayedkhan.pro@gmail.com</p>
                             </div>
                         </div>

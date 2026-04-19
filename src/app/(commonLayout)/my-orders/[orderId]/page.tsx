@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, CreditCard, Box, PackageCheck, Star, MessageSquare, Pencil, AlertCircle, Clock } from "lucide-react";
+import { ArrowLeft, MapPin, CreditCard, Box, PackageCheck, Star, MessageSquare, Pencil, AlertCircle, Clock, Ticket } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -191,15 +191,21 @@ export default function OrderDetailPage() {
                            <div className="pt-4 border-t space-y-2 text-muted-foreground">
                               <div className="flex justify-between">
                                  <span>Subtotal</span>
-                                 <span>${order.totalAmount}</span>
+                                 <span>${(order.totalAmount + (order.discountAmount || 0)).toFixed(2)}</span>
                               </div>
+                              {order.discountAmount && order.discountAmount > 0 ? (
+                                 <div className="flex justify-between text-emerald-600">
+                                    <span className="flex items-center gap-1"><Ticket className="w-4 h-4"/> Coupon Discount</span>
+                                    <span>-${order.discountAmount.toFixed(2)}</span>
+                                 </div>
+                              ) : null}
                               <div className="flex justify-between">
                                  <span>Shipping</span>
                                  <span className="text-emerald-600 font-medium">Free</span>
                               </div>
                               <div className="flex justify-between text-foreground font-bold text-base pt-2 border-t">
                                  <span>Total Amount</span>
-                                 <span>${order.totalAmount}</span>
+                                 <span>${order.totalAmount.toFixed(2)}</span>
                               </div>
                            </div>
 

@@ -1,4 +1,5 @@
 import { IReview } from "./review.type";
+import { ICoupon } from "./coupon.type";
 
 
 export enum OrderStatus {
@@ -44,6 +45,9 @@ export interface IOrder {
   paymentMethod: string;
   additionalInfo?: string | null;
   cancelReason?: string | null;
+  discountAmount?: number;
+  couponId?: string | null;
+  coupon?: ICoupon | null;
   createdAt: string;
   updatedAt: string;
   orderItems: IOrderItem[];
@@ -74,6 +78,7 @@ export interface ICreateOrderPayload {
   paymentMethod: string;
   paymentStatus?: string;
   additionalInfo?: string;
+  couponCode?: string;
   orderItems: {
     itemId: string;
     quantity: number;

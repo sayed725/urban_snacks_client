@@ -36,6 +36,7 @@ import {
   Users,
   Box,
   MessageSquare,
+  Ticket,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -94,6 +95,12 @@ export function AppSidebar() {
       title: "ManageReviews",
       href: "/dashboard/admin/reviews",
       icon: MessageSquare,
+      roles: ["ADMIN"],
+    },
+    {
+      title: "Coupons",
+      href: "/dashboard/admin/coupons",
+      icon: Ticket,
       roles: ["ADMIN"],
     }
   ].filter((item) => item.roles.includes(role as string));

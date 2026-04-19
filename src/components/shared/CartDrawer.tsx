@@ -111,8 +111,8 @@ export function CartDrawer({ className, isMobile = false }: CartDrawerProps) {
             items.map((item) => (
               <div key={item.id} className="flex items-center gap-4 border-b pb-4 last:border-0 last:pb-0">
                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-secondary shrink-0">
-                  {item.image ? (
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  {item.mainImage || item.image ? (
+                    <img src={item.mainImage || (Array.isArray(item.image) ? item.image[0] : item.image as string)} alt={item.name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-muted text-xs">No img</div>
                   )}

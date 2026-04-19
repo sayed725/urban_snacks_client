@@ -36,7 +36,6 @@ import {
 } from "lucide-react";
 import { ModeToggle } from "@/components/layout/ModeToggle";
 import { authClient } from "@/lib/auth-client";
-import { motion, AnimatePresence } from "framer-motion";
 
 const menuItems = [
   { title: "Home", href: "/", icon: Home },
@@ -81,10 +80,7 @@ export default function Navbar() {
   const dashboardHref = userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders";
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+    <nav
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-500 border-b",
         isScrolled
@@ -131,10 +127,8 @@ export default function Navbar() {
                 >
                   <span className="relative z-10">{item.title}</span>
                   {isActive && (
-                    <motion.div
-                      layoutId="navActiveIndicator"
+                    <div
                       className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/15 rounded-xl"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
                   {!isActive && (
@@ -157,10 +151,8 @@ export default function Navbar() {
               >
                 <span className="relative z-10">My Orders</span>
                 {pathname.startsWith("/my-orders") && (
-                  <motion.div
-                    layoutId="navActiveIndicator"
+                  <div
                     className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/15 rounded-xl"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
                 {!pathname.startsWith("/my-orders") && (
@@ -386,6 +378,6 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 }

@@ -6,7 +6,8 @@ export interface IItem {
   id: string;
   name: string;
   price: number;
-  image?: string | null;
+  mainImage?: string | null;
+  image?: string[] | string | null;
   weight?: string | null;
   category?: { id: string; name: string } | null;
 }
