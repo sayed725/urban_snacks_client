@@ -122,7 +122,7 @@ const FeatureReviewsClient = ({ reviews }: { reviews: IReview[] }) => {
           whileInView="visible"
           viewport={{ once: true, margin: "-10%" }}
           variants={containerVariants}
-          className="space-y-20"
+          className="space-y-10"
         >
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto px-4">

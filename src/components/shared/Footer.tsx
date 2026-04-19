@@ -1,165 +1,235 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  FaEnvelope, 
-  FaMapMarkerAlt, 
-  FaPhoneAlt, 
-  FaAngleRight, 
-  FaChevronUp 
+import {
+  Mail,
+  MapPin,
+  Phone,
+  ArrowRight,
+  Heart,
+  ExternalLink,
+} from "lucide-react";
+import {
+  FaFacebookF,
+  FaGithub,
+  FaLinkedinIn,
 } from "react-icons/fa";
+import { motion } from "framer-motion";
+
+const footerLinks = [
+  { title: "Privacy Policy", href: "/privacy-policy" },
+  { title: "Shipping Policy", href: "/shipping-policy" },
+  { title: "Terms & Conditions", href: "/terms-conditions" },
+];
+
+const socialLinks = [
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/abu.ssayed.khan.2024",
+    icon: FaFacebookF,
+    color: "hover:bg-blue-500 hover:border-blue-500",
+  },
+  {
+    name: "GitHub",
+    href: "https://github.com/sayed725",
+    icon: FaGithub,
+    color: "hover:bg-slate-800 dark:hover:bg-white hover:border-slate-800 dark:hover:border-white",
+    textColor: "dark:group-hover:text-slate-900",
+  },
+  {
+    name: "LinkedIn",
+    href: "https://www.linkedin.com/in/abu-sayed-khan-922801317",
+    icon: FaLinkedinIn,
+    color: "hover:bg-blue-600 hover:border-blue-600",
+  },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
 
 export default function Footer() {
   return (
-    <footer className="pt-12 pb-3 bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-t border-white/20 dark:border-white/10 relative overflow-hidden text-slate-800 dark:text-slate-200">
-      {/* Auth-style Background Glow Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-orange-600/5 pointer-events-none" />
-      
+    <footer className="relative overflow-hidden bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
+      {/* Ambient gradient decorations */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-orange-500/5 rounded-full blur-3xl" />
+      </div>
+
       {/* Main footer content */}
-      <div className="mx-auto w-11/12 px-0 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-start lg:items-center gap-10 lg:gap-16">
-          {/* Logo + Brand */}
-          <div>
-            <Link href="/" className="flex items-center gap-3 mb-6">
-              <img
-                src="/assets/urban_snaks_logo.png"
-                alt="Urban Snacks Logo"
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded"
-              />
-            <span className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-10%" }}
+        variants={containerVariants}
+        className="relative z-10 mx-auto w-11/12 pt-10 pb-2"
+      >
+        <div className="flex flex-col md:flex-row justify-between gap-12 lg:gap-8">
+          {/* Logo + Brand + Newsletter */}
+          <motion.div variants={itemVariants} className="lg:col-span-5 space-y-6">
+            <Link href="/" className="inline-flex items-center gap-3 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+                <img
+                  src="/assets/urban_snaks_logo.png"
+                  alt="Urban Snacks Logo"
+                  className="w-11 h-11 rounded-lg relative z-10 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+              <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
                 Urban Snacks
               </span>
             </Link>
+
             <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
-              Urban Snacks is your go-to destination for premium quality treats. We provide the best snacks to keep your cravings satisfied.
+              Your go-to destination for premium quality treats. We provide the best snacks to keep your cravings satisfied, delivered right to your doorstep.
             </p>
-          </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-xl font-semibold mb-6 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">Quick Links</h3>
-            <ul className="space-y-3 text-muted-foreground flex flex-wrap gap-5">
-              <li>
-                <Link 
-                  href="/privacy-policy" 
-                  className="hover:text-primary transition-colors"
-                >
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/shipping-policy" 
-                  className="hover:text-primary transition-colors"
-                >
-                 Shipping Policy
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/terms-conditions" 
-                  className="hover:text-primary transition-colors"
-                >
-                 Terms & Conditions
-                </Link>
-              </li>
-            </ul>
-
-            {/* Newsletter signup */}
-            <div className="mt-10">
-              <h4 className="text-lg font-medium mb-4 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">Stay Updated</h4>
-              <form className="flex flex-col sm:flex-row gap-3 max-w-md">
-                <Input
-                  type="email"
-                  placeholder="Your email address"
-                  required
-                  className="bg-transparent border-gray-500 focus:border-primary focus:ring-primary/30"
-                />
-                <Button 
+            {/* Newsletter */}
+            <div className="pt-2">
+              <h4 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
+                Stay Updated
+              </h4>
+              <form className="flex gap-2 max-w-sm">
+                <div className="relative flex-1">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    type="email"
+                    placeholder="Your email address"
+                    required
+                    className="pl-10 h-11 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl focus:border-orange-400 focus:ring-orange-400/20 transition-all"
+                  />
+                </div>
+                <Button
                   type="submit"
-                  className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold px-6 hover:scale-105 border-0 whitespace-nowrap"
+                  className="h-11 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-md hover:shadow-orange-500/25 transition-all duration-300 font-bold px-5 hover:scale-105 border-0"
                 >
-                  Subscribe <FaAngleRight className="ml-2" />
+                  <ArrowRight className="w-4 h-4" />
                 </Button>
               </form>
             </div>
-          </div>
+          </motion.div>
+
+          {/* Quick Links */}
+          <motion.div variants={itemVariants} className="lg:col-span-3">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-5">
+              Quick Links
+            </h3>
+            <ul className="space-y-3">
+              {footerLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-200"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-300 dark:bg-orange-700 group-hover:bg-orange-500 transition-colors" />
+                    {link.title}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link
+                  href="/products"
+                  className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-200"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-300 dark:bg-orange-700 group-hover:bg-orange-500 transition-colors" />
+                  All Products
+                </Link>
+              </li>
+            </ul>
+          </motion.div>
 
           {/* Contact Info */}
-          <div>
-            <h3 className="text-xl font-semibold mb-6 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">Contact</h3>
-            <div className="space-y-4 text-muted-foreground">
-              <p className="flex items-start">
-                <FaMapMarkerAlt className="mr-3 mt-1 text-primary shrink-0" />
-                55 Main Street, 2nd block,<br className="sm:hidden" /> New York City
-              </p>
-              <p className="flex items-center">
-                <FaEnvelope className="mr-3 text-primary shrink-0" />
-                abusayedkhan.pro@gmail.com
-              </p>
-              <p className="flex items-center">
-                <FaPhoneAlt className="mr-3 text-primary shrink-0" />
-                +880 1627142598
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+          <motion.div variants={itemVariants} className="lg:col-span-4">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-5">
+              Get In Touch
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 group">
+                <div className="mt-0.5 w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center shrink-0 group-hover:bg-orange-200 dark:group-hover:bg-orange-900/40 transition-colors">
+                  <MapPin className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    55 Main Street, 2nd block,<br />New York City
+                  </p>
+                </div>
+              </div>
 
-      {/* Back to top + Copyright */}
-      <div className="mt-16 border-t border-gray-800 pt-3">
-        <div className="w-11/12 mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-muted-foreground text-sm">
-            <p>
-              © {new Date().getFullYear()} <span className="text-primary font-semibold">Urban Snacks</span>. 
-              All rights reserved.
+              <div className="flex items-center gap-3 group">
+                <div className="w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center shrink-0 group-hover:bg-orange-200 dark:group-hover:bg-orange-900/40 transition-colors">
+                  <Mail className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                </div>
+                <a
+                  href="mailto:abusayedkhan.pro@gmail.com"
+                  className="text-sm text-muted-foreground hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                >
+                  abusayedkhan.pro@gmail.com
+                </a>
+              </div>
+
+              <div className="flex items-center gap-3 group">
+                <div className="w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center shrink-0 group-hover:bg-orange-200 dark:group-hover:bg-orange-900/40 transition-colors">
+                  <Phone className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                </div>
+                <a
+                  href="tel:+8801627142598"
+                  className="text-sm text-muted-foreground hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                >
+                  +880 1627142598
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Bottom Bar */}
+        <motion.div
+          variants={itemVariants}
+          className="mt-6 pt-2 border-t border-slate-200 dark:border-slate-800"
+        >
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-5">
+            <p className="text-sm text-muted-foreground flex items-center gap-1 flex-wrap justify-center">
+              © {new Date().getFullYear()}
+              <span className="font-bold bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+                Urban Snacks
+              </span>
+              . All rights reserved.
             </p>
 
-            <div className="flex gap-6">
-              <a 
-                href="https://www.facebook.com/abu.ssayed.khan.2024" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors"
-              >
-                Facebook
-              </a>
-              <a 
-                href="https://github.com/sayed725" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors"
-              >
-                GitHub
-              </a>
-              <a 
-                href="https://www.linkedin.com/in/abu-sayed-khan-922801317" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors"
-              >
-                LinkedIn
-              </a>
+            {/* Social Links */}
+            <div className="flex items-center gap-3">
+              {socialLinks.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.name}
+                    className={`group w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all duration-300 hover:text-white hover:shadow-lg hover:scale-110 ${social.color}`}
+                  >
+                    <Icon className={`w-4 h-4 text-muted-foreground group-hover:text-white transition-colors ${social.textColor || ""}`} />
+                  </a>
+                );
+              })}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Back to top button */}
-      {/* <div className="fixed bottom-8 right-8 z-50 md:bottom-12 md:right-12">
-        <a 
-          href="#top" 
-          className="block"
-          aria-label="Back to top"
-        >
-          <Button 
-            size="icon" 
-            className="rounded-full bg-[#1cb89e] hover:bg-white text-black shadow-lg hover:shadow-xl transition-all duration-300 h-12 w-12"
-          >
-            <FaChevronUp className="h-5 w-5" />
-          </Button>
-        </a>
-      </div> */}
+        </motion.div>
+      </motion.div>
     </footer>
   );
 }

@@ -26,7 +26,7 @@ const itemVariants = {
 
 const FeatureCard = () => {
   return (
-    <section className="bg-secondary text-secondary-foreground py-10 border-y overflow-hidden">
+    <section className="bg-secondary text-secondary-foreground py-5 border-y overflow-hidden">
       <div className="container mx-auto">
         <motion.div
           variants={containerVariants}

@@ -23,13 +23,24 @@ import {
   SheetTrigger,
   SheetDescription,
 } from "@/components/ui/sheet";
-import { Menu, LogOut, LayoutDashboard, Truck } from "lucide-react";
+import {
+  Menu,
+  LogOut,
+  LayoutDashboard,
+  Truck,
+  Home,
+  Package,
+  ClipboardList,
+  ChevronRight,
+  X,
+} from "lucide-react";
 import { ModeToggle } from "@/components/layout/ModeToggle";
 import { authClient } from "@/lib/auth-client";
+import { motion, AnimatePresence } from "framer-motion";
 
 const menuItems = [
-  { title: "Home", href: "/" },
-  { title: "Products", href: "/products" },
+  { title: "Home", href: "/", icon: Home },
+  { title: "Products", href: "/products", icon: Package },
 ];
 
 export default function Navbar() {
@@ -50,7 +61,7 @@ export default function Navbar() {
 
   const {
     data: session,
-    isPending, // loading state
+    isPending,
   } = authClient.useSession();
 
   const isAuthenticated = !!session?.user;
@@ -69,270 +80,312 @@ export default function Navbar() {
 
   const dashboardHref = userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders";
 
-
   return (
-    <nav 
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300 border-b",
-        isScrolled 
-          ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-white/20 dark:border-white/10 shadow-2xl py-3 lg:py-3" 
+        "sticky top-0 z-50 w-full transition-all duration-500 border-b",
+        isScrolled
+          ? "bg-white/80 dark:bg-black/70 backdrop-blur-2xl border-slate-200/50 dark:border-white/10 shadow-lg shadow-black/[0.03] dark:shadow-black/20 py-2.5 lg:py-2.5"
           : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-transparent py-3 lg:py-3"
       )}
     >
-      {/* Auth-style Background Glow Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-orange-600/5 pointer-events-none" />
-      
-      <div className=" mx-auto w-11/12  px-0 relative z-10">
+      {/* Subtle ambient gradient */}
+      <div className="absolute inset-0 bg-gradient-to-r from-amber-500/[0.03] via-transparent to-orange-500/[0.03] pointer-events-none" />
+
+      <div className="mx-auto w-11/12 px-0 relative z-10">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div
-              className="relative"
-            >
-              <div className="absolute inset-0 bg-orange-500 rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
               <img
                 src="/assets/urban_snaks_logo.png"
                 alt="Urban Snacks Logo"
-                className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm relative z-10 drop-shadow-sm"
+                className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg relative z-10 drop-shadow-sm transition-transform duration-300 group-hover:scale-105"
               />
             </div>
-            <span className="text-2xl font-bold tracking-tight sm:text-3xl bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">
-              Urban Snacks
-            </span>
+            <div className="flex flex-col">
+              <span className="text-xl font-black tracking-tight sm:text-2xl bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+                Urban Snacks
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-2 flex-1 justify-center">
-            {menuItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "relative text-sm font-semibold transition-colors px-4 py-2 rounded-full group",
-                  pathname === item.href
-                    ? "text-orange-600 dark:text-orange-400"
-                    : "text-slate-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400",
-                )}
-              >
-                <span className="relative z-10">{item.title}</span>
-                {pathname === item.href && (
-                  <div
-                    className="absolute inset-0 bg-orange-100 dark:bg-orange-500/10 rounded-full z-0"
-                  />
-                )}
-              </Link>
-            ))}
-            {isPending || !mounted ? (
-              <div className="h-8 w-24 bg-slate-200/50 dark:bg-slate-800/50 rounded-full animate-pulse ml-2" />
-            ) : isAuthenticated && userRole !== "ADMIN" && (
+          <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+            {menuItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
                 <Link
-                  href="/my-orders"
+                  key={item.href}
+                  href={item.href}
                   className={cn(
-                    "relative text-sm font-semibold transition-colors px-4 py-2 rounded-full group",
-                    pathname.startsWith("/my-orders")
+                    "relative text-sm font-semibold transition-all duration-300 px-5 py-2.5 rounded-xl group",
+                    isActive
                       ? "text-orange-600 dark:text-orange-400"
-                      : "text-slate-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400",
+                      : "text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400",
                   )}
                 >
-                  <span className="relative z-10">My Orders</span>
-                  {pathname.startsWith("/my-orders") && (
-                    <div
-                      className="absolute inset-0 bg-orange-100 dark:bg-orange-500/10 rounded-full z-0"
+                  <span className="relative z-10">{item.title}</span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="navActiveIndicator"
+                      className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/15 rounded-xl"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
+                  {!isActive && (
+                    <div className="absolute inset-0 bg-transparent group-hover:bg-slate-100/80 dark:group-hover:bg-white/5 rounded-xl transition-colors duration-300" />
+                  )}
                 </Link>
+              );
+            })}
+            {isPending || !mounted ? (
+              <div className="h-8 w-24 bg-slate-200/50 dark:bg-slate-800/50 rounded-xl animate-pulse ml-2" />
+            ) : isAuthenticated && userRole !== "ADMIN" && (
+              <Link
+                href="/my-orders"
+                className={cn(
+                  "relative text-sm font-semibold transition-all duration-300 px-5 py-2.5 rounded-xl group",
+                  pathname.startsWith("/my-orders")
+                    ? "text-orange-600 dark:text-orange-400"
+                    : "text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400",
+                )}
+              >
+                <span className="relative z-10">My Orders</span>
+                {pathname.startsWith("/my-orders") && (
+                  <motion.div
+                    layoutId="navActiveIndicator"
+                    className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/15 rounded-xl"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                {!pathname.startsWith("/my-orders") && (
+                  <div className="absolute inset-0 bg-transparent group-hover:bg-slate-100/80 dark:group-hover:bg-white/5 rounded-xl transition-colors duration-300" />
+                )}
+              </Link>
             )}
           </div>
 
           {/* Desktop Right Side */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
             <ModeToggle />
-
-
-            {/* Cart */}
             <CartDrawer isMobile={false} />
 
-
             {isPending || !mounted ? (
-              <div className="flex items-center gap-2">
-                 <div className="h-10 w-10 bg-slate-200/50 dark:bg-slate-800/50 rounded-full animate-pulse" />
-              </div>
+              <div className="h-10 w-10 bg-slate-200/50 dark:bg-slate-800/50 rounded-full animate-pulse" />
             ) : isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <div>
                     <Button
                       variant="ghost"
-                      className="relative h-10 w-10 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm p-0 hover:border-orange-300 dark:hover:border-orange-500/50 transition-colors"
+                      className="relative h-10 w-10 rounded-full p-0 ring-2 ring-slate-200/80 dark:ring-slate-700 hover:ring-orange-400 dark:hover:ring-orange-500/50 transition-all duration-300"
                     >
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-primary text-secondary font-bold">
-                        {userInitial}
-                      </AvatarFallback>
-                    </Avatar>
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white font-bold text-sm">
+                          {userInitial}
+                        </AvatarFallback>
+                      </Avatar>
                     </Button>
                   </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 mt-2 rounded-xl border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-black/90 backdrop-blur-xl">
-                  <DropdownMenuLabel className="font-normal border-b dark:border-slate-800 pb-2 mb-1">
-                     <p className="font-semibold">{session?.user?.name || "User"}</p>
-                     <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-60 mt-2 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl p-2 shadow-xl"
+                >
+                  <DropdownMenuLabel className="font-normal px-3 py-3 border-b dark:border-slate-800 mb-1">
+                    <p className="font-bold text-sm">{session?.user?.name || "User"}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{session?.user?.email}</p>
                   </DropdownMenuLabel>
-                  
-                  <DropdownMenuItem asChild className="cursor-pointer">
+
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-xl px-3 py-2.5 focus:bg-orange-50 dark:focus:bg-orange-950/30">
                     <Link href={dashboardHref}>
                       {userRole === "ADMIN" ? (
-                         <><LayoutDashboard className="mr-2 h-4 w-4" /> Admin Dashboard</>
+                        <><LayoutDashboard className="mr-2.5 h-4 w-4 text-orange-500" /> Admin Dashboard</>
                       ) : (
-                         <><Truck className="mr-2 h-4 w-4" /> Track Orders</>
+                        <><Truck className="mr-2.5 h-4 w-4 text-orange-500" /> Track Orders</>
                       )}
                     </Link>
                   </DropdownMenuItem>
-                  
-                  <DropdownMenuSeparator />
+
+                  <DropdownMenuSeparator className="my-1" />
                   <DropdownMenuItem
-                    className="text-red-600 focus:bg-red-50 dark:focus:bg-red-950 cursor-pointer"
+                    className="text-red-600 focus:bg-red-50 dark:focus:bg-red-950/30 cursor-pointer rounded-xl px-3 py-2.5"
                     onClick={handleLogout}
                   >
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-2.5 h-4 w-4" />
                     Log Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold text-md px-6 hover:scale-105 border-0">
+              <Button asChild className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-bold text-sm px-6 h-10 hover:scale-105 border-0">
                 <Link href="/login">Login</Link>
               </Button>
             )}
           </div>
 
           {/* Mobile Menu Trigger */}
-          <div className="flex items-center gap-3 lg:hidden">
+          <div className="flex items-center gap-2.5 lg:hidden">
             <CartDrawer isMobile={true} />
             <ModeToggle />
-            
+
             {mounted && (
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="border border-slate-200 dark:border-slate-800 shadow-sm rounded-full bg-white/50 dark:bg-black/50">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-black/50 hover:bg-orange-50 dark:hover:bg-orange-950/30 hover:border-orange-300 dark:hover:border-orange-700 transition-all duration-300"
+                  >
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[85vw] sm:w-[400px]">
-                <SheetHeader className="mb-8 border-b pb-4 text-left">
-                  <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
-                  <SheetDescription className="sr-only">Access navigation links, cart, and account settings.</SheetDescription>
-                  <Link
-                    href="/"
-                    className="flex items-center gap-3"
-                    onClick={closeMobileMenu}
-                  >
-                    <img
-                      src="/assets/urban_snaks_logo.png"
-                      alt="Logo"
-                      className="h-8 w-8 rounded-sm"
-                    />
-                    <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
-                      Urban Snacks
-                    </span>
-                  </Link>
-                </SheetHeader>
-
-                <nav className="flex flex-col gap-6 px-2">
-                  {menuItems.map((item) => (
+                <SheetContent side="right" className="w-[85vw] sm:w-[400px] p-0 flex flex-col">
+                  <SheetHeader className="p-6 border-b text-left">
+                    <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
+                    <SheetDescription className="sr-only">Access navigation links, cart, and account settings.</SheetDescription>
                     <Link
-                      key={item.href}
-                      href={item.href}
+                      href="/"
+                      className="flex items-center gap-2.5"
                       onClick={closeMobileMenu}
-                      className={cn(
-                        "text-lg font-medium transition-colors",
-                        pathname === item.href
-                          ? "text-primary font-bold"
-                          : "text-foreground hover:text-primary",
-                      )}
                     >
-                      {item.title}
+                      <img
+                        src="/assets/urban_snaks_logo.png"
+                        alt="Logo"
+                        className="h-9 w-9 rounded-lg"
+                      />
+                      <span className="text-xl font-black tracking-tight bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+                        Urban Snacks
+                      </span>
                     </Link>
-                  ))}
-                  
-                  {isPending || !mounted ? (
-                    <div className="h-6 w-28 bg-slate-200/50 dark:bg-slate-800/50 rounded-md animate-pulse" />
-                  ) : isAuthenticated && userRole !== "ADMIN" && (
-                      <Link
-                        href="/my-orders"
-                        onClick={closeMobileMenu}
-                        className={cn(
-                          "text-lg font-medium transition-colors",
-                          pathname.startsWith("/my-orders")
-                            ? "text-primary font-bold"
-                            : "text-foreground hover:text-primary",
-                        )}
-                      >
-                        My Orders
-                      </Link>
-                  )}
+                  </SheetHeader>
 
-                  <div className="border-t pt-6 mt-2 space-y-4">
-                    {isPending || !mounted ? (
-                      <div className="space-y-4">
-                        <div className="h-12 w-full bg-slate-200/50 dark:bg-slate-800/50 rounded-lg animate-pulse" />
-                        <div className="flex items-center gap-3 px-3 pt-4">
-                           <div className="h-10 w-10 bg-slate-200/50 dark:bg-slate-800/50 rounded-full animate-pulse" />
-                           <div className="space-y-2 flex-1">
+                  <nav className="flex flex-col flex-1 p-4">
+                    {/* Nav links */}
+                    <div className="space-y-1">
+                      {menuItems.map((item) => {
+                        const IconComp = item.icon;
+                        const isActive = pathname === item.href;
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={closeMobileMenu}
+                            className={cn(
+                              "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 group",
+                              isActive
+                                ? "bg-orange-500/10 text-orange-600 dark:text-orange-400 font-bold"
+                                : "text-foreground hover:bg-muted"
+                            )}
+                          >
+                            <IconComp className={cn(
+                              "h-5 w-5 transition-colors",
+                              isActive ? "text-orange-500" : "text-muted-foreground group-hover:text-orange-500"
+                            )} />
+                            <span className="text-base font-medium">{item.title}</span>
+                            <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground/50" />
+                          </Link>
+                        );
+                      })}
+
+                      {isPending || !mounted ? (
+                        <div className="h-12 w-full bg-slate-200/50 dark:bg-slate-800/50 rounded-xl animate-pulse" />
+                      ) : isAuthenticated && userRole !== "ADMIN" && (
+                        <Link
+                          href="/my-orders"
+                          onClick={closeMobileMenu}
+                          className={cn(
+                            "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 group",
+                            pathname.startsWith("/my-orders")
+                              ? "bg-orange-500/10 text-orange-600 dark:text-orange-400 font-bold"
+                              : "text-foreground hover:bg-muted"
+                          )}
+                        >
+                          <ClipboardList className={cn(
+                            "h-5 w-5 transition-colors",
+                            pathname.startsWith("/my-orders") ? "text-orange-500" : "text-muted-foreground group-hover:text-orange-500"
+                          )} />
+                          <span className="text-base font-medium">My Orders</span>
+                          <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground/50" />
+                        </Link>
+                      )}
+                    </div>
+
+                    {/* Divider + Account Section */}
+                    <div className="mt-auto border-t pt-4 space-y-3">
+                      {isPending || !mounted ? (
+                        <div className="space-y-3">
+                          <div className="h-14 w-full bg-slate-200/50 dark:bg-slate-800/50 rounded-xl animate-pulse" />
+                          <div className="flex items-center gap-3 px-3 pt-2">
+                            <div className="h-10 w-10 bg-slate-200/50 dark:bg-slate-800/50 rounded-full animate-pulse" />
+                            <div className="space-y-2 flex-1">
                               <div className="h-4 w-24 bg-slate-200/50 dark:bg-slate-800/50 rounded animate-pulse" />
                               <div className="h-3 w-32 bg-slate-200/50 dark:bg-slate-800/50 rounded animate-pulse" />
-                           </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    ) : isAuthenticated ? (
-                      <>
-                        <Link
-                          href={dashboardHref}
-                          onClick={closeMobileMenu}
-                          className="flex items-center gap-3 text-lg font-medium p-3 rounded-lg bg-muted/50 hover:bg-muted"
-                        >
-                          {userRole === "ADMIN" ? <LayoutDashboard className="h-5 w-5 text-primary" /> : <Truck className="h-5 w-5 text-primary" />}
-                          {userRole === "ADMIN" ? "Admin Dashboard" : "Track My Orders"}
-                        </Link>
-                        
-                        <div className="pt-4 flex items-center gap-3 px-3">
-                           <Avatar className="h-10 w-10 border">
-                             <AvatarFallback className="bg-primary text-secondary font-bold">
-                               {userInitial}
-                             </AvatarFallback>
-                           </Avatar>
-                           <div>
-                              <p className="font-bold text-sm leading-none">{session?.user?.name}</p>
-                              <p className="text-xs text-muted-foreground mt-1">{session?.user?.email}</p>
-                           </div>
-                        </div>
+                      ) : isAuthenticated ? (
+                        <>
+                          {/* User Profile Card */}
+                          <div className="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 border border-orange-100 dark:border-orange-900/30">
+                            <Avatar className="h-11 w-11 ring-2 ring-orange-200 dark:ring-orange-800">
+                              <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white font-bold">
+                                {userInitial}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0">
+                              <p className="font-bold text-sm leading-none truncate">{session?.user?.name}</p>
+                              <p className="text-xs text-muted-foreground mt-1 truncate">{session?.user?.email}</p>
+                            </div>
+                          </div>
 
-                        <button
-                          onClick={() => {
-                            handleLogout();
-                            closeMobileMenu();
-                          }}
-                          className="flex items-center gap-3 text-lg font-medium text-red-600 w-full text-left p-3 rounded-lg hover:bg-red-50 mt-2"
-                        >
-                          <LogOut className="h-5 w-5" />
-                          Log Out
-                        </button>
-                      </>
-                    ) : (
-                      <Button asChild className="w-full h-12 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold text-lg border-0">
-                        <Link href="/login" onClick={closeMobileMenu}>
-                          Login to continue
-                        </Link>
-                      </Button>
-                    )}
-                  </div>
-                </nav>
-              </SheetContent>
+                          {/* Dashboard Link */}
+                          <Link
+                            href={dashboardHref}
+                            onClick={closeMobileMenu}
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors"
+                          >
+                            {userRole === "ADMIN"
+                              ? <LayoutDashboard className="h-5 w-5 text-orange-500" />
+                              : <Truck className="h-5 w-5 text-orange-500" />}
+                            <span className="text-sm font-semibold">
+                              {userRole === "ADMIN" ? "Admin Dashboard" : "Track My Orders"}
+                            </span>
+                            <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground/50" />
+                          </Link>
+
+                          {/* Logout */}
+                          <button
+                            onClick={() => {
+                              handleLogout();
+                              closeMobileMenu();
+                            }}
+                            className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
+                          >
+                            <LogOut className="h-5 w-5" />
+                            <span className="text-sm font-semibold">Log Out</span>
+                          </button>
+                        </>
+                      ) : (
+                        <Button asChild className="w-full h-12 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-bold text-base border-0">
+                          <Link href="/login" onClick={closeMobileMenu}>
+                            Login to continue
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
+                  </nav>
+                </SheetContent>
               </Sheet>
             )}
           </div>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
