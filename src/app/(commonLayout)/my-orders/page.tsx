@@ -45,6 +45,8 @@ export default function MyOrdersPage() {
       enabled: !!session,
    });
 
+
+
    const { data: reviewsResponse } = useQuery({
       queryKey: ["my-reviews"],
       queryFn: () => getReviews({ customerId: session?.user?.id, limit: 100 }),
@@ -56,16 +58,18 @@ export default function MyOrdersPage() {
    const orders = response?.data || [];
    const reviews = reviewsResponse?.data || [];
 
-   const cancelMutation = useMutation({
-      mutationFn: cancelOrder,
-      onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["my-orders"] });
-         toast.success("Order cancelled safely");
-      },
-      onError: (error: any) => {
-         toast.error(error.message || "Failed to cancel order");
-      },
-   });
+   // console.log("orders", orders);
+
+   // const cancelMutation = useMutation({
+   //    mutationFn: cancelOrder,
+   //    onSuccess: () => {
+   //       queryClient.invalidateQueries({ queryKey: ["my-orders"] });
+   //       toast.success("Order cancelled safely");
+   //    },
+   //    onError: (error: any) => {
+   //       toast.error(error.message || "Failed to cancel order");
+   //    },
+   // });
 
    const retryMutation = useMutation({
       mutationFn: createCheckoutSession,
@@ -184,7 +188,7 @@ export default function MyOrdersPage() {
                            </div>
                         </div>
                         <div className="flex items-center gap-3">
-                           <div className="text-right">
+                           <div className="lg:text-right">
                               <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Order No.</p>
                               <p className="font-bold text-primary mt-0.5">{order.orderNumber}</p>
                            </div>
@@ -198,6 +202,23 @@ export default function MyOrdersPage() {
                               Status: <Badge className={getStatusColor(order.status)}>{order.status}</Badge>
                            </h3>
 
+                           {order.status === "CANCELLED" && (
+                              <div className="mb-4 flex flex-col md:flex-row lg:items-center gap-4 justify-between bg-red-50/50 dark:bg-red-950/20 p-2 rounded-xl border border-red-100 dark:border-red-900/30">
+                                 {order.cancelReason && (
+                                    <p className="text-sm text-red-600 dark:text-red-400 font-semibold flex items-center gap-2">
+                                       <AlertCircle className="w-4 h-4" />
+                                       Reason: {order.cancelReason}
+                                    </p>
+                                 )}
+                                 {order.paymentStatus === "PAID" && (
+                                    <p className="text-sm text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-2">
+                                       <Clock className="w-4 h-4" />
+                                       Refund Status: You will get refund soon
+                                    </p>
+                                 )}
+                              </div>
+                           )}
+
                            <div className="flex flex-wrap gap-4 mb-4">
                               {order.orderItems.slice(0, 3).map((oi: any) => (
                                  <motion.div
@@ -205,13 +226,13 @@ export default function MyOrdersPage() {
                                     className="relative group"
                                     whileHover={{ scale: 1.1 }}
                                  >
-                                    <div className="w-20 h-20 bg-secondary rounded-xl overflow-hidden border transition-transform duration-300">
-                                       {oi.item?.image ? (
-                                          <img src={oi.item.image} className="w-full h-full object-cover" alt="item" />
-                                       ) : (
-                                          <div className="w-full h-full text-[10px] flex items-center justify-center bg-muted text-muted-foreground">No image</div>
-                                       )}
-                                    </div>
+                                     <div className="w-16 h-16 sm:w-20 sm:h-20 bg-secondary rounded-xl overflow-hidden border transition-transform duration-300">
+                                        {oi.item?.mainImage || (oi.item?.image && oi.item.image.length > 0) ? (
+                                           <img src={oi.item.mainImage || oi.item.image[0]} className="w-full h-full object-cover" alt="item" />
+                                        ) : (
+                                           <div className="w-full h-full text-[10px] flex items-center justify-center bg-muted text-muted-foreground">No image</div>
+                                        )}
+                                     </div>
                                     <div className="absolute -top-2 -right-2 bg-primary text-secondary text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-sm">
                                        {oi.quantity}
                                     </div>

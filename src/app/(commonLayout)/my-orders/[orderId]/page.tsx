@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, CreditCard, Box, PackageCheck, Star, MessageSquare, Pencil } from "lucide-react";
+import { ArrowLeft, MapPin, CreditCard, Box, PackageCheck, Star, MessageSquare, Pencil, AlertCircle, Clock } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -124,14 +124,30 @@ export default function OrderDetailPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-6 mb-6">
                      <div>
                         <h1 className="text-2xl font-bold flex items-center gap-3">
-                           Order #{order.orderNumber}
+                           Order {order.orderNumber}
                            <Badge className={getStatusColor(order.status)}>{order.status}</Badge>
                         </h1>
                         <p className="text-muted-foreground text-sm mt-1">
                            Placed on {new Date(order.createdAt).toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                         </p>
+                        {order.status === "CANCELLED" && (
+                           <div className="mt-4 p-4 rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30">
+                              {order.cancelReason && (
+                                 <p className="text-sm text-red-600 dark:text-red-400 font-semibold flex items-center gap-2">
+                                    <AlertCircle className="w-4 h-4" />
+                                    Reason: {order.cancelReason}
+                                 </p>
+                              )}
+                              {order.paymentStatus === "PAID" && (
+                                 <p className="text-sm text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-2 mt-2">
+                                    <Clock className="w-4 h-4" />
+                                    Refund Status: You will get refund soon
+                                 </p>
+                              )}
+                           </div>
+                        )}
                      </div>
-                     <div className="text-right">
+                     <div className="lg:text-right">
                         <p className="text-sm text-muted-foreground uppercase tracking-widest font-semibold mb-1">Total Amount</p>
                         <p className="text-3xl font-black text-emerald-600">${order.totalAmount}</p>
                      </div>
@@ -262,7 +278,7 @@ export default function OrderDetailPage() {
                   </motion.div>
                )}
 
-               <motion.div variants={fadeInUp} className="bg-card border rounded-3xl p-6 sm:p-8 shadow-sm">
+               <motion.div variants={fadeInUp} className="bg-card border rounded-3xl p-3 lg:p-8 shadow-sm">
                   <h3 className="font-bold flex items-center gap-2 mb-6 text-xl">
                      <PackageCheck className="w-6 h-6 text-primary" /> Order Items
                   </h3>
@@ -276,26 +292,26 @@ export default function OrderDetailPage() {
                            key={oi.id}
                            variants={fadeInUp}
                            whileHover={{ scale: 1.01 }}
-                           className="flex gap-4 p-4 rounded-2xl border bg-background items-center transition-all"
+                           className="flex gap-4 p-3 sm:p-4 rounded-2xl border bg-background items-center transition-all"
                         >
-                           <div className="w-20 h-20 bg-secondary rounded-xl overflow-hidden shrink-0 border">
-                              {oi.item?.image ? (
-                                 <img src={oi.item.image} alt={oi.item.name} className="w-full h-full object-cover" />
+                           <div className="h-16 w-16 sm:h-20 sm:w-20 bg-secondary rounded-xl overflow-hidden shrink-0 border">
+                              {oi.item?.mainImage || (oi.item?.image && oi.item.image.length > 0) ? (
+                                 <img src={oi.item.mainImage || oi.item.image[0]} alt={oi.item.name} className="w-full h-full object-cover" />
                               ) : (
                                  <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">No image</div>
                               )}
                            </div>
                            <div className="flex-1 min-w-0">
-                              <div className="flex justify-between items-start">
-                                 <div>
+                              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                                 <div className="min-w-0">
                                     <Link href={`/products/${oi.item?.id}`} className="hover:text-primary transition-colors">
-                                       <h4 className="font-bold text-lg leading-tight truncate">{oi.item?.name}</h4>
+                                       <h4 className="font-bold text-base sm:text-lg leading-tight truncate">{oi.item?.name}</h4>
                                     </Link>
-                                    <p className="text-sm text-muted-foreground mt-1">{oi.item?.weight} {oi.item?.isSpicy ? "🌶️" : ""}</p>
+                                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">{oi.item?.weight} {oi.item?.isSpicy ? "🌶️" : ""}</p>
                                  </div>
-                                 <div className="text-right ml-4">
-                                    <p className="font-black text-lg">${oi.subTotal}</p>
-                                    <p className="text-sm text-muted-foreground">${oi.unitPrice} x {oi.quantity}</p>
+                                 <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 sm:gap-0">
+                                    <p className="font-black text-lg sm:text-xl text-primary sm:text-foreground">${oi.subTotal}</p>
+                                    <p className="text-xs sm:text-sm text-muted-foreground">${oi.unitPrice} x {oi.quantity}</p>
                                  </div>
                               </div>
                            </div>

@@ -489,8 +489,8 @@ export default function AdminOrders() {
                        {selectedOrder.orderItems?.map((oi: any) => (
                            <div key={oi.id} className="flex justify-between items-center bg-muted/30 p-2 rounded-lg border">
                                <div className="flex items-center gap-3">
-                                   {oi.item?.image ? (
-                                       <img src={oi.item.image} alt={oi.item.name} className="w-10 h-10 object-cover rounded-md border" />
+                                   {oi.item?.mainImage ? (
+                                       <img src={oi.item?.mainImage} alt={oi.item.name} className="w-10 h-10 object-cover rounded-md border" />
                                    ) : (
                                        <div className="w-10 h-10 bg-muted rounded-md border" />
                                    )}

@@ -23,8 +23,9 @@ export interface IOrderItem {
     id: string;
     name: string;
     price: number;
-    image?: string | null;
+    mainImage?: string | null;
     category?: { id: string; name: string } | null;
+    image?: string[] | null;
   };
 }
 
