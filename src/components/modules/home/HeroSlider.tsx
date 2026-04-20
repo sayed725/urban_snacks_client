@@ -6,8 +6,10 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { getBanners } from "@/services/banner.service";
+import { IBanner } from "@/types/banner.type";
 
-const slides = [
+const defaultSlides = [
   {
     id: 1,
     title: "Urban Snacks Collection",
@@ -39,8 +41,30 @@ const slides = [
 ];
 
 export default function HeroSlider() {
+  const [slides, setSlides] = useState<any[]>(defaultSlides);
   const [current, setCurrent] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const { data } = await getBanners({ isActive: true });
+        if (data && data.length > 0) {
+          // Filter only banners where banner field is true
+          const activeBanners = data.filter(b => b.banner);
+          if (activeBanners.length > 0) {
+             setSlides(activeBanners.sort((a, b) => (a.order || 0) - (b.order || 0)));
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch banners", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchBanners();
+  }, []);
 
   useEffect(() => {
     if (isHovered) return;
@@ -52,6 +76,12 @@ export default function HeroSlider() {
 
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+
+  if (isLoading) {
+    return <section className="relative w-full h-[90vh] md:h-[75vh] bg-black animate-pulse"></section>;
+  }
+
+  if (slides.length === 0) return null;
 
   return (
     <section 
@@ -69,8 +99,8 @@ export default function HeroSlider() {
           className="absolute inset-0"
         >
           <Image
-            src={slides[current].image}
-            alt={slides[current].title}
+            src={slides[current].image || "/assets/urban_snaks_cover_photo.jpg"}
+            alt={slides[current].title || "Banner"}
             fill
             priority
             className="object-cover"

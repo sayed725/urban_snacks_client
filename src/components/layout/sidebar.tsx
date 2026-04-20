@@ -37,6 +37,7 @@ import {
   Box,
   MessageSquare,
   Ticket,
+  Image as ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -101,6 +102,12 @@ export function AppSidebar() {
       title: "Coupons",
       href: "/dashboard/admin/coupons",
       icon: Ticket,
+      roles: ["ADMIN"],
+    },
+    {
+      title: "Banners",
+      href: "/dashboard/admin/banners",
+      icon: ImageIcon,
       roles: ["ADMIN"],
     }
   ].filter((item) => item.roles.includes(role as string));

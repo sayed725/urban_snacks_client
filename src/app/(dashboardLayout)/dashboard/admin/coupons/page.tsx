@@ -32,7 +32,7 @@ import USPagination from "@/components/shared/USPagination";
 import CouponsLoadingSkeleton from "./_couponsLoadingSkeleton";
 import { Textarea } from "@/components/ui/textarea";
 import moment from "moment";
-import { CouponFormFields } from "./_components/CouponFormFields";
+import { CouponFormFields } from "../../../../../components/modules/admin/cupon/CouponFormFields";
 
 const defaultFormData = {
   code: "",

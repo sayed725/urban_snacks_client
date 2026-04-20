@@ -161,7 +161,7 @@ const HowItWorks = () => {
 
       <div className="container w-11/12 mx-auto relative z-10">
         {/* Header */}
-        <div className="pb-16 text-center flex flex-col items-center">
+        <div className="pb-10 text-center flex flex-col items-center">
           <SectionHeader
             title="How It Works"
             description="Your snack journey simplified in these easy steps"
@@ -170,7 +170,7 @@ const HowItWorks = () => {
         </div>
 
         {/* Timeline navigation — desktop */}
-        <div className="hidden lg:flex items-center justify-center mb-14 px-4">
+        <div className="hidden lg:flex items-center justify-center mb-10 px-4">
           <div className="flex items-center gap-0 w-full max-w-4xl">
             {steps.map((step, index) => {
               const StepIcon = step.icon;
