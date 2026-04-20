@@ -5,10 +5,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 
 import { Button } from "@/components/ui/button";
-import { Eye, Trash2, Plus, X, Minus, XCircle } from "lucide-react";
+import { Eye, Trash2, Plus, X, Minus, XCircle, Download } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { generateInvoicePDF } from "@/lib/invoice-pdf";
 import {
   Select,
   SelectContent,
@@ -135,17 +136,19 @@ export default function AdminOrders() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "PLACED": return "bg-gray-100 text-gray-700";
-      case "PROCESSING": return "bg-blue-100 text-blue-700";
-      case "SHIPPED": return "bg-purple-100 text-purple-700";
-      case "DELIVERED": return "bg-green-100 text-green-700";
-      case "CANCELLED": return "bg-red-100 text-red-700";
-      default: return "bg-gray-100 text-gray-700";
+      case "PLACED": return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
+      case "PROCESSING": return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+      case "SHIPPED": return "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400";
+      case "DELIVERED": return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
+      case "CANCELLED": return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+      default: return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
     }
   };
 
   const getPaymentColor = (status: string) => {
-    return status === "PAID" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700";
+    return status === "PAID" 
+      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" 
+      : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
   };
 
   const resetFilters = () => {
@@ -283,6 +286,7 @@ export default function AdminOrders() {
                     <th className="px-6 py-4 text-right">Total</th>
                     <th className="px-6 py-4 text-center">Payment</th>
                     <th className="px-6 py-4 text-center">Status</th>
+                    <th className="px-6 py-4 text-center">Invoice</th>
                     <th className="px-6 py-4 text-right">Actions</th>
                  </tr>
               </thead>
@@ -306,7 +310,7 @@ export default function AdminOrders() {
                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${getPaymentColor(order.paymentStatus)}`}>
                              {order.paymentStatus}
                            </span>
-                           <div className="text-[10px] text-muted-foreground mt-1 uppercase">{order.paymentMethod}</div>
+                           <div className="text-[10px] text-muted-foreground mt-2 uppercase">{order.paymentMethod}</div>
                        </td>
                        <td className="px-6 py-4">
                            <div className="flex justify-center">
@@ -328,6 +332,17 @@ export default function AdminOrders() {
                                </Select>
                            </div>
                        </td>
+                       <td className="px-6 py-4 text-center">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-full"
+                              onClick={() => generateInvoicePDF(order)}
+                              title="Download Invoice"
+                            >
+                                <Download className="w-5 h-5" />
+                            </Button>
+                        </td>
                        <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2">
                              <Button variant="outline" size="icon" onClick={() => setSelectedOrder(order)}>
@@ -359,7 +374,7 @@ export default function AdminOrders() {
                  ))}
                  {orders.length === 0 && (
                     <tr>
-                       <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">
+                       <td colSpan={7} className="px-6 py-8 text-center text-muted-foreground">
                           No orders found.
                        </td>
                     </tr>

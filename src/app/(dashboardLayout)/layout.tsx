@@ -54,7 +54,9 @@ export default function DashboardLayout({
                         ) : (
                           <BreadcrumbLink asChild className="capitalize">
                             <Link href={href}>
+                            <span className="capitalize">
                               {segment.replace(/-/g, " ")}
+                            </span>
                             </Link>
                           </BreadcrumbLink>
                         )}

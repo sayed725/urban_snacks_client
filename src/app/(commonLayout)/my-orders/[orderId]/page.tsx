@@ -268,7 +268,7 @@ export default function OrderDetailPage() {
                                     variant="outline" 
                                     size="sm" 
                                     onClick={() => generateInvoicePDF(order)}
-                                    className="border-emerald-200 hover:bg-emerald-50 text-emerald-700 font-bold h-8 text-[10px] sm:text-xs"
+                                    className="border-emerald-200 hover:bg-emerald-50 text-emerald-700 dark:text-white dark:border-emerald-800 dark:hover:bg-emerald-900 font-bold h-8 text-[10px] sm:text-xs"
                                  >
                                     <Download className="w-3.5 h-3.5 mr-1" />
                                     Download Invoice
