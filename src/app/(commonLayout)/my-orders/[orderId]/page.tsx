@@ -18,7 +18,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCheckoutSession } from "@/services/payment.service";
 
 import { toast } from "sonner";
-import { RefreshCw, Truck } from "lucide-react";
+import { generateInvoicePDF } from "@/lib/invoice-pdf";
+import { Download, RefreshCw, Truck } from "lucide-react";
 import { OrderStatus } from "@/types/order.type";
 import { getOrderById, updatePaymentMethod } from "@/services/order.service";
 
@@ -259,9 +260,20 @@ export default function OrderDetailPage() {
                            </div>
                            <div className="flex justify-between items-center">
                               <span className="text-muted-foreground">Status</span>
-                              <Badge variant="outline" className={getPaymentColor(order.paymentStatus)}>
-                                 {order.paymentStatus}
-                              </Badge>
+                              <div className="flex flex-col items-end gap-2">
+                                 <Badge variant="outline" className={cn("font-bold", getPaymentColor(order.paymentStatus))}>
+                                    {order.paymentStatus}
+                                 </Badge>
+                                 <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    onClick={() => generateInvoicePDF(order)}
+                                    className="border-emerald-200 hover:bg-emerald-50 text-emerald-700 font-bold h-8 text-[10px] sm:text-xs"
+                                 >
+                                    <Download className="w-3.5 h-3.5 mr-1" />
+                                    Download Invoice
+                                 </Button>
+                              </div>
                            </div>
                            <div className="pt-4 border-t space-y-2 text-muted-foreground">
                               <div className="flex justify-between">
@@ -351,6 +363,16 @@ export default function OrderDetailPage() {
                               />
                            ))}
                         </div>
+
+                         <div className="text-right space-y-1">
+                            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Payment Status</p>
+                            <Badge className={cn(
+                               "rounded-full px-2 py-0 text-[10px] font-black",
+                               order.paymentStatus === "PAID" ? "bg-green-100 text-green-700 border-none" : "bg-red-100 text-red-700 border-none"
+                            )}>
+                               {order.paymentStatus}
+                            </Badge>
+                         </div>
 
                         <p className="text-lg dark:text-white font-medium text-amber-900/90 italic leading-relaxed relative z-10">
                            "{order.reviews[0].comment}"

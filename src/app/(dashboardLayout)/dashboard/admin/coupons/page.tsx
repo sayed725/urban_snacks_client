@@ -357,6 +357,7 @@ export default function AdminCoupons() {
                 <th className="px-6 py-4">Expiry</th>
                 <th className="px-6 py-4 text-center">Usage</th>
                 <th className="px-6 py-4 text-center">Status</th>
+                <th className="px-6 py-4 text-center">Toogle</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -381,11 +382,10 @@ export default function AdminCoupons() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`text-xs px-2 py-1 rounded-full font-bold ${
-                          coupon.discountType === "PERCENTAGE"
+                        className={`text-xs px-2 py-1 rounded-full font-bold ${coupon.discountType === "PERCENTAGE"
                             ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                             : "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
-                        }`}
+                          }`}
                       >
                         {coupon.discountType}
                       </span>
@@ -408,11 +408,10 @@ export default function AdminCoupons() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`text-sm ${
-                          isExpired
+                        className={`text-sm ${isExpired
                             ? "text-red-500 font-semibold"
                             : "text-muted-foreground"
-                        }`}
+                          }`}
                       >
                         {moment(coupon.expiryDate).format("MMM DD, YYYY")}
                       </span>
@@ -445,6 +444,21 @@ export default function AdminCoupons() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
+                        <div className="flex flex-col items-center gap-1">
+                        <Switch
+                          checked={coupon.isActive}
+                          onCheckedChange={(checked) => {
+                            updateMutation.mutate({
+                              id: coupon.id,
+                              payload: { isActive: checked }
+                            });
+                          }}
+                          disabled={updateMutation.isPending}
+                          className="data-[state=checked]:bg-emerald-500"
+                        />
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         <Button
                           variant="outline"
@@ -467,7 +481,7 @@ export default function AdminCoupons() {
                               },
                               cancel: {
                                 label: "Cancel",
-                                onClick: () => {},
+                                onClick: () => { },
                               },
                             });
                           }}

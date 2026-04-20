@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
 
 import {
   Select,
@@ -289,6 +290,7 @@ export default function AdminItems() {
                 <th className="px-6 py-4">Name</th>
                 <th className="px-6 py-4">Category</th>
                 <th className="px-6 py-4 text-right">Price</th>
+                <th className="px-6 py-4 text-center">Featured</th>
                 <th className="px-6 py-4 text-center">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
@@ -312,11 +314,30 @@ export default function AdminItems() {
                   <td className="px-6 py-4 text-muted-foreground">{item.category?.name || "-"}</td>
                   <td className="px-6 py-4 text-right font-bold text-emerald-600">${item.price}</td>
                   <td className="px-6 py-4 text-center">
-                    {item.isActive ? (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">Active</span>
-                    ) : (
-                      <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-bold">Inactive</span>
-                    )}
+                    <Switch 
+                      checked={item.isFeatured}
+                      onCheckedChange={(checked) => {
+                        updateMutation.mutate({
+                          id: item.id,
+                          payload: { isFeatured: checked }
+                        });
+                      }}
+                      disabled={updateMutation.isPending}
+                      className="data-[state=checked]:bg-amber-500"
+                    />
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <Switch 
+                      checked={item.isActive}
+                      onCheckedChange={(checked) => {
+                        updateMutation.mutate({
+                          id: item.id,
+                          payload: { isActive: checked }
+                        });
+                      }}
+                      disabled={updateMutation.isPending}
+                      className="data-[state=checked]:bg-emerald-500"
+                    />
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">

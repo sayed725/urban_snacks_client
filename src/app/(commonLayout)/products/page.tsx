@@ -27,6 +27,7 @@ async function ProductsGrid({
     isSpicy: isSpicy || undefined,
     sortBy: sortBy || "createdAt",
     sortOrder: sortOrder || "desc",
+    isActive: true,
     limit: 50
   });
 
