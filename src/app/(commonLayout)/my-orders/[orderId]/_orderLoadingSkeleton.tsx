@@ -10,6 +10,24 @@ const OrderLoadingSkeleton = () => {
 
       <div className="flex flex-col lg:flex-row gap-8">
          <div className="flex-1 space-y-8">
+            {/* Order Tracking Skeleton */}
+            <div className="bg-card border rounded-3xl p-4 sm:p-10 shadow-sm relative mb-8 overflow-hidden">
+               <div className="relative pt-2">
+                  <div className="absolute top-8 left-0 w-full h-[3px] bg-muted -translate-y-1/2 z-0 rounded-full" />
+                  <div className="relative flex justify-between items-start z-10">
+                     {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="flex flex-col items-center flex-1">
+                           <Skeleton className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[4px] border-background" />
+                           <div className="mt-4 flex flex-col items-center gap-1.5 px-1">
+                              <Skeleton className="h-3 w-12 sm:w-16 rounded-md" />
+                              <Skeleton className="h-2 w-16 sm:w-20 rounded-md hidden sm:block" />
+                           </div>
+                        </div>
+                     ))}
+                  </div>
+               </div>
+            </div>
+
             <div className="bg-card border rounded-3xl p-6 sm:p-8 shadow-sm">
                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-6 mb-6">
                   <div className="space-y-4">

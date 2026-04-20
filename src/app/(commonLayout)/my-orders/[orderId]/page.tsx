@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, CreditCard, Box, PackageCheck, Star, MessageSquare, Pencil, AlertCircle, Clock, Ticket } from "lucide-react";
+import { ArrowLeft, MapPin, CreditCard, Box, PackageCheck, Star, MessageSquare, Pencil, AlertCircle, Clock, Ticket, Check } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -104,6 +104,80 @@ export default function OrderDetailPage() {
       return status === "PAID" ? "text-emerald-600 bg-emerald-50 border-emerald-200" : "text-amber-600 bg-amber-50 border-amber-200";
    };
 
+   const OrderTracking = ({ status }: { status: OrderStatus }) => {
+      if (status === "CANCELLED") return null;
+
+      const steps = [
+         { status: "PLACED", label: "PLACED", desc: "Your order has been received" },
+         { status: "PROCESSING", label: "PROCESSING", desc: "Preparing your items" },
+         { status: "SHIPPED", label: "SHIPPED", desc: "On its way to you" },
+         { status: "DELIVERED", label: "DELIVERED", desc: "Packet received" },
+      ];
+
+      const currentStepIndex = steps.findIndex(s => s.status === status);
+
+      return (
+         <motion.div 
+            variants={fadeInUp} 
+            className="bg-card border rounded-3xl p-4 sm:p-10 shadow-sm relative mb-8 overflow-hidden"
+         >
+            <div className="relative pt-2">
+               {/* Background Line */}
+               <div className="absolute top-8 sm:top-8 left-0 w-full h-[3px] bg-muted -translate-y-1/2 z-0 rounded-full" />
+               
+               {/* Progress Line */}
+               <motion.div 
+                  className="absolute top-5 sm:top-6 left-0 h-[3px] bg-emerald-500 -translate-y-1/2 z-0 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.3)]"
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${(Math.max(0, currentStepIndex) / (steps.length - 1)) * 100}%` }}
+                  transition={{ duration: 1, ease: "easeInOut", delay: 0.5 }}
+               />
+
+               <div className="relative flex justify-between items-start z-10">
+                  {steps.map((step, index) => {
+                     const isCompleted = index <= currentStepIndex;
+                     const isCurrent = index === currentStepIndex;
+
+                     return (
+                        <div key={step.status} className="flex flex-col items-center flex-1">
+                           <motion.div
+                              initial={{ scale: 0.6, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ delay: 0.3 + (index * 0.1) }}
+                              className={cn(
+                                 "w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-[4px] transition-all duration-500 shadow-md",
+                                 isCompleted 
+                                    ? "bg-emerald-500 border-emerald-200 text-white" 
+                                    : "bg-white dark:bg-slate-900 border-muted text-muted-foreground"
+                              )}
+                           >
+                              {isCompleted ? (
+                                 <Check className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3px]" />
+                              ) : (
+                                 <div className="w-2.5 h-2.5 rounded-full bg-muted" />
+                              )}
+                           </motion.div>
+                           
+                           <div className="mt-4 text-center px-1">
+                              <p className={cn(
+                                 "text-[10px] sm:text-xs font-black tracking-widest uppercase mb-1.5",
+                                 isCompleted ? "text-emerald-600" : "text-muted-foreground"
+                              )}>
+                                 {step.label}
+                              </p>
+                              <p className="text-[9px] hidden sm:block sm:text-[11px] text-muted-foreground max-w-[70px] sm:max-w-[120px] mx-auto leading-tight font-medium">
+                                 {step.desc}
+                              </p>
+                           </div>
+                        </div>
+                     );
+                  })}
+               </div>
+            </div>
+         </motion.div>
+      );
+   };
+
    return (
 
       <motion.div
@@ -120,6 +194,7 @@ export default function OrderDetailPage() {
 
          <div className="flex flex-col lg:flex-row gap-8">
             <div className="flex-1 space-y-8">
+               <OrderTracking status={order.status} />
                <motion.div variants={fadeInUp} className="bg-card border rounded-3xl p-6 sm:p-8 shadow-sm">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-6 mb-6">
                      <div>
