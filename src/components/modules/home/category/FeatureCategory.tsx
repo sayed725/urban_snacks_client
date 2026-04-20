@@ -3,7 +3,7 @@ import { getCategories } from "@/services/category.service";
 import FeatureCategoryClient from "./FeatureCategoryClient";
 
 const FeatureCategory = async () => {
-    const catResponse = await getCategories({ limit: 10, sortBy: "createdAt", sortOrder: "asc" });
+    const catResponse = await getCategories({ limit: 10, sortBy: "createdAt", sortOrder: "asc", isFeatured: true });
     const categories = catResponse?.data || [];
 
     return (

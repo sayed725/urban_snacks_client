@@ -67,7 +67,7 @@ export default async function ProductsPage({
   const sortOrder = resolvedParams.sortOrder as "asc" | "desc";
 
   // Fetch categories for the sidebar (Server side)
-  const catResponse = await getCategories({ sortOrder: "asc" });
+  const catResponse = await getCategories({ sortOrder: "asc", isActive: true });
   const categories = catResponse?.data || [];
 
   return (

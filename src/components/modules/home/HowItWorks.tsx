@@ -161,7 +161,7 @@ const HowItWorks = () => {
 
       <div className="container w-11/12 mx-auto relative z-10">
         {/* Header */}
-        <div className="pb-10 text-center flex flex-col items-center">
+        <div className="pb-10 text-center  max-w-2xl mx-auto px-4">
           <SectionHeader
             title="How It Works"
             description="Your snack journey simplified in these easy steps"
@@ -369,7 +369,7 @@ const HowItWorks = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -30 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="relative"
+              className="relative hidden lg:block"
             >
               <div
                 className={cn(

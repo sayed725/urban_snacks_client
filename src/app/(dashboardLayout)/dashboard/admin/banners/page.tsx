@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -344,6 +345,7 @@ export default function AdminBanners() {
                 <th className="px-6 py-4 text-center">Type</th>
                 <th className="px-6 py-4 text-center">Order</th>
                 <th className="px-6 py-4 text-center">Status</th>
+                <th className="px-6 py-4 text-center">Toggle</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -395,15 +397,32 @@ export default function AdminBanners() {
                     {banner.order ?? <span className="font-normal text-muted-foreground">-</span>}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    {banner.isActive ? (
-                      <span className="text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-1 rounded-full font-bold">
-                        Active
-                      </span>
-                    ) : (
-                      <span className="text-xs bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-2 py-1 rounded-full font-bold">
-                        Inactive
-                      </span>
-                    )}
+                    <div className="flex items-center justify-center gap-2">
+                      
+                      {banner.isActive ? (
+                        <span className="text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-1 rounded-full font-bold">
+                          Active
+                        </span>
+                      ) : (
+                        <span className="text-xs bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-2 py-1 rounded-full font-bold">
+                          Inactive
+                        </span>
+                      )}
+                      
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <Switch
+                      checked={banner.banner}
+                      onCheckedChange={(checked) => {
+                        updateMutation.mutate({
+                          id: banner.id,
+                          payload: { banner: checked }
+                        });
+                      }}
+                      disabled={updateMutation.isPending}
+                      className="data-[state=checked]:bg-emerald-500"
+                    />
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
@@ -471,6 +490,10 @@ export default function AdminBanners() {
           <DialogHeader>
             <DialogTitle>Edit Banner</DialogTitle>
           </DialogHeader>
+           <DialogDescription>
+              Edit Your Banner
+            </DialogDescription>
+
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <BannerFormFields formData={formData} setFormData={setFormData} />
             <div className="pt-4 flex justify-end gap-2">

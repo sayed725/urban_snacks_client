@@ -306,18 +306,30 @@ export default function AdminCategories() {
                     {cat._count?.items || 0}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    {cat.isFeatured ? (
-                      <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-bold">Yes</span>
-                    ) : (
-                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">No</span>
-                    )}
+                    <Switch
+                      checked={cat.isFeatured}
+                      onCheckedChange={(checked) => {
+                        updateMutation.mutate({
+                          id: cat.id,
+                          payload: { isFeatured: checked }
+                        });
+                      }}
+                      disabled={updateMutation.isPending}
+                      className="data-[state=checked]:bg-amber-500"
+                    />
                   </td>
                   <td className="px-6 py-4 text-center">
-                    {cat.isActive ? (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">Active</span>
-                    ) : (
-                      <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-bold">Inactive</span>
-                    )}
+                    <Switch
+                      checked={cat.isActive}
+                      onCheckedChange={(checked) => {
+                        updateMutation.mutate({
+                          id: cat.id,
+                          payload: { isActive: checked }
+                        });
+                      }}
+                      disabled={updateMutation.isPending}
+                      className="data-[state=checked]:bg-emerald-500"
+                    />
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
