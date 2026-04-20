@@ -161,7 +161,7 @@ const HowItWorks = () => {
 
       <div className="container w-11/12 mx-auto relative z-10">
         {/* Header */}
-        <div className="pb-10 text-center  max-w-2xl mx-auto px-4">
+        <div className="pb-8 text-center  max-w-2xl mx-auto px-4">
           <SectionHeader
             title="How It Works"
             description="Your snack journey simplified in these easy steps"
@@ -169,9 +169,9 @@ const HowItWorks = () => {
           />
         </div>
 
-        {/* Timeline navigation — desktop */}
-        <div className="hidden lg:flex items-center justify-center mb-10 px-4">
-          <div className="flex items-center gap-0 w-full max-w-4xl">
+        {/* Timeline navigation — Responsive */}
+        <div className="flex items-center justify-center mb-10">
+          <div className="flex items-center gap-0 w-full max-w-5xl">
             {steps.map((step, index) => {
               const StepIcon = step.icon;
               const isActive = index === activeStep;
@@ -187,26 +187,26 @@ const HowItWorks = () => {
                   >
                     {/* Node circle */}
                     <motion.div
-                      animate={isActive ? { scale: [1, 1.1, 1] } : { scale: 1 }}
+                      animate={isActive ? { scale: [1, 1.05, 1] } : { scale: 1 }}
                       transition={{ duration: 1.5, repeat: isActive ? Infinity : 0 }}
                       className={cn(
-                        "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 relative",
+                        "w-9 h-9 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-500 relative",
                         isActive
-                          ? `bg-gradient-to-br ${step.gradient} text-white shadow-xl ${step.glowColor} ring-4 ring-white dark:ring-slate-900`
+                          ? `bg-gradient-to-br ${step.gradient} text-white shadow-lg ${step.glowColor} ring-2 sm:ring-4 ring-white dark:ring-slate-900`
                           : isPassed
-                          ? "bg-amber-500 dark:bg-amber-500 text-white dark:text-white ring-2 ring-amber-200 dark:ring-amber-800"
-                          : "bg-muted text-muted-foreground ring-2 ring-border group-hover:ring-orange-300 dark:group-hover:ring-orange-700 group-hover:bg-orange-50 dark:group-hover:bg-orange-950/30"
+                          ? "bg-amber-500 text-white ring-1 sm:ring-2 ring-amber-200 dark:ring-amber-800"
+                          : "bg-muted text-muted-foreground ring-1 sm:ring-2 ring-border group-hover:ring-orange-300 dark:group-hover:ring-orange-700"
                       )}
                     >
                       {isPassed ? (
-                        <CheckCircle2 className="w-6 h-6" />
+                        <CheckCircle2 className="w-4 h-4 sm:w-6 sm:h-6" />
                       ) : (
-                        <StepIcon className="w-6 h-6" />
+                        <StepIcon className="w-4 h-4 sm:w-6 sm:h-6" />
                       )}
                     </motion.div>
                     <span
                       className={cn(
-                        "text-xs font-bold uppercase tracking-wider transition-colors duration-300 whitespace-nowrap",
+                        "text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-colors duration-300 whitespace-nowrap hidden md:block",
                         isActive
                           ? "text-orange-600 dark:text-orange-400"
                           : isPassed
@@ -220,7 +220,7 @@ const HowItWorks = () => {
 
                   {/* Connector line */}
                   {index < steps.length - 1 && (
-                    <div className="flex-1 h-[3px] mx-2 rounded-full bg-border overflow-hidden relative mt-[-24px]">
+                    <div className="flex-1 h-[2px] sm:h-[3px] mx-1 sm:mx-2 rounded-full bg-border overflow-hidden relative  md:mt-[-28px]">
                       <motion.div
                         initial={false}
                         animate={{ width: isPassed || isActive ? "100%" : "0%" }}
@@ -238,36 +238,7 @@ const HowItWorks = () => {
           </div>
         </div>
 
-        {/* Mobile step indicator + nav */}
-        <div className="lg:hidden flex items-center justify-between mb-8 px-2">
-          <button
-            onClick={handlePrev}
-            className="w-10 h-10 rounded-full bg-muted hover:bg-orange-100 dark:hover:bg-orange-900/30 flex items-center justify-center transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <div className="flex items-center gap-2">
-            {steps.map((step, index) => (
-              <button
-                key={index}
-                onClick={() => handleStepClick(index)}
-                className={cn(
-                  "transition-all duration-300 rounded-full cursor-pointer",
-                  index === activeStep
-                    ? `w-8 h-3 bg-gradient-to-r ${step.gradient}`
-                    : "w-3 h-3 bg-muted-foreground/20 hover:bg-muted-foreground/40"
-                )}
-                aria-label={`Go to step ${index + 1}`}
-              />
-            ))}
-          </div>
-          <button
-            onClick={handleNext}
-            className="w-10 h-10 rounded-full bg-muted hover:bg-orange-100 dark:hover:bg-orange-900/30 flex items-center justify-center transition-colors"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
+      
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
