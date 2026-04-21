@@ -7,6 +7,8 @@ export interface IBanner {
   order?: number;
   banner: boolean;
   isActive: boolean;
+  categoryId?: string;
+  buttonText?: string;
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
@@ -20,4 +22,6 @@ export interface IBannerPayload {
   order?: number;
   banner?: boolean;
   isActive?: boolean;
+  categoryId?: string;
+  buttonText?: string;
 }

@@ -75,6 +75,7 @@ export default function ProductsSearchHeader() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="createdAt-desc">Newest Arrivals</SelectItem>
+              <SelectItem value="createdAt-asc">Oldest Arrivals</SelectItem>
               <SelectItem value="price-asc">Price: Low to High</SelectItem>
               <SelectItem value="price-desc">Price: High to Low</SelectItem>
               <SelectItem value="name-asc">Name: A to Z</SelectItem>

@@ -41,6 +41,8 @@ const defaultFormData = {
   order: 0,
   banner: true,
   isActive: true,
+  categoryId: "",
+  buttonText: "",
 };
 
 export default function AdminBanners() {
@@ -140,6 +142,8 @@ export default function AdminBanners() {
     if (formData.subtitle) payload.subtitle = formData.subtitle;
     if (formData.badge) payload.badge = formData.badge;
     if (formData.order !== undefined) payload.order = Number(formData.order);
+    if (formData.categoryId) payload.categoryId = formData.categoryId;
+    if (formData.buttonText) payload.buttonText = formData.buttonText;
 
     createMutation.mutate(payload);
   };
@@ -155,6 +159,8 @@ export default function AdminBanners() {
     if (formData.subtitle !== undefined) payload.subtitle = formData.subtitle;
     if (formData.badge !== undefined) payload.badge = formData.badge;
     if (formData.order !== undefined) payload.order = Number(formData.order);
+    if (formData.categoryId !== undefined) payload.categoryId = formData.categoryId;
+    if (formData.buttonText !== undefined) payload.buttonText = formData.buttonText;
 
     updateMutation.mutate({ id: selectedBanner.id, payload });
   };
@@ -169,6 +175,8 @@ export default function AdminBanners() {
       order: banner.order || 0,
       banner: banner.banner ?? true,
       isActive: banner.isActive ?? true,
+      categoryId: banner.categoryId || "",
+      buttonText: banner.buttonText || "",
     });
     setIsEditOpen(true);
   };
