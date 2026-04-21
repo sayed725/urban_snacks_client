@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { useDebounce } from "@/hooks/use-debounce";
 import USPagination from "@/components/shared/USPagination";
+import { formatPrice } from "@/lib/utils";
 import CouponsLoadingSkeleton from "./_couponsLoadingSkeleton";
 import { Textarea } from "@/components/ui/textarea";
 import moment from "moment";
@@ -393,17 +394,17 @@ export default function AdminCoupons() {
                     <td className="px-6 py-4 font-bold">
                       {coupon.discountType === "PERCENTAGE"
                         ? `${coupon.discountValue}%`
-                        : `$${coupon.discountValue}`}
+                        : formatPrice(coupon.discountValue)}
                       {coupon.discountType === "PERCENTAGE" &&
                         coupon.maxDiscountAmount && (
                           <span className="text-xs text-muted-foreground ml-1">
-                            (max ${coupon.maxDiscountAmount})
+                            (max {formatPrice(coupon.maxDiscountAmount)})
                           </span>
                         )}
                     </td>
                     <td className="px-6 py-4 text-muted-foreground">
                       {coupon.minOrderAmount
-                        ? `$${coupon.minOrderAmount}`
+                        ? formatPrice(coupon.minOrderAmount)
                         : "-"}
                     </td>
                     <td className="px-6 py-4">

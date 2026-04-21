@@ -15,7 +15,8 @@ import SectionHeader from "@/components/shared/SectionHeader";
 import { getItems } from "@/services/item.service";
 import { getReviews } from "@/services/review.service";
 import ProductReviews from "@/components/modules/products/ProductReviews";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
+import ProductsDetailsLoadingSkeleton from "./_productsDetailsLoadingSkeleton";
 
 export default function ProductDetailPage() {
   const { id } = useParams() as { id: string };
@@ -71,46 +72,7 @@ export default function ProductDetailPage() {
 
   // Loading skeleton
   if (isLoading) {
-    return (
-      <div className="min-h-screen">
-        <div className="container mx-auto px-4 pt-8 pb-20">
-          <div className="h-6 bg-muted rounded w-32 mb-8 animate-pulse" />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-            <div className="lg:sticky lg:top-24 space-y-4 animate-pulse">
-              <div className="aspect-square bg-muted rounded-3xl" />
-              <div className="flex gap-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="w-20 h-20 bg-muted rounded-xl" />
-                ))}
-              </div>
-            </div>
-            <div className="space-y-6 animate-pulse pt-4">
-              <div className="h-4 bg-muted rounded w-24" />
-              <div className="h-12 bg-muted rounded w-3/4" />
-              <div className="h-5 bg-muted rounded w-2/3" />
-              <div className="h-10 bg-muted rounded w-40" />
-              <div className="grid grid-cols-2 gap-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-20 bg-muted rounded-2xl" />
-                ))}
-              </div>
-              <div className="space-y-2">
-                <div className="h-4 bg-muted rounded w-32" />
-                <div className="h-4 bg-muted rounded w-full" />
-                <div className="h-4 bg-muted rounded w-full" />
-                <div className="h-4 bg-muted rounded w-5/6" />
-              </div>
-              <div className="h-px bg-muted w-full" />
-              <div className="flex items-center gap-4">
-                <div className="h-11 bg-muted rounded-xl w-36" />
-                <div className="h-6 bg-muted rounded w-32 ml-auto" />
-              </div>
-              <div className="h-14 bg-muted rounded-2xl w-full" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <ProductsDetailsLoadingSkeleton />
   }
 
   if (!product) {
@@ -136,7 +98,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 pt-8 pb-20">
+      <div className="container mx-auto w-11/12 pt-8 pb-20">
         {/* Breadcrumb */}
         <motion.div 
           initial={{ opacity: 0, x: -10 }}
@@ -269,7 +231,7 @@ export default function ProductDetailPage() {
 
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-6">
-              <span className="text-4xl font-black text-emerald-600">${product.price}</span>
+              <span className="text-4xl font-black text-emerald-600">{formatPrice(product.price)}</span>
             </div>
 
             {/* Product Specs */}
@@ -351,7 +313,7 @@ export default function ProductDetailPage() {
                   </button>
                 </div>
                 <span className="text-sm text-muted-foreground ml-auto font-medium">
-                  Total: <span className="text-foreground font-bold text-lg">${(product.price * quantity).toFixed(2)}</span>
+                  Total: <span className="text-foreground font-bold text-lg">{formatPrice(product.price * quantity)}</span>
                 </span>
               </div>
 
@@ -363,7 +325,7 @@ export default function ProductDetailPage() {
                   onClick={() => addItem(product as any, quantity)}
                 >
                   <ShoppingCart className="w-5 h-5 mr-3" />
-                  Add to Cart — ${(product.price * quantity).toFixed(2)}
+                  Add to Cart — {formatPrice(product.price * quantity)}
                 </Button>
               </motion.div>
             </div>

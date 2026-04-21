@@ -12,7 +12,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 
 interface CartDrawerProps {
   className?: string;
@@ -120,7 +120,7 @@ export function CartDrawer({ className, isMobile = false }: CartDrawerProps) {
                 
                 <div className="flex flex-col flex-1 min-w-0">
                   <h4 className="font-bold text-sm truncate">{item.name}</h4>
-                  <div className="text-primary font-bold text-sm my-1">${item.price}</div>
+                  <div className="text-primary font-bold text-sm my-1">{formatPrice(item.price)}</div>
                   
                   <div className="flex items-center justify-between mt-1">
                     <div className="flex items-center border rounded-lg h-8 bg-background">
@@ -152,7 +152,7 @@ export function CartDrawer({ className, isMobile = false }: CartDrawerProps) {
           <div className="border-t p-6 bg-card/50 backdrop-blur-sm">
             <div className="flex justify-between items-center mb-6">
               <span className="font-semibold text-muted-foreground">Total:</span>
-              <span className="text-2xl font-black text-emerald-600">${totalPrice().toFixed(2)}</span>
+              <span className="text-2xl font-black text-emerald-600">{formatPrice(totalPrice())}</span>
             </div>
             <Button asChild className="w-full h-14 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-bold text-lg hover:scale-[1.02] border-0" onClick={() => setOpen(false)}>
               <Link href="/checkout">

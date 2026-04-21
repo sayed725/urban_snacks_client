@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import moment from "moment";
 import OrdersLoadingSkeleton from "./_ordersLoadingSkeleton";
 import AddReviewDialog from "@/components/modules/user/review/AddReviewDialog";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { createCheckoutSession } from "@/services/payment.service";
 
 import { Truck, CreditCard, Ticket } from "lucide-react";
@@ -180,7 +180,7 @@ export default function MyOrdersPage() {
                            </div>
                            <div>
                               <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Total Amount</p>
-                              <p className="font-bold text-emerald-600 mt-0.5">${order.totalAmount}</p>
+                              <p className="font-bold text-emerald-600 mt-0.5">{formatPrice(order.totalAmount)}</p>
                            </div>
                            <div>
                               <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Ship To</p>
@@ -257,7 +257,7 @@ export default function MyOrdersPage() {
                            {order.discountAmount > 0 && (
                                <div className="flex items-center gap-2 mb-2">
                                    <Ticket className="w-4 h-4 text-emerald-500" />
-                                   <span className="text-sm font-bold text-emerald-600">Saved ${order.discountAmount.toFixed(2)}</span>
+                                   <span className="text-sm font-bold text-emerald-600">Saved {formatPrice(order.discountAmount)}</span>
                                </div>
                            )}
 

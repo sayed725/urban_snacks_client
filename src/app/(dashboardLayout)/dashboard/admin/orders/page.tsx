@@ -29,6 +29,7 @@ import { getItems } from "@/services/item.service";
 import { OrderStatus } from "@/types/order.type";
 import { createOrder, getAllOrders, deleteOrder, changeOrderStatus, cancelOrder } from "@/services/order.service";
 import USPagination from "@/components/shared/USPagination";
+import { formatPrice } from "@/lib/utils";
 
 
 
@@ -304,7 +305,7 @@ export default function AdminOrders() {
                            <div className="text-xs text-muted-foreground">{order.shippingPhone}</div>
                        </td>
                        <td className="px-6 py-4 text-right font-bold text-emerald-600">
-                           ${order.totalAmount}
+                           {formatPrice(order.totalAmount)}
                        </td>
                        <td className="px-6 py-4 text-center">
                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${getPaymentColor(order.paymentStatus)}`}>
@@ -482,7 +483,7 @@ export default function AdminOrders() {
                       <p className="font-semibold text-muted-foreground border-b pb-1 mb-2">Payment Info</p>
                       <p><span className="font-medium">Method:</span> {selectedOrder.paymentMethod}</p>
                       <p><span className="font-medium">Status:</span> <Badge variant="outline" className={getPaymentColor(selectedOrder.paymentStatus)}>{selectedOrder.paymentStatus}</Badge></p>
-                      <p><span className="font-medium">Total:</span> <span className="font-bold text-emerald-600">${selectedOrder.totalAmount}</span></p>
+                      <p><span className="font-medium">Total:</span> <span className="font-bold text-emerald-600">{formatPrice(selectedOrder.totalAmount)}</span></p>
                       {selectedOrder.additionalInfo && (
                         <div className="mt-4">
                             <p className="font-semibold text-muted-foreground">Notes:</p>
@@ -511,11 +512,11 @@ export default function AdminOrders() {
                                    )}
                                    <div>
                                        <p className="font-medium text-sm">{oi.item?.name}</p>
-                                       <p className="text-xs text-muted-foreground">${oi.unitPrice} x {oi.quantity}</p>
+                                       <p className="text-xs text-muted-foreground">{formatPrice(oi.unitPrice)} x {oi.quantity}</p>
                                    </div>
                                </div>
                                <div className="font-bold text-sm">
-                                   ${oi.subTotal}
+                                   {formatPrice(oi.subTotal)}
                                </div>
                            </div>
                        ))}

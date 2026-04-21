@@ -108,8 +108,8 @@ export const generateInvoicePDF = (order: IOrder) => {
   const tableData = order.orderItems.map((item) => [
     item.item.name,
     item.quantity.toString(),
-    `$${item.unitPrice.toFixed(2)}`,
-    `$${(item.quantity * item.unitPrice).toFixed(2)}`,
+    `BDT ${item.unitPrice.toFixed(2)}`,
+    `BDT ${(item.quantity * item.unitPrice).toFixed(2)}`,
   ]);
 
   autoTable(doc, {
@@ -131,8 +131,8 @@ export const generateInvoicePDF = (order: IOrder) => {
     columnStyles: {
       0: { cellWidth: "auto" },
       1: { halign: "center", cellWidth: 20 },
-      2: { halign: "right", cellWidth: 35 },
-      3: { halign: "right", cellWidth: 35 },
+      2: { halign: "right", cellWidth: 40 },
+      3: { halign: "right", cellWidth: 40 },
     },
     alternateRowStyles: {
       fillColor: [249, 250, 251],
@@ -152,14 +152,14 @@ export const generateInvoicePDF = (order: IOrder) => {
   const subtotal = order.orderItems.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
   doc.text("Subtotal", summaryX, finalY);
   doc.setTextColor(17, 24, 39);
-  doc.text(`$${subtotal.toFixed(2)}`, pageWidth - 15, finalY, { align: "right" });
+  doc.text(`BDT ${subtotal.toFixed(2)}`, pageWidth - 15, finalY, { align: "right" });
 
   // Discount
   if (order.discountAmount) {
     doc.setTextColor(107, 114, 128);
     doc.text("Discount", summaryX, finalY + 8);
     doc.setTextColor(redColor[0], redColor[1], redColor[2]);
-    doc.text(`-$${order.discountAmount.toFixed(2)}`, pageWidth - 15, finalY + 8, { align: "right" });
+    doc.text(`-BDT ${order.discountAmount.toFixed(2)}`, pageWidth - 15, finalY + 8, { align: "right" });
   }
 
   // Shipping (Assuming free for now as per dashboard UI)
@@ -177,7 +177,7 @@ export const generateInvoicePDF = (order: IOrder) => {
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.text("TOTAL AMOUNT", summaryX, totalY + 1);
-  doc.text(`$${order.totalAmount.toFixed(2)}`, pageWidth - 20, totalY + 1, { align: "right" });
+  doc.text(`BDT ${order.totalAmount.toFixed(2)}`, pageWidth - 15, totalY + 1, { align: "right" });
 
   // --- Footer ---
   const footerY = doc.internal.pageSize.height - 20;

@@ -20,6 +20,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Urban Snacks",
   description: "Your favorite local snacks",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({

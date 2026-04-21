@@ -124,7 +124,7 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmit, isPending, 
                               </SelectTrigger>
                               <SelectContent>
                                   {items.map((it: any) => (
-                                      <SelectItem key={it.id} value={it.id}>{it.name} - ${it.price}</SelectItem>
+                                      <SelectItem key={it.id} value={it.id}>{it.name} - ৳{it.price}</SelectItem>
                                   ))}
                               </SelectContent>
                           </Select>

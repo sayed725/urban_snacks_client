@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import { toast } from "sonner";
 import { ShieldCheck, Truck, CreditCard, Ticket, X, CheckCircle2, Loader2 } from "lucide-react";
+import { cn, formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
 import { createCheckoutSession } from "@/services/payment.service";
@@ -59,7 +60,7 @@ export default function CheckoutPage() {
         discountAmount: res.data.discountAmount,
       });
       toast.success(
-        `Coupon applied! You save $${res.data.discountAmount.toFixed(2)}`
+        `Coupon applied! You save ${formatPrice(res.data.discountAmount)}`
       );
     } catch (error: any) {
       toast.error(error.message || "Invalid coupon code");
@@ -244,7 +245,7 @@ export default function CheckoutPage() {
               disabled={orderMutation.isPending}
               className="w-full h-16 text-xl font-bold rounded-2xl bg-primary hover:bg-primary/90 text-secondary shadow-xl shadow-primary/30 mt-8 transition-transform active:scale-[0.98]"
             >
-              {orderMutation.isPending ? "Processing..." : `Place Order • $${finalTotal.toFixed(2)}`}
+              {orderMutation.isPending ? "Processing..." : `Place Order • ${formatPrice(finalTotal)}`}
             </Button>
           </form>
         </div>
@@ -266,11 +267,12 @@ export default function CheckoutPage() {
                   </div>
                     <div>
                       <p className="font-medium truncate">{item.name}</p>
+                      <div className="text-primary font-bold text-sm my-1">{formatPrice(item.price)}</div>
                       <p className="text-muted-foreground text-xs">Qty: {item.quantity}</p>
                     </div>
                   </div>
                   <div className="font-semibold text-right">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {formatPrice(item.price * item.quantity)}
                   </div>
                 </div>
               ))}
@@ -290,7 +292,7 @@ export default function CheckoutPage() {
                       {appliedCoupon.code}
                     </span>
                     <span className="text-sm text-emerald-600 dark:text-emerald-400">
-                      (-${appliedCoupon.discountAmount.toFixed(2)})
+                      (-{formatPrice(appliedCoupon.discountAmount)})
                     </span>
                   </div>
                   <button
@@ -336,12 +338,12 @@ export default function CheckoutPage() {
             <div className="space-y-3 font-medium">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{formatPrice(subtotal)}</span>
               </div>
               {appliedCoupon && (
                 <div className="flex justify-between text-emerald-600">
                   <span>Coupon Discount</span>
-                  <span>-${discountAmount.toFixed(2)}</span>
+                  <span>-{formatPrice(discountAmount)}</span>
                 </div>
               )}
               <div className="flex justify-between text-muted-foreground">
@@ -350,7 +352,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between text-2xl font-black pt-4 border-t mt-4">
                 <span>Total</span>
-                <span className="text-primary">${finalTotal.toFixed(2)}</span>
+                <span className="text-primary">{formatPrice(finalTotal)}</span>
               </div>
             </div>
           </div>

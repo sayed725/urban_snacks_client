@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 
 import { motion } from "framer-motion";
 import OrderLoadingSkeleton from "./_orderLoadingSkeleton";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { IReview } from "@/types/review.type";
 import AddReviewDialog from "@/components/modules/user/review/AddReviewDialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -123,16 +123,19 @@ export default function OrderDetailPage() {
             className="bg-card border rounded-3xl p-4 sm:p-10 shadow-sm relative mb-8 overflow-hidden"
          >
             <div className="relative pt-2">
-               {/* Background Line */}
-               <div className="absolute top-8 sm:top-8 left-0 w-full h-[3px] bg-muted -translate-y-1/2 z-0 rounded-full" />
-               
-               {/* Progress Line */}
-               <motion.div 
-                  className="absolute top-5 sm:top-6 left-0 h-[3px] bg-emerald-500 -translate-y-1/2 z-0 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.3)]"
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${(Math.max(0, currentStepIndex) / (steps.length - 1)) * 100}%` }}
-                  transition={{ duration: 1, ease: "easeInOut", delay: 0.5 }}
-               />
+               {/* Tracking Track Container - Centers line between first and last step */}
+               <div className="absolute top-7 sm:top-8 left-[12.5%] right-[12.5%] h-[3px] -translate-y-1/2 z-0">
+                  {/* Background Line */}
+                  <div className="absolute inset-0 bg-muted rounded-full" />
+                  
+                  {/* Progress Line */}
+                  <motion.div 
+                     className="absolute top-0 left-0 h-full bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.3)]"
+                     initial={{ width: "0%" }}
+                     animate={{ width: `${(Math.max(0, currentStepIndex) / (steps.length - 1)) * 100}%` }}
+                     transition={{ duration: 1, ease: "easeInOut", delay: 0.5 }}
+                  />
+               </div>
 
                <div className="relative flex justify-between items-start z-10">
                   {steps.map((step, index) => {
@@ -225,7 +228,7 @@ export default function OrderDetailPage() {
                      </div>
                      <div className="lg:text-right">
                         <p className="text-sm text-muted-foreground uppercase tracking-widest font-semibold mb-1">Total Amount</p>
-                        <p className="text-3xl font-black text-emerald-600">${order.totalAmount}</p>
+                        <p className="text-3xl font-black text-emerald-600">{formatPrice(order.totalAmount)}</p>
                      </div>
                   </div>
 
@@ -278,12 +281,12 @@ export default function OrderDetailPage() {
                            <div className="pt-4 border-t space-y-2 text-muted-foreground">
                               <div className="flex justify-between">
                                  <span>Subtotal</span>
-                                 <span>${(order.totalAmount + (order.discountAmount || 0)).toFixed(2)}</span>
+                                 <span>{formatPrice(order.totalAmount + (order.discountAmount || 0))}</span>
                               </div>
                               {order.discountAmount && order.discountAmount > 0 ? (
                                  <div className="flex justify-between text-emerald-600">
                                     <span className="flex items-center gap-1"><Ticket className="w-4 h-4"/> Coupon Discount</span>
-                                    <span>-${order.discountAmount.toFixed(2)}</span>
+                                    <span>-{formatPrice(order.discountAmount)}</span>
                                  </div>
                               ) : null}
                               <div className="flex justify-between">
@@ -292,7 +295,7 @@ export default function OrderDetailPage() {
                               </div>
                               <div className="flex justify-between text-foreground font-bold text-base pt-2 border-t">
                                  <span>Total Amount</span>
-                                 <span>${order.totalAmount.toFixed(2)}</span>
+                                 <span>{formatPrice(order.totalAmount)}</span>
                               </div>
                            </div>
 
@@ -413,8 +416,8 @@ export default function OrderDetailPage() {
                                     <p className="text-xs sm:text-sm text-muted-foreground mt-1">{oi.item?.weight} {oi.item?.isSpicy ? "🌶️" : ""}</p>
                                  </div>
                                  <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 sm:gap-0">
-                                    <p className="font-black text-lg sm:text-xl text-primary sm:text-foreground">${oi.subTotal}</p>
-                                    <p className="text-xs sm:text-sm text-muted-foreground">${oi.unitPrice} x {oi.quantity}</p>
+                                    <p className="font-black text-lg sm:text-xl text-primary sm:text-foreground">{formatPrice(oi.subTotal)}</p>
+                                    <p className="text-xs sm:text-sm text-muted-foreground">{formatPrice(oi.unitPrice)} x {oi.quantity}</p>
                                  </div>
                               </div>
                            </div>

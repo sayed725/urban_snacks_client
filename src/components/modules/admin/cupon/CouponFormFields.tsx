@@ -50,7 +50,7 @@ export function CouponFormFields({ formData, setFormData }: CouponFormFieldsProp
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="FIXED">Fixed ($)</SelectItem>
+              <SelectItem value="FIXED">Fixed (৳)</SelectItem>
               <SelectItem value="PERCENTAGE">Percentage (%)</SelectItem>
             </SelectContent>
           </Select>
@@ -103,7 +103,7 @@ export function CouponFormFields({ formData, setFormData }: CouponFormFieldsProp
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {formData.discountType === "PERCENTAGE" && (
           <div className="space-y-2">
-            <label className="text-sm font-medium">Max Discount Cap ($)</label>
+            <label className="text-sm font-medium">Max Discount Cap (৳)</label>
             <Input
               type="number"
               min={0}
@@ -116,7 +116,7 @@ export function CouponFormFields({ formData, setFormData }: CouponFormFieldsProp
                   maxDiscountAmount: val,
                 });
               }}
-              placeholder="Max discount in dollars"
+              placeholder="Max discount in Taka"
             />
           </div>
         )}

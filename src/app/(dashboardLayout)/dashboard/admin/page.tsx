@@ -13,10 +13,11 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { IAdminStats } from "@/types/stats.type";
 import { getAdminStats } from "@/services/stats.service";
 import { useQuery } from "@tanstack/react-query";
+import { cn, formatPrice } from "@/lib/utils";
 import {
   ArrowDownRight,
   ArrowUpRight,
-  DollarSign,
+  Banknote,
   Layers,
   ShoppingBag,
   TrendingUp,
@@ -82,9 +83,9 @@ export default function AdminDashboardPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <MetricCard
               title="Total Revenue"
-              value={`$${stats.summary.totalRevenue.toLocaleString()}`}
+              value={formatPrice(stats.summary.totalRevenue)}
               description="Gross revenue overall"
-              icon={<DollarSign className="h-4 w-4 text-emerald-600" />}
+              icon={<Banknote className="h-4 w-4 text-emerald-600" />}
               trend="All-time"
               trendUp={true}
             />
@@ -100,7 +101,7 @@ export default function AdminDashboardPage() {
               title="Payments"
               value={stats.summary.totalPayments.toString()}
               description="Total payment records"
-              icon={<DollarSign className="h-4 w-4 text-orange-600" />}
+              icon={<Banknote className="h-4 w-4 text-orange-600" />}
               trend=""
               trendUp={true}
             />
@@ -162,7 +163,7 @@ export default function AdminDashboardPage() {
                         fontSize={12}
                         tickLine={false}
                         axisLine={false}
-                        tickFormatter={(value) => `$${value}`}
+                        tickFormatter={(value) => `৳${value}`}
                       />
                       <Tooltip
                         contentStyle={{
@@ -265,7 +266,7 @@ export default function AdminDashboardPage() {
                     <div key={order.id} className="flex flex-col gap-2 border-b pb-4 last:border-b-0 last:pb-0">
                        <div className="flex justify-between items-center">
                           <span className="font-bold">{order.orderNumber}</span>
-                          <span className="font-semibold text-primary">${order.totalAmount}</span>
+                          <span className="font-semibold text-primary">{formatPrice(order.totalAmount)}</span>
                        </div>
                        <div className="flex justify-between items-center text-sm">
                           <span className="text-muted-foreground">{order.user?.name || order.user?.email || "Guest"}</span>

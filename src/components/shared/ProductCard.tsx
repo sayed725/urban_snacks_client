@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/cart.store";
 import { IItem } from "@/types/item.type";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 
 interface ProductCardProps {
   product: IItem;
@@ -82,7 +82,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{product.semiTitle}</p>
         </div>
         <div className="flex items-center justify-between mt-4 border-t pt-4">
-          <div className="font-black text-2xl text-emerald-600">${product.price}</div>
+          <div className="font-black text-2xl text-emerald-600">{formatPrice(product.price)}</div>
           <Button
             className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-md hover:shadow-orange-500/25 transition-all duration-300 font-semibold shrink-0 hover:scale-105 border-0 z-10 relative"
             onClick={(e) => {

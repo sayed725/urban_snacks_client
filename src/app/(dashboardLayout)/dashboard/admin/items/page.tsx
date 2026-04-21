@@ -28,6 +28,7 @@ import AddItemForm from "@/components/modules/admin/items/AddItemForm";
 import ItemsLoadingSkeleton from "./_itemsLoadingSkeleton";
 import { useDebounce } from "@/hooks/use-debounce";
 import USPagination from "@/components/shared/USPagination";
+import { formatPrice } from "@/lib/utils";
 
 
 export default function AdminItems() {
@@ -312,7 +313,7 @@ export default function AdminItems() {
                     <div className="text-xs text-muted-foreground">{item.weight} {item.isSpicy && '🌶️'}</div>
                   </td>
                   <td className="px-6 py-4 text-muted-foreground">{item.category?.name || "-"}</td>
-                  <td className="px-6 py-4 text-right font-bold text-emerald-600">${item.price}</td>
+                  <td className="px-6 py-4 text-right font-bold text-emerald-600">{formatPrice(item.price)}</td>
                   <td className="px-6 py-4 text-center">
                     <Switch 
                       checked={item.isFeatured}

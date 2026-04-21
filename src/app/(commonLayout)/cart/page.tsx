@@ -4,6 +4,7 @@ import { useCartStore } from "@/store/cart.store";
 import { Button } from "@/components/ui/button";
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { formatPrice } from "@/lib/utils";
 
 export default function CartPage() {
   const { items, totalItems, totalPrice, removeItem, updateQuantity, clearCart } = useCartStore();
@@ -62,7 +63,7 @@ export default function CartPage() {
                   <Link href={`/products/${item.id}`} className="hover:text-primary transition-colors">
                      <h3 className="text-lg font-bold truncate">{item.name}</h3>
                   </Link>
-                  <p className="text-sm text-muted-foreground mt-1">${item.price} • {item.weight}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{formatPrice(item.price)} • {item.weight}</p>
                 </div>
 
                 <div className="flex items-center gap-6 sm:gap-8 w-full sm:w-auto justify-between sm:justify-end mt-4 sm:mt-0">
@@ -79,7 +80,7 @@ export default function CartPage() {
                   </div>
 
                   <div className="font-black text-lg w-20 text-right">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {formatPrice(item.price * item.quantity)}
                   </div>
 
                   <button 
@@ -102,7 +103,7 @@ export default function CartPage() {
              <div className="space-y-4 mb-6 text-sm">
                 <div className="flex justify-between">
                    <span className="text-muted-foreground">Subtotal</span>
-                   <span className="font-medium">${totalPrice().toFixed(2)}</span>
+                   <span className="font-medium">{formatPrice(totalPrice())}</span>
                 </div>
                 <div className="flex justify-between">
                    <span className="text-muted-foreground">Shipping</span>
@@ -110,7 +111,7 @@ export default function CartPage() {
                 </div>
                 <div className="border-t pt-4 flex justify-between items-center">
                    <span className="text-base font-bold">Total</span>
-                   <span className="text-2xl font-black text-emerald-600">${totalPrice().toFixed(2)}</span>
+                   <span className="text-2xl font-black text-emerald-600">{formatPrice(totalPrice())}</span>
                 </div>
              </div>
 
