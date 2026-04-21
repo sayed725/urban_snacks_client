@@ -1,4 +1,4 @@
-import { IUser } from "../user/user.type";
+import { IUser } from "./user.type";
 
 export interface IReview {
   id: string;
@@ -33,6 +33,7 @@ export interface IGetReviewsParams {
   customerId?: string;
   rating?: number;
   isActive?: boolean;
+  itemId?: string;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }

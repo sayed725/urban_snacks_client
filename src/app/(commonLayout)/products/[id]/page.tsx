@@ -13,6 +13,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "@/components/shared/ProductCard";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { getItems } from "@/services/item.service";
+import { getReviews } from "@/services/review.service";
+import ProductReviews from "@/components/modules/products/ProductReviews";
 import { cn } from "@/lib/utils";
 
 export default function ProductDetailPage() {
@@ -20,6 +22,7 @@ export default function ProductDetailPage() {
   const { addItem } = useCartStore();
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState<"similar" | "reviews">("similar");
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["item", id],
@@ -44,6 +47,15 @@ export default function ProductDetailPage() {
   });
 
   const relatedItems = relatedResponse?.data?.filter((item: any) => item.id !== id).slice(0, 4) || [];
+
+  // Reviews query
+  const { data: reviewsResponse, isLoading: isReviewsLoading } = useQuery({
+    queryKey: ["item-reviews", id],
+    queryFn: () => getReviews({ itemId: id, isActive: true }),
+    enabled: !!id,
+  });
+
+  const reviews = reviewsResponse?.data || [];
 
   const nextImage = () => {
     if (allImages.length > 1) {
@@ -358,37 +370,92 @@ export default function ProductDetailPage() {
           </motion.div>
         </div>
 
-        {/* Related Products Section */}
-        {relatedItems.length > 0 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-28 space-y-12"
-          >
-            <div className="max-w-2xl">
-               <SectionHeader
-                  title="You Might Also Like"
-                  badge="Related Snacks"
-               />
+        {/* Tabbed Section */}
+        <div className="mt-20 space-y-10">
+          {/* Tab Navigation */}
+          <div className="flex items-center justify-center border-b border-slate-200 dark:border-white/10 pb-px">
+            <div className="flex gap-8 relative">
+              <button
+                onClick={() => setActiveTab("similar")}
+                className={cn(
+                  "pb-4 text-sm font-bold uppercase tracking-widest transition-all relative",
+                  activeTab === "similar" 
+                    ? "text-primary" 
+                    : "text-muted-foreground hover:text-slate-600 dark:hover:text-slate-300"
+                )}
+              >
+                Similar Items
+                {activeTab === "similar" && (
+                  <motion.div 
+                    layoutId="activeTab"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                  />
+                )}
+              </button>
+              <button
+                onClick={() => setActiveTab("reviews")}
+                className={cn(
+                  "pb-4 text-sm font-bold uppercase tracking-widest transition-all relative",
+                  activeTab === "reviews" 
+                    ? "text-primary" 
+                    : "text-muted-foreground hover:text-slate-600 dark:hover:text-slate-300"
+                )}
+              >
+                Reviews ({reviews.length})
+                {activeTab === "reviews" && (
+                  <motion.div 
+                    layoutId="activeTab"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                  />
+                )}
+              </button>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {relatedItems.map((item: any, index: number) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.1 * index }}
-                >
-                  <ProductCard product={item} />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
+          {/* Tab Content */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              {activeTab === "similar" ? (
+                <div className="space-y-12">
+                  {relatedItems.length > 0 ? (
+                    <>
+                      <div className="max-w-2xl">
+                        <SectionHeader
+                          title="You Might Also Like"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                        {relatedItems.map((item: any, index: number) => (
+                          <motion.div
+                            key={item.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.1 * index }}
+                          >
+                            <ProductCard product={item} />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-20 bg-slate-50/50 dark:bg-white/5 rounded-[2.5rem] border border-dashed">
+                       <p className="text-muted-foreground font-medium">No similar snacks found at the moment.</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <ProductReviews reviews={reviews} isLoading={isReviewsLoading} />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

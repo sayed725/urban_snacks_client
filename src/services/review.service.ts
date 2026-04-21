@@ -13,6 +13,7 @@ export const getReviews = async (
       customerId: params?.customerId,
       rating: params?.rating,
       isActive: params?.isActive,
+      itemId: params?.itemId,
       sortBy: params?.sortBy,
       sortOrder: params?.sortOrder,
     },
