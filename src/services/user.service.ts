@@ -36,7 +36,8 @@ export const userServices = {
                 return null;
             }
 
-            const { data } = await res.json();
+            const jsonResponse = await res.json();
+            const data = jsonResponse?.data || null;
 
             return data;
         } catch (error) {

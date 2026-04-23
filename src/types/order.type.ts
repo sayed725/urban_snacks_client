@@ -45,6 +45,7 @@ export interface IOrder {
   paymentMethod: string;
   additionalInfo?: string | null;
   cancelReason?: string | null;
+  deliveryCharge?: number;
   discountAmount?: number;
   couponId?: string | null;
   coupon?: ICoupon | null;
@@ -78,6 +79,7 @@ export interface ICreateOrderPayload {
   paymentMethod: string;
   paymentStatus?: string;
   additionalInfo?: string;
+  deliveryCharge?: number;
   couponCode?: string;
   orderItems: {
     itemId: string;

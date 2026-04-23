@@ -483,6 +483,7 @@ export default function AdminOrders() {
                       <p className="font-semibold text-muted-foreground border-b pb-1 mb-2">Payment Info</p>
                       <p><span className="font-medium">Method:</span> {selectedOrder.paymentMethod}</p>
                       <p><span className="font-medium">Status:</span> <Badge variant="outline" className={getPaymentColor(selectedOrder.paymentStatus)}>{selectedOrder.paymentStatus}</Badge></p>
+                      <p><span className="font-medium">Delivery:</span> <span className="font-medium">{selectedOrder.deliveryCharge && selectedOrder.deliveryCharge > 0 ? formatPrice(selectedOrder.deliveryCharge) : <span className="text-emerald-600 font-medium">Free</span>}</span></p>
                       <p><span className="font-medium">Total:</span> <span className="font-bold text-emerald-600">{formatPrice(selectedOrder.totalAmount)}</span></p>
                       {selectedOrder.additionalInfo && (
                         <div className="mt-4">

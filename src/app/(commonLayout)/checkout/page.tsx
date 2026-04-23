@@ -17,6 +17,7 @@ import { createCheckoutSession } from "@/services/payment.service";
 import CheckoutLoadingSkeleton from "./_checkoutLoadingSkeleton";
 import { createOrder } from "@/services/order.service";
 import { verifyCoupon } from "@/services/coupon.service";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -45,7 +46,27 @@ export default function CheckoutPage() {
 
   const subtotal = totalPrice();
   const discountAmount = appliedCoupon?.discountAmount || 0;
-  const finalTotal = Math.max(0, subtotal - discountAmount);
+
+  let baseDeliveryCharge = 0;
+  if (formData.shippingCity === "dhaka") {
+    baseDeliveryCharge = 60;
+  } else if (formData.shippingCity === "suburbs") {
+    baseDeliveryCharge = 100;
+  } else if (formData.shippingCity === "outside") {
+    baseDeliveryCharge = 120;
+  }
+
+  const totalWeightInGm = items.reduce((sum, item) => {
+    const numericVal = parseFloat(item.weight || "0") || 0;
+    const isKg = (item.weight || "").toLowerCase().includes("kg");
+    const gram = numericVal * (isKg ? 1000 : 1);
+    return sum + (gram * item.quantity);
+  }, 0);
+
+  const extraWeightCharge = Math.max(0, Math.ceil(totalWeightInGm / 1000) - 1) * 10;
+  const deliveryCharge = formData.shippingCity ? baseDeliveryCharge + extraWeightCharge : 0;
+
+  const finalTotal = Math.max(0, subtotal - discountAmount) + deliveryCharge;
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
@@ -186,7 +207,16 @@ export default function CheckoutPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold">City</label>
-                  <Input required value={formData.shippingCity} onChange={e => setFormData({ ...formData, shippingCity: e.target.value })} className="h-10 bg-muted/50 focus:bg-background" />
+                  <Select required value={formData.shippingCity} onValueChange={(val) => setFormData({ ...formData, shippingCity: val })}>
+                    <SelectTrigger className="h-10 bg-muted/50 focus:bg-background">
+                      <SelectValue placeholder="Select delivery area..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="dhaka">Inside Dhaka City</SelectItem>
+                      <SelectItem value="suburbs">Greater Dhaka (Suburbs)</SelectItem>
+                      <SelectItem value="outside">Outside Dhaka (Districts)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold">Postal Code</label>
@@ -348,7 +378,9 @@ export default function CheckoutPage() {
               )}
               <div className="flex justify-between text-muted-foreground">
                 <span>Delivery</span>
-                <span className="text-emerald-600 font-bold">Free</span>
+                <span className="text-emerald-600 font-bold">
+                  {formData.shippingCity ? formatPrice(deliveryCharge) : "Select Area"}
+                </span>
               </div>
               <div className="flex justify-between text-2xl font-black pt-4 border-t mt-4">
                 <span>Total</span>

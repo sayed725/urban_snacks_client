@@ -162,11 +162,16 @@ export const generateInvoicePDF = (order: IOrder) => {
     doc.text(`-BDT ${order.discountAmount.toFixed(2)}`, pageWidth - 15, finalY + 8, { align: "right" });
   }
 
-  // Shipping (Assuming free for now as per dashboard UI)
+  // Delivery Charge
   doc.setTextColor(107, 114, 128);
-  doc.text("Shipping", summaryX, finalY + 16);
-  doc.setTextColor(emeraldColor[0], emeraldColor[1], emeraldColor[2]);
-  doc.text("FREE", pageWidth - 15, finalY + 16, { align: "right" });
+  doc.text("Delivery Charge", summaryX, finalY + 16);
+  if (order.deliveryCharge && order.deliveryCharge > 0) {
+    doc.setTextColor(17, 24, 39);
+    doc.text(`BDT ${order.deliveryCharge.toFixed(2)}`, pageWidth - 15, finalY + 16, { align: "right" });
+  } else {
+    doc.setTextColor(emeraldColor[0], emeraldColor[1], emeraldColor[2]);
+    doc.text("FREE", pageWidth - 15, finalY + 16, { align: "right" });
+  }
 
   // Grand Total Overlay
   const totalY = finalY + 25;

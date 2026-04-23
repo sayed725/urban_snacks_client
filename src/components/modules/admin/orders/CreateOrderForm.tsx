@@ -42,6 +42,35 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmit, isPending, 
     setOrderItems(updated);
   };
 
+  const calculateTotals = () => {
+    const subtotal = orderItems.reduce((sum, oi) => {
+      const product = items.find(it => it.id === oi.itemId);
+      return sum + (product ? product.price * oi.quantity : 0);
+    }, 0);
+
+    let baseDeliveryCharge = 0;
+    if (formData.shippingCity === "dhaka") baseDeliveryCharge = 60;
+    else if (formData.shippingCity === "suburbs") baseDeliveryCharge = 100;
+    else if (formData.shippingCity === "outside") baseDeliveryCharge = 120;
+
+    const totalWeightInGm = orderItems.reduce((sum, oi) => {
+      const product = items.find(it => it.id === oi.itemId);
+      if (!product || !product.weight) return sum;
+      
+      const numericVal = parseFloat(product.weight) || 0;
+      const isKg = product.weight.toLowerCase().includes("kg");
+      const gram = numericVal * (isKg ? 1000 : 1);
+      return sum + (gram * oi.quantity);
+    }, 0);
+
+    const extraWeightCharge = Math.max(0, Math.ceil(totalWeightInGm / 1000) - 1) * 10;
+    const deliveryCharge = formData.shippingCity ? baseDeliveryCharge + extraWeightCharge : 0;
+    
+    return { subtotal, deliveryCharge, total: subtotal + deliveryCharge };
+  };
+
+  const { subtotal, deliveryCharge, total } = calculateTotals();
+
   const parseSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (orderItems.length === 0) {
@@ -78,7 +107,16 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmit, isPending, 
               </div>
               <div className="space-y-2">
                   <label className="text-sm font-medium">City <span className="text-red-500">*</span></label>
-                  <Input required value={formData.shippingCity} onChange={(e) => setFormData({ ...formData, shippingCity: e.target.value })} />
+                  <Select required value={formData.shippingCity} onValueChange={(v) => setFormData({ ...formData, shippingCity: v })}>
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Select Area" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="dhaka">Inside Dhaka City</SelectItem>
+                      <SelectItem value="suburbs">Greater Dhaka (Suburbs)</SelectItem>
+                      <SelectItem value="outside">Outside Dhaka (Districts)</SelectItem>
+                    </SelectContent>
+                  </Select>
               </div>
               <div className="space-y-2">
                   <label className="text-sm font-medium">Postal Code <span className="text-red-500">*</span></label>
@@ -92,7 +130,7 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmit, isPending, 
                           <SelectItem value="PAID">Paid</SelectItem>
                           <SelectItem value="UNPAID">Unpaid</SelectItem>
                       </SelectContent>
-                  </Select>
+                   </Select>
               </div>
               <div className="space-y-2 col-span-2">
                   <label className="text-sm font-medium">Street Address <span className="text-red-500">*</span></label>
@@ -153,9 +191,25 @@ const CreateOrderForm: React.FC<CreateOrderFormProps> = ({ onSubmit, isPending, 
           </div>
       </div>
 
+      {/* Order Summary */}
+      <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-dashed space-y-2">
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Subtotal</span>
+          <span className="font-medium">৳{subtotal.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Delivery Charge</span>
+          <span className="font-medium text-emerald-600">{deliveryCharge > 0 ? `৳${deliveryCharge.toLocaleString()}` : "Select City"}</span>
+        </div>
+        <div className="flex justify-between text-lg font-bold border-t pt-2 mt-2">
+          <span>Total Amount</span>
+          <span className="text-primary">৳{total.toLocaleString()}</span>
+        </div>
+      </div>
+
       <div className="pt-4 flex justify-end gap-2 border-t mt-6">
           <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending || orderItems.length === 0}>
               {isPending ? "Creating..." : "Create Order"}
           </Button>
       </div>

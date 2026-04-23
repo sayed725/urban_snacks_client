@@ -281,7 +281,7 @@ export default function OrderDetailPage() {
                            <div className="pt-4 border-t space-y-2 text-muted-foreground">
                               <div className="flex justify-between">
                                  <span>Subtotal</span>
-                                 <span>{formatPrice(order.totalAmount + (order.discountAmount || 0))}</span>
+                                 <span>{formatPrice(order.totalAmount - (order.deliveryCharge || 0) + (order.discountAmount || 0))}</span>
                               </div>
                               {order.discountAmount && order.discountAmount > 0 ? (
                                  <div className="flex justify-between text-emerald-600">
@@ -290,8 +290,12 @@ export default function OrderDetailPage() {
                                  </div>
                               ) : null}
                               <div className="flex justify-between">
-                                 <span>Shipping</span>
-                                 <span className="text-emerald-600 font-medium">Free</span>
+                                 <span>Delivery Charge</span>
+                                 {order.deliveryCharge && order.deliveryCharge > 0 ? (
+                                    <span className="text-emerald-600 font-medium">{formatPrice(order.deliveryCharge)}</span>
+                                 ) : (
+                                    <span className="text-emerald-600 font-medium">Free</span>
+                                 )}
                               </div>
                               <div className="flex justify-between text-foreground font-bold text-base pt-2 border-t">
                                  <span>Total Amount</span>
