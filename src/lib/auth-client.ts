@@ -1,10 +1,11 @@
 
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
-import { env } from "../config/env";
 
+// Use the proxy rewrite path so auth requests go through Vercel (/api/auth/* → backend)
+// This ensures cookies are set on the same domain (Vercel) and bypass cross-origin cookie blocking.
 export const authClient = createAuthClient({
-  baseURL: env.NEXT_PUBLIC_API_URL,
+  baseURL: typeof window !== "undefined" ? window.location.origin : process.env.NEXT_PUBLIC_FRONTEND_URL,
   fetchOptions: { credentials: "include" },
   plugins: [
     inferAdditionalFields({

@@ -2,6 +2,7 @@ import { fetchApi } from "@/lib/fetch-api";
 import { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import { IReview, ICreateReviewPayload, IGetReviewsParams, IUpdateReviewPayload } from "@/types/review.type";
 
+
 export const getReviews = async (
   params?: IGetReviewsParams
 ): Promise<PaginatedResponse<IReview>> => {
@@ -23,6 +24,7 @@ export const getReviews = async (
 export const getMyReviews = async (
     params?: IGetReviewsParams
 ): Promise<PaginatedResponse<IReview>> => {
+
     // This assumes the backend handles identity based on session
     return fetchApi("/api/v1/reviews", {
         params: {

@@ -121,13 +121,13 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" variant="sidebar" className="border-r">
       <SidebarHeader>
 
-        <Link href="/" className="flex items-center gap-2 mb-1">
+        <Link href="/" className="flex items-center gap-2 mb-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0">
           <img
             src="/assets/urban_snaks_logo.png"
             alt="Urban Snacks Logo"
             className="w-10 h-10 rounded"
           />
-          <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+          <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent group-data-[collapsible=icon]:hidden">
             Urban Snacks
           </span>
         </Link>
@@ -282,7 +282,7 @@ function SidebarLoadingSkeleton() {
               <SidebarMenuItem key={i}>
                 <SidebarMenuButton>
                   <Skeleton className="h-5 w-5 rounded-md" />
-                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-32 group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
@@ -299,7 +299,7 @@ function SidebarLoadingSkeleton() {
               <SidebarMenuItem key={i}>
                 <SidebarMenuButton>
                   <Skeleton className="h-5 w-5 rounded-md" />
-                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-24 group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
@@ -313,8 +313,8 @@ function SidebarLoadingSkeleton() {
             <SidebarMenuButton size="lg">
               <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
               <div className="grid flex-1 gap-2 leading-tight">
-                <Skeleton className="h-3 w-24" />
-                <Skeleton className="h-2 w-32" />
+                <Skeleton className="h-3 w-24 group-data-[collapsible=icon]:hidden" />
+                <Skeleton className="h-2 w-32 group-data-[collapsible=icon]:hidden" />
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>

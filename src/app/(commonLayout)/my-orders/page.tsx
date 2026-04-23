@@ -16,7 +16,7 @@ import { cn, formatPrice } from "@/lib/utils";
 import { createCheckoutSession } from "@/services/payment.service";
 
 import { Truck, CreditCard, Ticket } from "lucide-react";
-import { cancelOrder, getMyOrders, updatePaymentMethod } from "@/services/order.service";
+import { getMyOrders, updatePaymentMethod } from "@/services/order.service";
 import { OrderStatus } from "@/types/order.type";
 import { getReviews } from "@/services/review.service";
 
@@ -39,6 +39,13 @@ export default function MyOrdersPage() {
    const { data: session, isPending: sessionLoading } = authClient.useSession();
    const queryClient = useQueryClient();
 
+
+   // const { data: response, isLoading } = useQuery({
+   //    queryKey: ["my-orders"],
+   //    queryFn: () => getMyAllOrders(),
+   //    enabled: !!session,
+   // });
+
    const { data: response, isLoading } = useQuery({
       queryKey: ["my-orders"],
       queryFn: () => getMyOrders({ limit: 50 }),
@@ -60,16 +67,6 @@ export default function MyOrdersPage() {
 
    // console.log("orders", orders);
 
-   // const cancelMutation = useMutation({
-   //    mutationFn: cancelOrder,
-   //    onSuccess: () => {
-   //       queryClient.invalidateQueries({ queryKey: ["my-orders"] });
-   //       toast.success("Order cancelled safely");
-   //    },
-   //    onError: (error: any) => {
-   //       toast.error(error.message || "Failed to cancel order");
-   //    },
-   // });
 
    const retryMutation = useMutation({
       mutationFn: createCheckoutSession,
@@ -136,6 +133,8 @@ export default function MyOrdersPage() {
             <h1 className="text-4xl font-black">My Orders</h1>
             <p className="text-muted-foreground mt-2">Track and manage your past snack orders</p>
          </motion.div>
+
+         {/* <h2>here is the data from using manual api call{res?.data?.data?.length}</h2> */}
 
          {isLoading || sessionLoading ? (
             <OrdersLoadingSkeleton />

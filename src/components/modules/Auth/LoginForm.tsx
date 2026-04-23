@@ -197,14 +197,14 @@ const LoginForm = ({ redirectPath }: LoginFormProps) => {
                                 </form.Field>
                             </motion.div>
 
-                            <motion.div variants={itemVariants} className="flex justify-end">
+                            {/* <motion.div variants={itemVariants} className="flex justify-end">
                                 <Link
                                     href="/forgot-password"
                                     className="text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors"
                                 >
                                     Forgot password?
                                 </Link>
-                            </motion.div>
+                            </motion.div> */}
 
                             <AnimatePresence>
                                 {serverError && (

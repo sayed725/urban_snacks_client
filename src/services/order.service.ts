@@ -10,7 +10,9 @@ import {
 export const getAllOrders = async (
   params?: IGetOrdersParams
 ): Promise<{ data: IOrder[]; total: number }> => {
+
   return fetchApi("/api/v1/orders/all", {
+    
     params: {
       page: params?.page,
       limit: params?.limit ?? 20,
@@ -27,6 +29,7 @@ export const getAllOrders = async (
 export const getMyOrders = async (
   params?: IGetOrdersParams
 ): Promise<{ data: IOrder[]; total: number }> => {
+
   return fetchApi("/api/v1/orders/my-orders", {
     params: {
       page: params?.page,
