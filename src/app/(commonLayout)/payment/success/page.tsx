@@ -4,17 +4,20 @@ import { CheckCircle2, Receipt, CreditCard, CalendarCheck } from "lucide-react";
 import { getPaymentByOrderId } from "@/services/payment.service";
 import { ClearCartOnSuccess } from "./ClearCartOnSuccess";
 
+import { cn, formatPrice } from "@/lib/utils";
+
 export default async function PaymentSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ session_id?: string; order_id?: string }>;
+  searchParams: Promise<{ session_id?: string; order_id?: string; orderId?: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
+  const orderId = resolvedSearchParams.orderId || resolvedSearchParams.order_id;
 
   let paymentInfo = null;
-  if (resolvedSearchParams.order_id) {
+  if (orderId) {
     try {
-      const res = await getPaymentByOrderId(resolvedSearchParams.order_id);
+      const res = await getPaymentByOrderId(orderId);
       paymentInfo = res.data;
     } catch (e) {
       // Payment might still be processing by the webhook, ignore error and show default success
@@ -48,7 +51,7 @@ export default async function PaymentSuccessPage({
               <div className="grid grid-cols-2 gap-4 text-sm pt-2">
                 <div>
                   <p className="text-muted-foreground font-medium mb-1">Amount Paid</p>
-                  <p className="font-bold text-lg">${Number(paymentInfo.amount || 0).toFixed(2)}</p>
+                  <p className="font-bold text-lg">{formatPrice(Number(paymentInfo.amount || 0))}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground font-medium mb-1 flex items-center gap-1"><CreditCard className="w-3.5 h-3.5" /> Payment Status</p>

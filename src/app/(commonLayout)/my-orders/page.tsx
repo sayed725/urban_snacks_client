@@ -13,7 +13,7 @@ import moment from "moment";
 import OrdersLoadingSkeleton from "./_ordersLoadingSkeleton";
 import AddReviewDialog from "@/components/modules/user/review/AddReviewDialog";
 import { cn, formatPrice } from "@/lib/utils";
-import { createCheckoutSession } from "@/services/payment.service";
+import { createCheckoutSession, initiateSslPayment } from "@/services/payment.service";
 
 import { Truck, CreditCard, Ticket } from "lucide-react";
 import { getMyOrders, updatePaymentMethod } from "@/services/order.service";
@@ -77,6 +77,18 @@ export default function MyOrdersPage() {
       },
       onError: (error: any) => {
          toast.error(error.message || "Failed to initiate payment");
+      },
+   });
+
+   const sslRetryMutation = useMutation({
+      mutationFn: initiateSslPayment,
+      onSuccess: (res) => {
+         if (res.data?.url) {
+            window.location.href = res.data.url;
+         }
+      },
+      onError: (error: any) => {
+         toast.error(error.message || "Failed to initiate SSL payment");
       },
    });
 
@@ -279,6 +291,29 @@ export default function MyOrdersPage() {
                                     <Button
                                        onClick={() => switchMutation.mutate({ orderId: order.id, method: "COD" })}
                                        disabled={retryMutation.isPending || switchMutation.isPending}
+                                       variant="outline"
+                                       className="w-full border-primary/20 text-primary font-bold"
+                                    >
+                                       <Truck className="w-4 h-4 mr-2" /> Switch to COD
+                                    </Button>
+                                 </div>
+                              )}
+
+                           {order.paymentStatus === "UNPAID" &&
+                              order.paymentMethod === "SSLCOMMERZ" &&
+                              order.status !== "CANCELLED" && (
+                                 <div className="flex flex-col gap-2">
+                                    <Button
+                                       onClick={() => sslRetryMutation.mutate(order.id)}
+                                       disabled={sslRetryMutation.isPending || switchMutation.isPending}
+                                       className="w-full bg-[#005694] hover:bg-[#00467a] text-white font-bold"
+                                    >
+                                       <CreditCard className="w-4 h-4 mr-2" />
+                                       {sslRetryMutation.isPending ? "Connecting..." : "Pay with SSL"}
+                                    </Button>
+                                    <Button
+                                       onClick={() => switchMutation.mutate({ orderId: order.id, method: "COD" })}
+                                       disabled={sslRetryMutation.isPending || switchMutation.isPending}
                                        variant="outline"
                                        className="w-full border-primary/20 text-primary font-bold"
                                     >

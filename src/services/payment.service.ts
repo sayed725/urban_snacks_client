@@ -9,6 +9,14 @@ export const createCheckoutSession = async (
   });
 };
 
+export const initiateSslPayment = async (
+  orderId: string
+): Promise<ApiResponse<{ url: string }>> => {
+  return fetchApi(`/api/v1/payments/initiate-ssl/${orderId}`, {
+    method: "POST",
+  });
+};
+
 export const getPaymentByOrderId = async (
   orderId: string
 ): Promise<ApiResponse<any>> => {

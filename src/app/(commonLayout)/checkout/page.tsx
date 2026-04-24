@@ -13,7 +13,7 @@ import { ShieldCheck, Truck, CreditCard, Ticket, X, CheckCircle2, Loader2 } from
 import { cn, formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
-import { createCheckoutSession } from "@/services/payment.service";
+import { createCheckoutSession, initiateSslPayment } from "@/services/payment.service";
 import CheckoutLoadingSkeleton from "./_checkoutLoadingSkeleton";
 import { createOrder } from "@/services/order.service";
 import { verifyCoupon } from "@/services/coupon.service";
@@ -108,10 +108,24 @@ export default function CheckoutPage() {
             window.location.href = res.data.url;
             return;
           } else {
-            toast.error("Failed to initialize payment gateway");
+            toast.error("Failed to initialize Stripe gateway");
           }
         } catch (error: any) {
-          toast.error(error.message || "Failed to initiate payment.");
+          toast.error(error.message || "Failed to initiate Stripe payment.");
+        }
+      }
+
+      if (paymentMethod === "SSLCOMMERZ" && orderId) {
+        try {
+          const res = await initiateSslPayment(orderId);
+          if (res.data?.url) {
+            window.location.href = res.data.url;
+            return;
+          } else {
+            toast.error("Failed to initialize SSLCommerz gateway");
+          }
+        } catch (error: any) {
+          toast.error(error.message || "Failed to initiate SSL payment.");
         }
       }
 
@@ -264,6 +278,22 @@ export default function CheckoutPage() {
                     <div>
                       <p className="font-bold text-lg">Cash on Delivery (COD)</p>
                       <p className="text-sm text-muted-foreground font-medium">Pay securely when you receive your snacks.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SSLCOMMERZ Option */}
+                <div
+                  onClick={() => setPaymentMethod("SSLCOMMERZ")}
+                  className={`border-2 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-colors ${paymentMethod === "SSLCOMMERZ" ? "border-primary bg-primary/5" : "border-muted hover:border-primary/50"}`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`w-5 h-5 rounded-full border-4 flex items-center justify-center ${paymentMethod === "SSLCOMMERZ" ? "border-primary bg-background" : "border-muted bg-background"}`}>
+                      {paymentMethod === "SSLCOMMERZ" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                    </div>
+                    <div>
+                      <p className="font-bold text-lg">Local Cards / Mobile Banking (SSLCommerz)</p>
+                      <p className="text-sm text-muted-foreground font-medium">Pay with bKash, Nagad, Rocket, or any local card.</p>
                     </div>
                   </div>
                 </div>

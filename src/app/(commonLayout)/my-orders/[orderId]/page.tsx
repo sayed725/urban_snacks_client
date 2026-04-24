@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { authClient } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
@@ -14,9 +14,7 @@ import OrderLoadingSkeleton from "./_orderLoadingSkeleton";
 import { cn, formatPrice } from "@/lib/utils";
 import { IReview } from "@/types/review.type";
 import AddReviewDialog from "@/components/modules/user/review/AddReviewDialog";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createCheckoutSession } from "@/services/payment.service";
-
+import { createCheckoutSession, initiateSslPayment } from "@/services/payment.service";
 import { toast } from "sonner";
 import { generateInvoicePDF } from "@/lib/invoice-pdf";
 import { Download, RefreshCw, Truck } from "lucide-react";
@@ -59,6 +57,18 @@ export default function OrderDetailPage() {
       },
       onError: (error: any) => {
          toast.error(error.message || "Failed to initiate payment");
+      },
+   });
+
+   const sslRetryMutation = useMutation({
+      mutationFn: () => initiateSslPayment(orderId),
+      onSuccess: (res) => {
+         if (res.data?.url) {
+            window.location.href = res.data.url;
+         }
+      },
+      onError: (error: any) => {
+         toast.error(error.message || "Failed to initiate SSL payment");
       },
    });
 
@@ -318,6 +328,30 @@ export default function OrderDetailPage() {
                                     <Button
                                        onClick={() => switchMutation.mutate()}
                                        disabled={retryMutation.isPending || switchMutation.isPending}
+                                       variant="outline"
+                                       className="w-full border-primary/20 text-primary font-bold h-12 rounded-xl"
+                                    >
+                                       <Truck className="w-4 h-4 mr-2" />
+                                       {switchMutation.isPending ? "Updating..." : "Switch to Cash on Delivery"}
+                                    </Button>
+                                 </div>
+                              )}
+
+                           {order.paymentStatus === "UNPAID" &&
+                              order.paymentMethod === "SSLCOMMERZ" &&
+                              order.status !== "CANCELLED" && (
+                                 <div className="flex flex-col gap-3 mt-4 pt-4 border-t">
+                                    <Button
+                                       onClick={() => sslRetryMutation.mutate()}
+                                       disabled={sslRetryMutation.isPending || switchMutation.isPending}
+                                       className="w-full bg-[#005694] hover:bg-[#00467a] text-white font-bold h-12 rounded-xl"
+                                    >
+                                       <RefreshCw className={`w-4 h-4 mr-2 ${sslRetryMutation.isPending ? "animate-spin" : ""}`} />
+                                       {sslRetryMutation.isPending ? "Connecting..." : "Pay with SSLCommerz"}
+                                    </Button>
+                                    <Button
+                                       onClick={() => switchMutation.mutate()}
+                                       disabled={sslRetryMutation.isPending || switchMutation.isPending}
                                        variant="outline"
                                        className="w-full border-primary/20 text-primary font-bold h-12 rounded-xl"
                                     >
