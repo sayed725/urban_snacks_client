@@ -38,6 +38,7 @@ import {
   MessageSquare,
   Ticket,
   Image as ImageIcon,
+  DollarSign,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -69,6 +70,12 @@ export function AppSidebar() {
       roles: ["ADMIN"],
     },
     {
+      title: "Manage Orders",
+      href: "/dashboard/admin/orders",
+      icon: ShoppingBag,
+      roles: ["ADMIN"],
+    },
+    {
       title: "All Items",
       href: "/dashboard/admin/items", // using Box for items
       icon: Box,
@@ -81,9 +88,15 @@ export function AppSidebar() {
       roles: ["ADMIN"],
     },
     {
-      title: "Manage Orders",
-      href: "/dashboard/admin/orders",
-      icon: ShoppingBag,
+      title: "Coupons",
+      href: "/dashboard/admin/coupons",
+      icon: Ticket,
+      roles: ["ADMIN"],
+    },
+    {
+      title: "Banners",
+      href: "/dashboard/admin/banners",
+      icon: ImageIcon,
       roles: ["ADMIN"],
     },
     {
@@ -98,18 +111,6 @@ export function AppSidebar() {
       icon: MessageSquare,
       roles: ["ADMIN"],
     },
-    {
-      title: "Coupons",
-      href: "/dashboard/admin/coupons",
-      icon: Ticket,
-      roles: ["ADMIN"],
-    },
-    {
-      title: "Banners",
-      href: "/dashboard/admin/banners",
-      icon: ImageIcon,
-      roles: ["ADMIN"],
-    }
   ].filter((item) => item.roles.includes(role as string));
 
   const publicItems = [
@@ -230,7 +231,7 @@ export function AppSidebar() {
                       {user.name?.charAt(0).toUpperCase() || "?"}
                     </div>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold text-black dark:text-white">
+                      <span className="truncate font-semibold text-foreground">
                         My Account
                       </span>
                       <span className="truncate text-sm text-muted-foreground capitalize">

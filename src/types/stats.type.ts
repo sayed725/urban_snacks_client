@@ -5,6 +5,10 @@ export interface IAdminStats {
     totalPayments: number;
     totalRevenue: number;
     totalReviews: number;
+    totalUsers: number;
+    totalCategories: number;
+    totalCoupons: number;
+    totalBanners: number;
   };
   orderStats: {
     byStatus: {

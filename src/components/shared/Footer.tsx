@@ -99,7 +99,7 @@ export default function Footer() {
 
             {/* Newsletter */}
             <div className="pt-2">
-              <h4 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
+              <h4 className="text-sm font-bold uppercase tracking-widest text-foreground mb-3">
                 Stay Updated
               </h4>
               <form className="flex gap-2 max-w-sm">
@@ -124,7 +124,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <motion.div variants={itemVariants} className="lg:col-span-3">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-5">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-foreground mb-5">
               Quick Links
             </h3>
             <ul className="space-y-3">
@@ -153,7 +153,7 @@ export default function Footer() {
 
           {/* Contact Info */}
           <motion.div variants={itemVariants} className="lg:col-span-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-5">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-foreground mb-5">
               Get In Touch
             </h3>
             <div className="space-y-4">

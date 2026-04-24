@@ -76,7 +76,7 @@ const FeatureSnacksClient = ({ featuredItems }: { featuredItems: any[] }) => {
                transition={{ delay: 0.3, duration: 0.5 }}
                className="text-center mt-12"
             >
-               <Button asChild size="lg" className=" px-8 h-14 text-lg bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-orange-500/25 transition-all duration-300 font-semibold border-0">
+               <Button asChild size="lg" className=" px-8 h-14 text-lg bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-orange-500/25 transition-all duration-300  border-0">
                   <Link href="/products">Explore Full Catalog <ArrowRight className="w-5 h-5 ml-2" /></Link>
                </Button>
             </motion.div>

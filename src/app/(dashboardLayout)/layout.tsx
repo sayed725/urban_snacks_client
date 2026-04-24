@@ -33,7 +33,7 @@ export default function DashboardLayout({
       <div className="flex min-h-screen w-full bg-slate-50/50 dark:bg-background">
         <AppSidebar />
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <header className="flex py-3 shrink-0 items-center gap-2 border-b bg-white dark:bg-black px-4">
+          <header className="flex py-3 shrink-0 items-center gap-2 border-b bg-card px-4">
             <SidebarTrigger className="-ml-1" />
             <div className="h-4 w-px bg-border mx-2" />
 

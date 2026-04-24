@@ -39,28 +39,28 @@ const FeatureCard = () => {
             <div className="flex justify-center mb-2 text-primary">
               <ShoppingBag className="w-8 h-8" />
             </div>
-            <h3 className="font-bold">Premium Snacks</h3>
+            <h3 className="font-semibold tracking-tight">Premium Snacks</h3>
             <p className="text-sm text-muted-foreground mt-1">Curated quality</p>
           </motion.div>
           <motion.div variants={itemVariants} className="px-4">
             <div className="flex justify-center mb-2 text-primary">
               <Zap className="w-8 h-8" />
             </div>
-            <h3 className="font-bold">Fast Delivery</h3>
+            <h3 className="font-semibold tracking-tight">Fast Delivery</h3>
             <p className="text-sm text-muted-foreground mt-1">Right to your door</p>
           </motion.div>
           <motion.div variants={itemVariants} className="px-4">
             <div className="flex justify-center mb-2 text-primary">
               <Star className="w-8 h-8" />
             </div>
-            <h3 className="font-bold">Top Rated</h3>
+            <h3 className="font-semibold tracking-tight">Top Rated</h3>
             <p className="text-sm text-muted-foreground mt-1">Loved by thousands</p>
           </motion.div>
           <motion.div variants={itemVariants} className="px-4 border-l-0 md:border-l">
             <div className="flex justify-center mb-2 text-primary">
               <span className="text-3xl">🛡️</span>
             </div>
-            <h3 className="font-bold">Secure Checkout</h3>
+            <h3 className="font-semibold tracking-tight">Secure Checkout</h3>
             <p className="text-sm text-muted-foreground mt-1">100% protected</p>
           </motion.div>
         </motion.div>

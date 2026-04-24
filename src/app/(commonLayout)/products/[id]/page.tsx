@@ -132,7 +132,7 @@ export default function ProductDetailPage() {
                     transition={{ duration: 0.4 }}
                     src={allImages[activeImageIndex]}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover dark:brightness-80"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground">

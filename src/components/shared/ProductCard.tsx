@@ -36,7 +36,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           <motion.img
             src={product.mainImage || product.image[0]}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            className="w-full h-full object-cover group-hover:scale-110  dark:brightness-80 transition-transform duration-700"
           />
         ) : (
           <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-muted/30 italic">
@@ -75,14 +75,14 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
 
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex-grow">
-          <div className="text-xs text-primary font-bold tracking-wider mb-2 uppercase">
+          <div className="text-xs text-primary font-bold tracking-widest mb-2 uppercase">
             {product.category?.name}
           </div>
-          <Link href={`/products/${product.id}`} className="text-xl font-bold group-hover:text-primary transition-colors line-clamp-2">{product.name}</Link>
+          <Link href={`/products/${product.id}`} className="text-xl font-extrabold tracking-tight group-hover:text-primary transition-colors line-clamp-2">{product.name}</Link>
           <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{product.semiTitle}</p>
         </div>
         <div className="flex items-center justify-between mt-4 border-t pt-4">
-          <div className="font-black text-2xl text-emerald-600">{formatPrice(product.price)}</div>
+          <div className="font-extrabold text-2xl tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">{formatPrice(product.price)}</div>
           <Button
             className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-md hover:shadow-orange-500/25 transition-all duration-300 font-semibold shrink-0 hover:scale-105 border-0 z-10 relative"
             onClick={(e) => {

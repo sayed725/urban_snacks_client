@@ -50,7 +50,7 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
               <div
                 className={`cursor-pointer px-3 py-2 rounded-md transition-colors text-sm min-w-fit ${
                   selectedCategory === "" 
-                    ? "bg-primary text-secondary font-medium" 
+                    ? "bg-primary text-secondary dark:text-white font-medium" 
                     : "hover:bg-muted"
                 }`}
                 onClick={() => updateCategory("")}
@@ -62,7 +62,7 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
                   key={cat.id}
                   className={`cursor-pointer px-3 py-2 rounded-md transition-colors text-sm min-w-fit  ${
                     selectedCategory === cat.id 
-                      ? "bg-primary text-secondary font-medium" 
+                      ? "bg-primary text-secondary font-medium dark:text-white" 
                       : "hover:bg-muted"
                   }`}
                   onClick={() => updateCategory(cat.id)}
