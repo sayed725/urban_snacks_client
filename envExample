@@ -1,0 +1,15 @@
+NEXT_PUBLIC_NODE_ENV=development
+
+NEXT_PUBLIC_BACKEND_URL=your_backend_url
+NEXT_PUBLIC_FRONTEND_URL=your_frontend_url
+
+NEXT_PUBLIC_API_URL=your_api_url
+NEXT_PUBLIC_AUTH_URL=your_auth_url
+
+# Google Login 
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=your_google_client_secret
+NEXT_PUBLIC_GOOGLE_CALLBACK_URL=your_google_callback_url
+
+# ImgBB (server-only, no NEXT_PUBLIC_ prefix)
+IMGBB_API_KEY=your_imgbb_api_key

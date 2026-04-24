@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag, Star, Zap } from "lucide-react";
+import { CheckCheck, CreditCard, ShieldCheck, ShoppingBag, Signal, Star, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -56,11 +56,11 @@ const FeatureCard = () => {
             <h3 className="font-semibold tracking-tight">Top Rated</h3>
             <p className="text-sm text-muted-foreground mt-1">Loved by thousands</p>
           </motion.div>
-          <motion.div variants={itemVariants} className="px-4 border-l-0 md:border-l">
+          <motion.div variants={itemVariants} className="px-4 border-l-0">
             <div className="flex justify-center mb-2 text-primary">
-              <span className="text-3xl">🛡️</span>
+             <ShieldCheck className="w-8 h-8" />
             </div>
-            <h3 className="font-semibold tracking-tight">Secure Checkout</h3>
+            <h3 className="font-semibold tracking-tight">Secure Pay</h3>
             <p className="text-sm text-muted-foreground mt-1">100% protected</p>
           </motion.div>
         </motion.div>

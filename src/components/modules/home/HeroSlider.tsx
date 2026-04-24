@@ -11,7 +11,7 @@ const fallbackBanner = [
   {
     id: 1,
     title: "Urban Snacks Collection",
-    subtitle: "Discover the perfect bite for every moment. Sweet, salty, and savory treats curated from premium ingredients.",
+    subtitle: "Discover the perfect bite for every moment. Spicy, salty, and savory treats curated from premium ingredients.",
     badge: "Welcome to Urban Snacks 🎉",
     image: "/assets/urban_snaks_cover_photo.jpg",
   }
@@ -41,7 +41,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
 
   return (
     <section 
-      className="relative w-full h-[75vh] lg:h-[70vh] overflow-hidden bg-black"
+      className="relative w-full h-[65vh] lg:h-[70vh] overflow-hidden bg-black"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -115,7 +115,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                 <Button asChild className="group relative overflow-hidden bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-full shadow-xl shadow-orange-500/20 transition-all duration-300 font-bold text-sm sm:text-lg px-6 py-5 sm:px-8 sm:py-6 lg:px-10 lg:py-7 hover:scale-[1.02] border-0">
                   <Link href={slides[current].categoryId ? `/products?category=${slides[current].categoryId}` : "/products"}>
                     <span className="relative z-10 flex items-center gap-2">
-                       {slides[current].buttonText || "Shop the Collection"}
+                       {slides[current].buttonText || "Explore Collections"}
                        <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </span>
                     <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
