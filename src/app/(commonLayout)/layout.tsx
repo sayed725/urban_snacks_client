@@ -1,5 +1,6 @@
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar3";
+import WhatsAppButton from "@/components/shared/WhatsAppButton";
 
 
 export default function CommonLayout({
@@ -11,6 +12,7 @@ export default function CommonLayout({
    <>
    <Navbar/>
    {children}
+   <WhatsAppButton />
    <Footer/>
    </>
   );

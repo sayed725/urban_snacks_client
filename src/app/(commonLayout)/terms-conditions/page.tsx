@@ -18,14 +18,14 @@ const TermsConditionsPage = () => {
                 {/* 1. Refund Policy */}
                 <section>
                     <div className="flex items-center gap-3 mb-8 border-b pb-4">
-                        <RotateCcw className="text-orange-600" size={28} />
-                        <h2 className="text-3xl font-black text-stone-800">1. Refund Policy</h2>
+                        <RotateCcw className="text-orange-500 dark:text-orange-400" size={28} />
+                        <h2 className="text-3xl font-extrabold tracking-tight text-foreground/90">1. Refund Policy</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card className="border-none shadow-md bg-stone-50/50">
+                        <Card className="border-none shadow-md bg-muted/40 dark:bg-card/50">
                             <CardContent className="pt-6">
                                 <div className="flex items-start gap-3">
-                                    <div className="p-2 bg-amber-100 rounded-lg text-amber-600 shrink-0">
+                                    <div className="p-2 bg-amber-500/10 rounded-lg text-amber-600 dark:text-amber-400 shrink-0">
                                         <Ban size={20} />
                                     </div>
                                     <div>
@@ -38,10 +38,10 @@ const TermsConditionsPage = () => {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-none shadow-md bg-stone-50/50">
+                        <Card className="border-none shadow-md bg-muted/40 dark:bg-card/50">
                             <CardContent className="pt-6">
                                 <div className="flex items-start gap-3">
-                                    <div className="p-2 bg-amber-100 rounded-lg text-amber-600 shrink-0">
+                                    <div className="p-2 bg-amber-500/10 rounded-lg text-amber-600 dark:text-amber-400 shrink-0">
                                         <FileText size={20} />
                                     </div>
                                     <div>
@@ -54,10 +54,10 @@ const TermsConditionsPage = () => {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-none shadow-md bg-stone-50/50 md:col-span-2">
+                        <Card className="border-none shadow-md bg-muted/40 dark:bg-card/50 md:col-span-2">
                             <CardContent className="pt-6">
                                 <div className="flex items-start gap-3">
-                                    <div className="p-2 bg-amber-100 rounded-lg text-amber-600 shrink-0">
+                                    <div className="p-2 bg-amber-500/10 rounded-lg text-amber-600 dark:text-amber-400 shrink-0">
                                         <Truck size={20} />
                                     </div>
                                     <div>
@@ -75,12 +75,12 @@ const TermsConditionsPage = () => {
                 {/* 2. Exchange Policy */}
                 <section>
                     <div className="flex items-center gap-3 mb-8 border-b pb-4">
-                        <RefreshCcw className="text-orange-600" size={28} />
-                        <h2 className="text-3xl font-black text-stone-800">2. Exchange Policy</h2>
+                        <RefreshCcw className="text-orange-500 dark:text-orange-400" size={28} />
+                        <h2 className="text-3xl font-extrabold tracking-tight text-foreground/90">2. Exchange Policy</h2>
                     </div>
                     
                     <div className="space-y-6">
-                        <div className="p-6 bg-stone-50 rounded-2xl border border-stone-100">
+                        <div className="p-6 bg-muted/30 rounded-2xl border border-border">
                             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                                 <CheckCircle className="text-green-600" size={20} />
                                 Eligibility Window
@@ -113,15 +113,15 @@ const TermsConditionsPage = () => {
                             </div>
                         </div>
 
-                        <Card className="border-2 border-amber-200 bg-amber-50">
+                        <Card className="border-2 border-amber-200 dark:border-amber-900/30 bg-amber-50/50 dark:bg-amber-900/10">
                             <CardContent className="pt-6">
                                 <div className="flex items-start gap-4">
-                                    <div className="p-3 bg-white rounded-xl text-amber-600 shrink-0 shadow-sm">
+                                    <div className="p-3 bg-card rounded-xl text-amber-600 dark:text-amber-400 shrink-0 shadow-sm border">
                                         <AlertTriangle size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-black text-amber-900 mb-2">Important: Delivery Inspection</h4>
-                                        <p className="text-amber-900/70 leading-relaxed text-sm">
+                                        <h4 className="text-xl font-extrabold tracking-tight text-amber-900 dark:text-amber-200 mb-2">Important: Delivery Inspection</h4>
+                                        <p className="text-amber-900/70 dark:text-amber-300/70 leading-relaxed text-sm font-medium">
                                             If you do not like a product at the time of delivery, <strong>DO NOT</strong> return it directly to the delivery person, as this risks product loss. Instead, receive the parcel by paying the bill, then inform us within 7 days. We will arrange an exchange and adjust the bill accordingly, InshaAllah.
                                         </p>
                                     </div>
@@ -133,22 +133,22 @@ const TermsConditionsPage = () => {
 
                 {/* Footer Section */}
                 <section className="text-center pt-8 border-t">
-                    <h2 className="text-2xl font-black mb-6">Need Help?</h2>
+                    <h2 className="text-2xl font-extrabold tracking-tight mb-6">Need Help?</h2>
                     <p className="text-muted-foreground mb-8">
                         Our team is here to ensure your satisfaction. Contact us for any clarifications regarding these terms.
                     </p>
                     <div className="flex flex-wrap justify-center gap-8">
-                        <div className="flex items-center gap-3 bg-white shadow-sm border p-4 rounded-2xl">
-                            <Phone className="text-amber-500" size={20} />
+                        <div className="flex items-center gap-3 bg-card shadow-sm border p-4 rounded-2xl">
+                            <Phone className="text-amber-600 dark:text-amber-400" size={20} />
                             <div>
-                                <p className="text-xs text-muted-foreground font-semibold text-start uppercase">Call Us</p>
+                                <p className="text-xs text-muted-foreground font-semibold text-start uppercase tracking-wider">Call Us</p>
                                 <p className="font-bold">01627142598</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3 bg-white shadow-sm border p-4 rounded-2xl">
-                            <Mail className="text-amber-500" size={20} />
+                        <div className="flex items-center gap-3 bg-card shadow-sm border p-4 rounded-2xl">
+                            <Mail className="text-amber-600 dark:text-amber-400" size={20} />
                             <div>
-                                <p className="text-xs text-muted-foreground font-semibold text-start uppercase">Email Us</p>
+                                <p className="text-xs text-muted-foreground font-semibold text-start uppercase tracking-wider">Email Us</p>
                                 <p className="font-bold">abusayedkhan.pro@gmail.com</p>
                             </div>
                         </div>
