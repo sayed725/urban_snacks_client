@@ -9,9 +9,13 @@
 [![Zustand](https://img.shields.io/badge/State-Zustand-443D38)](https://zustand-demo.pmnd.rs/)
 [![Shadcn/UI](https://img.shields.io/badge/UI-Shadcn%2FUI-000000)](https://ui.shadcn.com/)
 
-Urban Snacks is a modern, premium **e-commerce platform for authentic Bangladeshi snacks**. This repository contains the **Frontend Client**, built for visual excellence, buttery-smooth interactions, and a complete shopping experience — from discovery to doorstep delivery. Features a full-featured admin dashboard with analytics, inventory management, and order processing.
+Urban Snacks is a modern, premium **platform for authentic Bangladeshi snacks**. This repository contains the **Frontend Client**, built for visual excellence, buttery-smooth interactions, and a complete shopping experience — from discovery to doorstep delivery. Features a full-featured admin dashboard with analytics, inventory management, and order processing.
 
 ---
+
+## Backend Repository
+
+[Backend Repository](https://github.com/sayed725/urban_snacks_server)
 
 ## 📖 Table of Contents
 
