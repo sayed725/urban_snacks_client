@@ -1,37 +1,21 @@
+"use client";
+
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { getItems } from "@/services/item.service";
 import { getCategories } from "@/services/category.service";
 import { Button } from "@/components/ui/button";
-import { Suspense } from "react";
 import Link from "next/link";
 import ProductCard from "@/components/shared/ProductCard";
-import ProductsLoadingSkeleton, { ProductGridSkeleton, ProductsHeaderSkeleton, ProductsSidebarSkeleton } from "./_productsLoadingSkeleton";
 import ProductsSearchHeader from "../../../components/modules/products/ProductsSearchHeader";
 import ProductsSidebar from "../../../components/modules/products/ProductsSidebar";
+import ProductsLoadingSkeleton, { ProductGridSkeleton, ProductsSidebarSkeleton } from "./_productsLoadingSkeleton";
 
-async function ProductsGrid({ 
-  searchTerm, 
-  categoryId, 
-  isSpicy, 
-  sortBy, 
-  sortOrder 
-}: { 
-  searchTerm?: string; 
-  categoryId?: string; 
-  isSpicy?: boolean; 
-  sortBy?: string; 
-  sortOrder?: "asc" | "desc"; 
-}) {
-  const itemResponse = await getItems({
-    searchTerm: searchTerm || undefined,
-    categoryId: categoryId || undefined,
-    isSpicy: isSpicy || undefined,
-    sortBy: sortBy || "createdAt",
-    sortOrder: sortOrder || "desc",
-    isActive: true,
-    limit: 50
-  });
-
-  const products = itemResponse?.data || [];
+function ProductsGrid({ products, isLoading }: { products: any[], isLoading: boolean }) {
+  if (isLoading) {
+    return <ProductGridSkeleton count={6} />;
+  }
 
   if (products.length === 0) {
     return (
@@ -55,49 +39,58 @@ async function ProductsGrid({
   );
 }
 
-export default async function ProductsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const resolvedParams = await searchParams;
-  const searchTerm = resolvedParams.searchTerm as string;
-  const categoryId = resolvedParams.category as string;
-  const isSpicy = resolvedParams.isSpicy === "true";
-  const sortBy = resolvedParams.sortBy as string;
-  const sortOrder = resolvedParams.sortOrder as "asc" | "desc";
+function ProductsPageContent() {
+  const searchParams = useSearchParams();
+  const searchTerm = searchParams.get("searchTerm") || undefined;
+  const categoryId = searchParams.get("category") || undefined;
+  const isSpicy = searchParams.get("isSpicy") === "true";
+  const sortBy = searchParams.get("sortBy") || "createdAt";
+  const sortOrder = (searchParams.get("sortOrder") as "asc" | "desc") || "desc";
 
-  // Fetch categories for the sidebar (Server side)
-  const catResponse = await getCategories({ sortOrder: "asc", isActive: true });
+  const { data: catResponse, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => getCategories({ sortOrder: "asc", isActive: true }),
+  });
+
+  const { data: itemResponse, isLoading: isLoadingProducts } = useQuery({
+    queryKey: ["products", { searchTerm, categoryId, isSpicy, sortBy, sortOrder }],
+    queryFn: () => getItems({
+      searchTerm,
+      categoryId,
+      isSpicy: isSpicy || undefined,
+      sortBy,
+      sortOrder,
+      isActive: true,
+      limit: 50
+    }),
+  });
+
   const categories = catResponse?.data || [];
+  const products = itemResponse?.data || [];
 
   return (
     <div className="container mx-auto py-10 px-4 min-h-screen">
-      <Suspense fallback={<ProductsHeaderSkeleton />}>
-        <ProductsSearchHeader />
-      </Suspense>
+      <ProductsSearchHeader />
 
       <div className="flex flex-col lg:flex-row gap-8">
-        <Suspense fallback={<ProductsSidebarSkeleton />}>
+        {isLoadingCategories ? (
+          <ProductsSidebarSkeleton />
+        ) : (
           <ProductsSidebar categories={categories} />
-        </Suspense>
+        )}
 
-        {/* Product Grid with Suspense */}
         <div className="flex-1">
-          <Suspense 
-            key={`${searchTerm}-${categoryId}-${isSpicy}-${sortBy}-${sortOrder}`} 
-            fallback={<ProductGridSkeleton count={6} />}
-          >
-            <ProductsGrid 
-              searchTerm={searchTerm} 
-              categoryId={categoryId} 
-              isSpicy={isSpicy}
-              sortBy={sortBy}
-              sortOrder={sortOrder}
-            />
-          </Suspense>
+          <ProductsGrid products={products} isLoading={isLoadingProducts} />
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<ProductsLoadingSkeleton />}>
+      <ProductsPageContent />
+    </Suspense>
   );
 }

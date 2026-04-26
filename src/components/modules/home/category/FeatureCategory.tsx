@@ -1,24 +1,19 @@
-import React, { Suspense } from 'react'
+"use client";
+
+import React from 'react'
+import { useQuery } from "@tanstack/react-query";
 import { getCategories } from "@/services/category.service";
 import FeatureCategoryClient from "./FeatureCategoryClient";
 
-const FeatureCategory = async () => {
-    const catResponse = await getCategories({ limit: 10, sortBy: "createdAt", sortOrder: "asc", isFeatured: true });
+const FeatureCategory = () => {
+    const { data: catResponse, isLoading } = useQuery({
+        queryKey: ["featureCategories"],
+        queryFn: () => getCategories({ limit: 10, sortBy: "createdAt", sortOrder: "asc", isFeatured: true })
+    });
+
     const categories = catResponse?.data || [];
 
-    return (
-        <Suspense fallback={
-            <div className='bg-muted/30 overflow-hidden'>
-                <section className="py-10 container w-11/12 mx-auto">
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                        {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-32 bg-muted rounded-2xl animate-pulse" />)}
-                    </div>
-                </section>
-            </div>
-        }>
-            <FeatureCategoryClient categories={categories} />
-        </Suspense>
-    )
+    return <FeatureCategoryClient categories={categories} isLoading={isLoading} />
 }
 
 export default FeatureCategory

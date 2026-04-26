@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { getBanners } from "@/services/banner.service";
 import { motion, AnimatePresence } from "framer-motion";
 
 const fallbackBanner = [
@@ -22,7 +24,14 @@ interface HeroSliderProps {
 }
 
 export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
-  const [slides, setSlides] = useState<any[]>(initialSlides.length > 0 ? initialSlides : fallbackBanner);
+  const { data: bannerResponse, isLoading } = useQuery({
+    queryKey: ["heroBanners"],
+    queryFn: () => getBanners({ isActive: true }),
+  });
+
+  const fetchedBanners = bannerResponse?.data?.filter((b: any) => b.banner).sort((a: any, b: any) => (a.order || 0) - (b.order || 0)) || [];
+  
+  const slides = fetchedBanners.length > 0 ? fetchedBanners : (initialSlides.length > 0 ? initialSlides : fallbackBanner);
   const [current, setCurrent] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -37,7 +46,9 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
-  if (slides.length === 0) return null;
+  if (slides.length === 0 && !isLoading) return null;
+
+
 
   return (
     <section 

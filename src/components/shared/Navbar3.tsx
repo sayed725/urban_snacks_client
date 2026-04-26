@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CartDrawer } from "@/components/shared/CartDrawer";
 import {
   DropdownMenu,
@@ -139,23 +139,23 @@ export default function Navbar() {
             })}
             {isPending || !mounted ? (
               <div className="h-8 w-24 bg-slate-200/50 dark:bg-slate-800/50 rounded-xl animate-pulse ml-2" />
-            ) : isAuthenticated && userRole !== "ADMIN" && (
+            ) : isAuthenticated && (
               <Link
-                href="/my-orders"
+                href={userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders"}
                 className={cn(
                   "relative text-sm font-semibold transition-all duration-300 px-5 py-2.5 rounded-xl group",
-                  pathname.startsWith("/my-orders")
+                  pathname.startsWith(userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders")
                     ? "text-orange-600 dark:text-orange-400"
                     : "text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400",
                 )}
               >
-                <span className="relative z-10">My Orders</span>
-                {pathname.startsWith("/my-orders") && (
+                <span className="relative z-10">{userRole === "ADMIN" ? "Dashboard" : "My Orders"}</span>
+                {pathname.startsWith(userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders") && (
                   <div
                     className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/15 rounded-xl"
                   />
                 )}
-                {!pathname.startsWith("/my-orders") && (
+                {!pathname.startsWith(userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders") && (
                   <div className="absolute inset-0 bg-transparent group-hover:bg-slate-100/80 dark:group-hover:bg-white/5 rounded-xl transition-colors duration-300" />
                 )}
               </Link>
@@ -175,9 +175,10 @@ export default function Navbar() {
                   <div>
                     <Button
                       variant="ghost"
-                      className="relative h-10 w-10 rounded-full p-0 ring-2 ring-slate-200/80 dark:ring-slate-700 hover:ring-orange-400 dark:hover:ring-orange-500/50 transition-all duration-300"
+                      className="relative h-10 w-10 rounded-full p-0 ring-2 ring-orange-500 dark:ring-orange-500 hover:ring-orange-400 dark:hover:ring-orange-400 transition-all duration-300"
                     >
                       <Avatar className="h-10 w-10">
+                        <AvatarImage src={session?.user?.image as string} alt={session?.user?.name || "User"} className="object-cover" />
                         <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white font-bold text-sm">
                           {userInitial}
                         </AvatarFallback>
@@ -326,6 +327,7 @@ export default function Navbar() {
                           {/* User Profile Card */}
                           <div className="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 border border-orange-100 dark:border-orange-900/30">
                             <Avatar className="h-11 w-11 ring-2 ring-orange-200 dark:ring-orange-800">
+                              <AvatarImage src={session?.user?.image as string} alt={session?.user?.name || "User"} className="object-cover" />
                               <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white font-bold">
                                 {userInitial}
                               </AvatarFallback>

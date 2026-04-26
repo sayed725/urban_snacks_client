@@ -9,6 +9,7 @@ import SectionHeader from '@/components/shared/SectionHeader';
 import ProductCard from '@/components/shared/ProductCard';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { ProductGridSkeleton } from '@/app/(commonLayout)/products/_productsLoadingSkeleton';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -36,16 +37,12 @@ const headerVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
 };
 
-const FeatureSnacksClient = ({ featuredItems }: { featuredItems: any[] }) => {
+const FeatureSnacksClient = ({ featuredItems, isLoading }: { featuredItems: any[], isLoading?: boolean }) => {
    const { addItem } = useCartStore();
    return (
       <section className="py-10 bg-muted/30 overflow-hidden">
          <div className="container mx-auto w-11/12">
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-10%" }}
-              variants={headerVariants}
+            <div
               className="text-center mb-10 max-w-2xl mx-auto"
             >
                <SectionHeader
@@ -53,21 +50,27 @@ const FeatureSnacksClient = ({ featuredItems }: { featuredItems: any[] }) => {
                   description="Our most popular and highly demanded treats that everyone is talking about."
                   badge="Top Picks"
                />
-            </motion.div>
+            </div>
 
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-10%" }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
-            >
-               {featuredItems.map((item) => (
-                  <motion.div variants={itemVariants} key={item.id}>
-                     <ProductCard product={item} />
-                  </motion.div>
-               ))}
-            </motion.div>
+            {isLoading ? (
+               <div className="mt-8">
+                 <ProductGridSkeleton count={6} />
+               </div>
+            ) : (
+               <motion.div 
+                 variants={containerVariants}
+                 initial="hidden"
+                 whileInView="visible"
+                 viewport={{ once: true, margin: "-10%" }}
+                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+               >
+                  {featuredItems.map((item) => (
+                     <motion.div variants={itemVariants} key={item.id}>
+                        <ProductCard product={item} />
+                     </motion.div>
+                  ))}
+               </motion.div>
+            )}
 
             <motion.div 
                initial={{ opacity: 0, y: 20 }}
