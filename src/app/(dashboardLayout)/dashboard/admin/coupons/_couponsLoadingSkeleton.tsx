@@ -13,7 +13,7 @@ export default function CouponsLoadingSkeleton() {
 
       <div className="flex flex-col lg:flex-row gap-4">
         <Skeleton className="h-10 flex-1 rounded-lg" />
-        <div className="flex gap-2">
+        <div className="hidden lg:flex gap-2">
           <Skeleton className="h-10 w-[140px] rounded-lg" />
           <Skeleton className="h-10 w-[140px] rounded-lg" />
           <Skeleton className="h-10 w-[180px] rounded-lg" />

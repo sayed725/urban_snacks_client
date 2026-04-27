@@ -22,6 +22,7 @@ import {
   SheetTitle,
   SheetTrigger,
   SheetDescription,
+  SheetClose,
 } from "@/components/ui/sheet";
 import {
   Menu,
@@ -33,14 +34,11 @@ import {
   ClipboardList,
   ChevronRight,
   X,
+  ShoppingCart,
 } from "lucide-react";
 import { ModeToggle } from "@/components/layout/ModeToggle";
 import { authClient } from "@/lib/auth-client";
 
-const menuItems = [
-  { title: "Home", href: "/", icon: Home },
-  { title: "Products", href: "/products", icon: Package },
-];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,6 +63,13 @@ export default function Navbar() {
 
   const isAuthenticated = !!session?.user;
   const userRole = session?.user?.role;
+
+  const menuItems = [
+    { title: "Home", href: "/", icon: Home },
+    { title: "Products", href: "/products", icon: Package },
+    ...(userRole !== "ADMIN" ? [{ title: "Cart", href: "/cart", icon: ShoppingCart }] : []),
+  ];
+
   const userInitial =
     session?.user?.name?.charAt(0)?.toUpperCase() ||
     session?.user?.email?.charAt(0)?.toUpperCase() ||
@@ -82,7 +87,7 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-500 border-b",
+        "relative lg:sticky top-0 z-50 w-full transition-all duration-500 border-b",
         isScrolled
           ? "bg-white/80 dark:bg-black/70 backdrop-blur-2xl border-slate-200/50 dark:border-white/10 shadow-lg shadow-black/[0.03] dark:shadow-black/20 py-2.5 lg:py-2.5"
           : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-transparent py-3 lg:py-3"
@@ -238,8 +243,8 @@ export default function Navbar() {
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[85vw] sm:w-[400px] p-0 flex flex-col">
-                  <SheetHeader className="p-6 border-b text-left">
+                <SheetContent side="right" className="w-[85vw] sm:w-[400px] p-0 flex flex-col" showCloseButton={false}>
+                  <SheetHeader className="p-4 border-b flex flex-row items-center justify-between space-y-0">
                     <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
                     <SheetDescription className="sr-only">Access navigation links, cart, and account settings.</SheetDescription>
                     <Link
@@ -256,6 +261,10 @@ export default function Navbar() {
                         Urban Snacks
                       </span>
                     </Link>
+                    <SheetClose className="rounded-xl p-2 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-transparent hover:border-orange-200 dark:hover:border-orange-800">
+                      <X className="h-5 w-5 text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400" />
+                      <span className="sr-only">Close</span>
+                    </SheetClose>
                   </SheetHeader>
 
                   <nav className="flex flex-col flex-1 p-4">

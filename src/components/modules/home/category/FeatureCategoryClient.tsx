@@ -162,7 +162,7 @@ const FeatureCategoryClient = ({ categories, isLoading }: { categories: any[], i
           >
             <CarouselContent className="-ml-3 md:-ml-4">
               {categories.map((cat) => (
-                <CarouselItem key={cat.id} className="pl-3 md:pl-4 basis-1/2 sm:basis-1/2 md:basis-[28%] lg:basis-1/5">
+                <CarouselItem key={cat.id} className="pl-3 basis-1/2 sm:basis-1/2 md:basis-[28%] lg:basis-1/5">
                   <motion.div variants={itemVariants}>
                     <Link href={`/products?category=${cat.id}`} className="block group relative overflow-hidden rounded-2xl h-36 sm:h-44 bg-secondary border hover:shadow-xl transition-all">
                       {cat.image && <img src={cat.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" alt={cat.name} />}

@@ -5,9 +5,10 @@ import {
   SheetTitle,
   SheetTrigger,
   SheetDescription,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { useCartStore } from "@/store/cart.store";
-import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, ShoppingBag } from "lucide-react";
+import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, ShoppingBag, X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -84,8 +85,8 @@ export function CartDrawer({ className, isMobile = false }: CartDrawerProps) {
         </button>
       </SheetTrigger>
       
-      <SheetContent side="right" className="w-full sm:w-[450px] flex flex-col p-0">
-        <SheetHeader className="p-6 border-b">
+      <SheetContent side="right" className="w-full sm:w-[450px] flex flex-col p-0" showCloseButton={false}>
+        <SheetHeader className="p-4 border-b flex flex-row items-center justify-between space-y-0">
           <SheetTitle className="text-2xl font-bold flex items-center gap-2">
              <ShoppingBag className="w-6 h-6 text-primary" />
              Your Cart <span className="text-muted-foreground text-sm font-normal ml-2">({mounted ? totalItems() : 0} items)</span>
@@ -93,6 +94,10 @@ export function CartDrawer({ className, isMobile = false }: CartDrawerProps) {
           <SheetDescription className="sr-only">
             Review the items in your shopping cart, adjust quantities, or proceed to checkout.
           </SheetDescription>
+          <SheetClose className="rounded-xl p-2 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-transparent hover:border-orange-200 dark:hover:border-orange-800">
+            <X className="h-5 w-5 text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400" />
+            <span className="sr-only">Close</span>
+          </SheetClose>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto w-full p-4 space-y-4">

@@ -11,11 +11,11 @@ const ItemsLoadingSkeleton = () => {
         <Skeleton className="h-10 w-28 rounded-md" />
       </div>
 
-      <div className="flex flex-warp flex-col lg:flex-row gap-2">
+      <div className="flex flex-col lg:flex-row gap-2">
         <div className="flex-1">
           <Skeleton className="h-10 w-full" />
         </div>
-        <div className="flex flex-warp flex-col lg:flex-row gap-2">
+        <div className="hidden lg:flex gap-2">
           <Skeleton className="h-10 w-[140px] shrink-0" />
           <Skeleton className="h-10 w-[140px] shrink-0" />
           <Skeleton className="h-10 w-[180px] shrink-0" />

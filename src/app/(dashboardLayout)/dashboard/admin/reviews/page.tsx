@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getReviews, updateReviewStatus, deleteReview } from "@/services/review.service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Star, XCircle, MessageSquare, User, Package, Eye, Calendar } from "lucide-react";
+import { Trash2, Star, XCircle, MessageSquare, User, Package, Eye, Calendar, Filter, Search, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
@@ -23,6 +23,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { useDebounce } from "@/hooks/use-debounce";
 import ReviewsLoadingSkeleton from "./_reviewsLoadingSkeleton";
 import { cn } from "@/lib/utils";
@@ -104,62 +113,171 @@ export default function AdminReviews() {
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <div className="flex flex-col lg:flex-row gap-4">
-        <div className="flex-1">
+      {/* Filters and Search Header */}
+      <div className="flex flex-row gap-2 sm:gap-4 items-center">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search reviews by customer or order..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            className="pl-9 pr-10 h-11 w-full bg-background border-slate-200 dark:border-slate-800 focus-visible:ring-primary/20 rounded-xl"
           />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Select value={ratingFilter} onValueChange={(v) => { setRatingFilter(v); setPage(1); }}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="All Ratings" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Ratings</SelectItem>
-              {[5, 4, 3, 2, 1].map((r) => (
-                <SelectItem key={r} value={r.toString()}>{r} Stars</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
-            const [by, order] = v.split('-');
-            setSortBy(by);
-            setSortOrder(order as "asc" | "desc");
-            setPage(1);
-          }}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort By" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="createdAt-desc">Newest First</SelectItem>
-              <SelectItem value="createdAt-asc">Oldest First</SelectItem>
-              <SelectItem value="rating-desc">Rating: High to Low</SelectItem>
-              <SelectItem value="rating-asc">Rating: Low to High</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {isFiltered && (
-            <Button variant="outline" onClick={resetFilters} className="text-muted-foreground hover:text-foreground px-2">
-              <XCircle className="h-4 w-4 mr-2" />
-              Clear
-            </Button>
+          {search && (
+            <button 
+              onClick={() => { setSearch(""); setPage(1); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <XCircle className="h-4 w-4" />
+            </button>
           )}
+        </div>
+
+        <div className="flex items-center gap-2 w-auto">
+          {/* Mobile/Tablet Filter Drawer */}
+          <div className="lg:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="w-auto gap-2 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-xl h-11 px-3 sm:px-4 transition-all">
+                  <Filter className="h-4 w-4" />
+                  <span className="hidden sm:inline">Filters</span>
+                  {isFiltered && <span className="flex h-2 w-2 rounded-full bg-primary" />}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[85vw] sm:w-[400px] p-0 flex flex-col" showCloseButton={false}>
+                <SheetHeader className="p-4 border-b flex flex-row items-center justify-between space-y-0">
+                  <SheetTitle className="text-xl font-bold flex items-center gap-2">
+                    <Filter className="w-5 h-5 text-primary" /> Filters
+                  </SheetTitle>
+                  <SheetClose className="rounded-xl p-2 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-transparent hover:border-orange-200 dark:hover:border-orange-800">
+                    <XCircle className="h-5 w-5 text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400" />
+                  </SheetClose>
+                </SheetHeader>
+                
+                <div className="p-6 space-y-8 flex-1 overflow-y-auto">
+                  <SheetDescription className="sr-only">Filter and sort user reviews table</SheetDescription>
+                  
+                  {/* Rating Filter */}
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-wider">Rating Star</h3>
+                    <Select value={ratingFilter} onValueChange={(v) => { setRatingFilter(v); setPage(1); }}>
+                      <SelectTrigger className="w-full h-11 bg-background border-slate-200 dark:border-slate-800 rounded-xl">
+                        <SelectValue placeholder="All Ratings" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="all">All Ratings</SelectItem>
+                        {[5, 4, 3, 2, 1].map((r) => (
+                          <SelectItem key={r} value={r.toString()}>{r} Stars</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Status Filter */}
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-wider">Review Status</h3>
+                    <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+                      <SelectTrigger className="w-full h-11 bg-background border-slate-200 dark:border-slate-800 rounded-xl">
+                        <SelectValue placeholder="All Status" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Sort By */}
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-wider">Sort Reviews</h3>
+                    <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
+                      const [by, order] = v.split('-');
+                      setSortBy(by);
+                      setSortOrder(order as "asc" | "desc");
+                      setPage(1);
+                    }}>
+                      <SelectTrigger className="w-full h-11 bg-background border-slate-200 dark:border-slate-800 rounded-xl">
+                        <SelectValue placeholder="Sort By" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                        <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+                        <SelectItem value="rating-desc">Rating: High to Low</SelectItem>
+                        <SelectItem value="rating-asc">Rating: Low to High</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="p-6 border-t bg-slate-50 dark:bg-slate-900/50">
+                  <Button 
+                    onClick={resetFilters} 
+                    variant="outline" 
+                    disabled={!isFiltered}
+                    className="w-full h-12 rounded-xl border-slate-200 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950/30 hover:text-orange-600 dark:hover:text-orange-400 transition-all font-bold"
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" /> Reset All Filters
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Desktop Inline Filters */}
+          <div className="hidden lg:flex flex-wrap gap-2 items-center">
+            <Select value={ratingFilter} onValueChange={(v) => { setRatingFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[130px]">
+                <SelectValue placeholder="Rating" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Ratings</SelectItem>
+                {[5, 4, 3, 2, 1].map((r) => (
+                  <SelectItem key={r} value={r.toString()}>{r} Stars</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
+              const [by, order] = v.split('-');
+              setSortBy(by);
+              setSortOrder(order as "asc" | "desc");
+              setPage(1);
+            }}>
+              <SelectTrigger className="w-[170px]">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+                <SelectItem value="rating-desc">Rating: High to Low</SelectItem>
+                <SelectItem value="rating-asc">Rating: Low to High</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {isFiltered && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={resetFilters} 
+                className="text-muted-foreground hover:text-orange-600 h-10 px-2"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Reset
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

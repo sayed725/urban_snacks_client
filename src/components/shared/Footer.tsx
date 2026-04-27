@@ -61,7 +61,7 @@ const itemVariants = {
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
+    <footer className="relative overflow-hidden pb-20 lg:pb-0 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
       {/* Ambient gradient decorations */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />

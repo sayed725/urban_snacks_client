@@ -15,7 +15,7 @@ const CategoriesLoadingSkeleton = () => {
         <div className="flex-1">
           <Skeleton className="h-10 w-full" />
         </div>
-        <div className="flex gap-2 flex-col lg:flex-row flex-warp">
+        <div className="hidden lg:flex gap-2 flex-col lg:flex-row flex-warp">
           <Skeleton className="h-10 w-[140px] shrink-0" />
           <Skeleton className="h-10 w-[140px] shrink-0" />
           <Skeleton className="h-10 w-[180px] shrink-0" />

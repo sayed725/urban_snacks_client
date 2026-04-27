@@ -4,7 +4,7 @@ import React from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { motion } from "framer-motion";
 
-const WhatsAppButton = () => {
+const WhatsAppButton = ({ className }: { className?: string }) => {
   const phoneNumber = "+8801627142598";
   const whatsappUrl = `https://wa.me/${phoneNumber.replace("+", "")}`;
 
@@ -17,7 +17,7 @@ const WhatsAppButton = () => {
       animate={{ scale: 1, opacity: 1 }}
       whileHover={{ scale: 1.1, rotate: 5 }}
       whileTap={{ scale: 0.9 }}
-      className="fixed bottom-5 right-5 z-50 flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-2xl hover:shadow-[#25D366]/40 transition-shadow duration-300 group"
+      className={`fixed bottom-5 right-5 z-50 flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-2xl hover:shadow-[#25D366]/40 transition-shadow duration-300 group ${className || ""}`}
       aria-label="Chat on WhatsApp"
     >
       {/* Pulse effect */}

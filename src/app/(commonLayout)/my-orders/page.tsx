@@ -14,11 +14,32 @@ import OrdersLoadingSkeleton from "./_ordersLoadingSkeleton";
 import AddReviewDialog from "@/components/modules/user/review/AddReviewDialog";
 import { cn, formatPrice } from "@/lib/utils";
 import { createCheckoutSession, initiateSslPayment } from "@/services/payment.service";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import {
+   Sheet,
+   SheetContent,
+   SheetHeader,
+   SheetTitle,
+   SheetTrigger,
+   SheetClose,
+   SheetDescription,
+} from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/use-debounce";
+import { Filter, Search, RefreshCw, XCircle } from "lucide-react";
 
 import { Truck, CreditCard, Ticket } from "lucide-react";
 import { getMyOrders, updatePaymentMethod } from "@/services/order.service";
 import { OrderStatus } from "@/types/order.type";
 import { getReviews } from "@/services/review.service";
+import SectionHeader from "@/components/shared/SectionHeader";
+import { useState } from "react";
 
 const containerVariants = {
    hidden: { opacity: 0 },
@@ -46,11 +67,36 @@ export default function MyOrdersPage() {
    //    enabled: !!session,
    // });
 
+   // Filters
+   const [search, setSearch] = useState("");
+   const debouncedSearch = useDebounce(search, 500);
+   const [statusFilter, setStatusFilter] = useState<string>("all");
+   const [sortBy, setSortBy] = useState("createdAt");
+   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+   const [page, setPage] = useState(1);
+
    const { data: response, isLoading } = useQuery({
-      queryKey: ["my-orders"],
-      queryFn: () => getMyOrders({ limit: 50 }),
+      queryKey: ["my-orders", page, debouncedSearch, statusFilter, sortBy, sortOrder],
+      queryFn: () => getMyOrders({
+         limit: 10,
+         page,
+         searchTerm: debouncedSearch,
+         status: statusFilter === "all" ? undefined : statusFilter as OrderStatus,
+         sortBy,
+         sortOrder
+      }),
       enabled: !!session,
    });
+
+   const resetFilters = () => {
+      setSearch("");
+      setStatusFilter("all");
+      setSortBy("createdAt");
+      setSortOrder("desc");
+      setPage(1);
+   };
+
+   const isFiltered = search !== "" || statusFilter !== "all" || sortBy !== "createdAt" || sortOrder !== "desc";
 
 
 
@@ -137,14 +183,162 @@ export default function MyOrdersPage() {
 
    return (
       <div className="container w-11/12 mx-auto py-10  min-h-screen">
-         <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="mb-10 text-center md:text-left"
-         >
-            <h1 className="text-4xl font-black">My Orders</h1>
-            <p className="text-muted-foreground mt-2">Track and manage your past snack orders</p>
-         </motion.div>
+
+
+         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div className="max-w-2xl">
+               <SectionHeader
+                  title="My Orders"
+                  description="Track and manage your past snack orders"
+               />
+            </div>
+
+            {/* Filters and Search Header */}
+            <div className="flex flex-row gap-2 sm:gap-4 items-center w-full md:w-auto">
+               <div className="flex-1 md:w-64 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                     placeholder="Search order no..."
+                     value={search}
+                     onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                     className="pl-9 pr-10 h-10 w-full bg-background border-slate-200 dark:border-slate-800 focus-visible:ring-primary/20 rounded-xl shadow-sm"
+                  />
+                  {search && (
+                     <button
+                        onClick={() => { setSearch(""); setPage(1); }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                     >
+                        <XCircle className="h-4 w-4" />
+                     </button>
+                  )}
+               </div>
+
+               <div className="flex items-center gap-2 w-auto">
+                  {/* Mobile/Tablet Filter Drawer */}
+                  <div className="lg:hidden">
+                     <Sheet>
+                        <SheetTrigger asChild>
+                           <Button variant="outline" className="w-auto gap-2 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-xl h-11 px-3 sm:px-4 transition-all shadow-sm">
+                              <Filter className="h-4 w-4" />
+                              <span className="hidden sm:inline">Filters</span>
+                              {isFiltered && <span className="flex h-2 w-2 rounded-full bg-primary" />}
+                           </Button>
+                        </SheetTrigger>
+                        <SheetContent side="right" className="w-[85vw] sm:w-[400px] p-0 flex flex-col" showCloseButton={false}>
+                           <SheetHeader className="p-4 border-b flex flex-row items-center justify-between space-y-0">
+                              <SheetTitle className="text-xl font-bold flex items-center gap-2">
+                                 <Filter className="w-5 h-5 text-primary" /> Filters
+                              </SheetTitle>
+                              <SheetClose className="rounded-xl p-2 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-transparent hover:border-orange-200 dark:hover:border-orange-800">
+                                 <XCircle className="h-5 w-5 text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400" />
+                              </SheetClose>
+                           </SheetHeader>
+
+                           <div className="p-6 space-y-8 flex-1 overflow-y-auto">
+                              <SheetDescription className="sr-only">Filter and sort your orders</SheetDescription>
+
+                              {/* Status Filter */}
+                              <div className="space-y-3">
+                                 <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-wider">Order Status</h3>
+                                 <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+                                    <SelectTrigger className="w-full h-11 bg-background border-slate-200 dark:border-slate-800 rounded-xl">
+                                       <SelectValue placeholder="All Status" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-xl">
+                                       <SelectItem value="all">All Status</SelectItem>
+                                       <SelectItem value="PLACED">Placed</SelectItem>
+                                       <SelectItem value="PROCESSING">Processing</SelectItem>
+                                       <SelectItem value="SHIPPED">Shipped</SelectItem>
+                                       <SelectItem value="DELIVERED">Delivered</SelectItem>
+                                       <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                                    </SelectContent>
+                                 </Select>
+                              </div>
+
+                              {/* Sort By */}
+                              <div className="space-y-3">
+                                 <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-wider">Sort Orders</h3>
+                                 <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
+                                    const [by, order] = v.split('-');
+                                    setSortBy(by);
+                                    setSortOrder(order as "asc" | "desc");
+                                    setPage(1);
+                                 }}>
+                                    <SelectTrigger className="w-full h-11 bg-background border-slate-200 dark:border-slate-800 rounded-xl">
+                                       <SelectValue placeholder="Sort By" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-xl">
+                                       <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                                       <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+                                       <SelectItem value="totalAmount-desc">Price: High to Low</SelectItem>
+                                       <SelectItem value="totalAmount-asc">Price: Low to High</SelectItem>
+                                    </SelectContent>
+                                 </Select>
+                              </div>
+                           </div>
+
+                           <div className="p-6 border-t bg-slate-50 dark:bg-slate-900/50">
+                              <Button
+                                 onClick={resetFilters}
+                                 variant="outline"
+                                 disabled={!isFiltered}
+                                 className="w-full h-12 rounded-xl border-slate-200 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950/30 hover:text-orange-600 dark:hover:text-orange-400 transition-all font-bold"
+                              >
+                                 <RefreshCw className="w-4 h-4 mr-2" /> Reset All Filters
+                              </Button>
+                           </div>
+                        </SheetContent>
+                     </Sheet>
+                  </div>
+
+                  {/* Desktop Inline Filters */}
+                  <div className="hidden lg:flex flex-wrap gap-2 items-center">
+                     <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+                        <SelectTrigger className="w-[130px] rounded-xl h-11 shadow-sm border-slate-200 dark:border-slate-800">
+                           <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl">
+                           <SelectItem value="all">All Status</SelectItem>
+                           <SelectItem value="PLACED">Placed</SelectItem>
+                           <SelectItem value="PROCESSING">Processing</SelectItem>
+                           <SelectItem value="SHIPPED">Shipped</SelectItem>
+                           <SelectItem value="DELIVERED">Delivered</SelectItem>
+                           <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                        </SelectContent>
+                     </Select>
+
+                     <Select value={`${sortBy}-${sortOrder}`} onValueChange={(v) => {
+                        const [by, order] = v.split('-');
+                        setSortBy(by);
+                        setSortOrder(order as "asc" | "desc");
+                        setPage(1);
+                     }}>
+                        <SelectTrigger className="w-[170px] rounded-xl h-11 shadow-sm border-slate-200 dark:border-slate-800">
+                           <SelectValue placeholder="Sort By" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl">
+                           <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                           <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+                           <SelectItem value="totalAmount-desc">Price: High to Low</SelectItem>
+                           <SelectItem value="totalAmount-asc">Price: Low to High</SelectItem>
+                        </SelectContent>
+                     </Select>
+
+                     {isFiltered && (
+                        <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={resetFilters}
+                           className="text-muted-foreground hover:text-orange-600 h-10 px-2 font-semibold"
+                        >
+                           <RefreshCw className="h-4 w-4 mr-2" />
+                           Reset
+                        </Button>
+                     )}
+                  </div>
+               </div>
+            </div>
+         </div>
 
          {/* <h2>here is the data from using manual api call{res?.data?.data?.length}</h2> */}
 
@@ -180,28 +374,54 @@ export default function MyOrdersPage() {
                      className="bg-card border shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-all"
                   >
                      {/* Order Header */}
-                     <div className="bg-muted/30 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b">
-                        <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+                     <div className="bg-muted/30 px-6 py-4 border-b">
+                        {/* Mobile & Tablet View (Grid 2x2) */}
+                        <div className="lg:hidden grid grid-cols-2 gap-y-4 justify-between gap-x-2">
                            <div>
-                              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Order Placed</p>
-                              <p className="font-medium flex items-center gap-1 mt-0.5">
-                                 <Clock className="w-3.5 h-3.5" />
+                              <p className="text-sm text-muted-foreground font-semibold uppercase tracking-wider">Order Placed</p>
+                              <p className="text-xs font-medium flex items-center gap-1 mt-0.5">
+                                 <Clock className="w-3 h-3" />
                                  {moment(order.createdAt).fromNow()}
                               </p>
                            </div>
                            <div>
-                              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Total Amount</p>
-                              <p className="font-bold text-emerald-600 mt-0.5">{formatPrice(order.totalAmount)}</p>
+                              <p className="text-sm text-muted-foreground font-semibold uppercase tracking-wider">Total Amount</p>
+                              <p className="text-xs font-bold text-emerald-600 mt-0.5">{formatPrice(order.totalAmount)}</p>
                            </div>
                            <div>
-                              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Ship To</p>
-                              <p className="font-medium mt-0.5 max-w-[150px] truncate" title={order.shippingName}>{order.shippingName}</p>
+                              <p className="text-sm text-muted-foreground font-semibold uppercase tracking-wider">Ship To</p>
+                              <p className="text-xs font-medium mt-0.5 truncate" title={order.shippingName}>{order.shippingName}</p>
+                           </div>
+                           <div className="">
+                              <p className="text-sm text-muted-foreground font-semibold uppercase tracking-wider">Order No.</p>
+                              <p className="text-xs font-bold text-primary mt-0.5">{order.orderNumber}</p>
                            </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                           <div className="lg:text-right">
-                              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Order No.</p>
-                              <p className="font-bold text-primary mt-0.5">{order.orderNumber}</p>
+
+                        {/* Desktop View (Preferred Flex Layout) */}
+                        <div className="hidden lg:flex lg:flex-row lg:items-center justify-between gap-4">
+                           <div className="flex flex-row gap-8">
+                              <div>
+                                 <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Order Placed</p>
+                                 <p className="font-medium flex items-center gap-1 mt-0.5">
+                                    <Clock className="w-3.5 h-3.5" />
+                                    {moment(order.createdAt).fromNow()}
+                                 </p>
+                              </div>
+                              <div>
+                                 <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Total Amount</p>
+                                 <p className="font-bold text-emerald-600 mt-0.5">{formatPrice(order.totalAmount)}</p>
+                              </div>
+                              <div>
+                                 <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Ship To</p>
+                                 <p className="font-medium mt-0.5 max-w-[150px] truncate" title={order.shippingName}>{order.shippingName}</p>
+                              </div>
+                           </div>
+                           <div className="flex items-center gap-3">
+                              <div className="text-right">
+                                 <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Order No.</p>
+                                 <p className="font-bold text-primary mt-0.5">{order.orderNumber}</p>
+                              </div>
                            </div>
                         </div>
                      </div>
@@ -237,13 +457,13 @@ export default function MyOrdersPage() {
                                     className="relative group"
                                     whileHover={{ scale: 1.1 }}
                                  >
-                                     <div className="w-16 h-16 sm:w-20 sm:h-20 bg-secondary rounded-xl overflow-hidden border transition-transform duration-300">
-                                        {oi.item?.mainImage || (oi.item?.image && oi.item.image.length > 0) ? (
-                                           <img src={oi.item.mainImage || oi.item.image[0]} className="w-full h-full object-cover" alt="item" />
-                                        ) : (
-                                           <div className="w-full h-full text-[10px] flex items-center justify-center bg-muted text-muted-foreground">No image</div>
-                                        )}
-                                     </div>
+                                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-secondary rounded-xl overflow-hidden border transition-transform duration-300">
+                                       {oi.item?.mainImage || (oi.item?.image && oi.item.image.length > 0) ? (
+                                          <img src={oi.item.mainImage || oi.item.image[0]} className="w-full h-full object-cover" alt="item" />
+                                       ) : (
+                                          <div className="w-full h-full text-[10px] flex items-center justify-center bg-muted text-muted-foreground">No image</div>
+                                       )}
+                                    </div>
                                     <div className="absolute -top-2 -right-2 bg-primary text-secondary text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-sm">
                                        {oi.quantity}
                                     </div>
@@ -266,10 +486,10 @@ export default function MyOrdersPage() {
                            </div>
 
                            {order.discountAmount > 0 && (
-                               <div className="flex items-center gap-2 mb-2">
-                                   <Ticket className="w-4 h-4 text-emerald-500" />
-                                   <span className="text-sm font-bold text-emerald-600">Saved {formatPrice(order.discountAmount)}</span>
-                               </div>
+                              <div className="flex items-center gap-2 mb-2">
+                                 <Ticket className="w-4 h-4 text-emerald-500" />
+                                 <span className="text-sm font-bold text-emerald-600">Saved {formatPrice(order.discountAmount)}</span>
+                              </div>
                            )}
 
                            <Button asChild className="w-full bg-primary/10 text-primary dark:text-white hover:bg-primary/20 font-bold border-primary/20">

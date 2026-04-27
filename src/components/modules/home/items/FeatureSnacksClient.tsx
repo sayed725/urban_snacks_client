@@ -9,7 +9,7 @@ import SectionHeader from '@/components/shared/SectionHeader';
 import ProductCard from '@/components/shared/ProductCard';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { ProductGridSkeleton } from '@/app/(commonLayout)/products/_productsLoadingSkeleton';
+import { HomeProductGridSkeleton, ProductGridSkeleton } from '@/app/(commonLayout)/products/_productsLoadingSkeleton';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -54,7 +54,7 @@ const FeatureSnacksClient = ({ featuredItems, isLoading }: { featuredItems: any[
 
             {isLoading ? (
                <div className="mt-8">
-                 <ProductGridSkeleton count={6} />
+                 <HomeProductGridSkeleton count={8} />
                </div>
             ) : (
                <motion.div 
@@ -62,7 +62,7 @@ const FeatureSnacksClient = ({ featuredItems, isLoading }: { featuredItems: any[
                  initial="hidden"
                  whileInView="visible"
                  viewport={{ once: true, margin: "-10%" }}
-                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3"
                >
                   {featuredItems.map((item) => (
                      <motion.div variants={itemVariants} key={item.id}>

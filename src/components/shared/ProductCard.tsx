@@ -79,7 +79,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             {product.category?.name}
           </div>
           <Link href={`/products/${product.id}`} className="text-xl font-extrabold tracking-tight group-hover:text-primary transition-colors line-clamp-2">{product.name}</Link>
-          <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{product.semiTitle}</p>
+          <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{product.semiTitle?.slice(0, 50) + "..."}</p>
         </div>
         <div className="flex items-center justify-between mt-4 border-t pt-4">
           <div className="font-extrabold text-2xl tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">{formatPrice(product.price)}</div>

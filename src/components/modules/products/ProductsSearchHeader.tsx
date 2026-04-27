@@ -11,17 +11,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import SectionHeader from "@/components/shared/SectionHeader"
 
-export default function ProductsSearchHeader() {
+export default function ProductsSearchHeader({ children }: { children?: React.ReactNode }) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  
+
   const currentSearch = searchParams.get("searchTerm") || ""
   const currentSort = searchParams.get("sortBy") || "createdAt"
   const currentOrder = searchParams.get("sortOrder") || "desc"
   const currentSortOption = `${currentSort}-${currentOrder}`
 
   const [searchTerm, setSearchTerm] = useState(currentSearch)
+
+  // Sync local state when URL changes externally (e.g. Reset button)
+  useEffect(() => {
+    setSearchTerm(currentSearch)
+  }, [currentSearch])
 
   // Debounced search update
   useEffect(() => {
@@ -49,16 +55,18 @@ export default function ProductsSearchHeader() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-      <div>
-        <h1 className="text-3xl md:text-5xl font-black mb-2 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent hover:from-amber-600 hover:to-orange-700 transition-all">
-          Our Snacks
-        </h1>
-        <p className="text-muted-foreground mt-2">Find the perfectly curated snacks for your cravings</p>
+    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
+    
+      <div className="max-w-2xl pb-5">
+        <SectionHeader
+          title="All Snacks"
+          description="Find the perfectly curated snacks for your cravings"
+        />
       </div>
 
-      <div className="flex w-full md:w-auto items-center gap-3 relative flex-wrap sm:flex-nowrap">
-        <div className="relative w-full sm:w-[250px] md:w-[300px]">
+
+      <div className="flex w-full lg:w-auto items-center gap-2 sm:gap-3 relative">
+        <div className="relative flex-1 lg:flex-none lg:w-[300px] xl:w-[350px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search snacks..."
@@ -68,7 +76,9 @@ export default function ProductsSearchHeader() {
           />
         </div>
 
-        <div className="w-full sm:w-[180px]">
+        {children}
+
+        <div className="hidden lg:block w-full sm:w-[180px]">
           <Select value={currentSortOption} onValueChange={handleSortChange}>
             <SelectTrigger className="w-full bg-background border-slate-200 dark:border-slate-800">
               <SelectValue placeholder="Sort by" />

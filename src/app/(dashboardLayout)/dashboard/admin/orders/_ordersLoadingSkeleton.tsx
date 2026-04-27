@@ -15,7 +15,7 @@ const OrdersLoadingSkeleton = () => {
         <div className="flex-1">
           <Skeleton className="h-10 w-full" />
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="hidden lg:flex flex-wrap gap-2">
           <Skeleton className="h-10 w-[140px] shrink-0" />
           <Skeleton className="h-10 w-[140px] shrink-0" />
           <Skeleton className="h-10 w-[140px] shrink-0" />
