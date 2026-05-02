@@ -15,7 +15,7 @@ const fallbackBanner = [
     title: "Urban Snacks Collection",
     subtitle: "Discover the perfect bite for every moment. Spicy, salty, and savory treats curated from premium ingredients.",
     badge: "Welcome to Urban Snacks 🎉",
-    image: "/assets/urban_snaks_cover_photo.jpg",
+    image: "/assets/urban_snaks_cover_photo (1).jpg",
   }
 ];
 
@@ -66,7 +66,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
           className="absolute inset-0"
         >
           <Image
-            src={slides[current].image || "/assets/urban_snaks_cover_photo.jpg"}
+            src={slides[current].image || "/assets/urban_snaks_cover_photo (1).jpg"}
             alt={slides[current].title || "Banner"}
             fill
             priority
