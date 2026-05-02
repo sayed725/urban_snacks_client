@@ -45,6 +45,7 @@ export default function RootLayout({
         >
           <QueryProvider>
             {children}
+            
             <Toaster
               position="top-right"
               style={{

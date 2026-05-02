@@ -2,6 +2,7 @@ import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar3";
 import WhatsAppButton from "@/components/shared/WhatsAppButton";
 import MobileBottomNav from "@/components/shared/MobileBottomNav";
+import ChatWidget from "@/components/chat/ChatWidget";
 
 export default function CommonLayout({
   children,
@@ -13,6 +14,7 @@ export default function CommonLayout({
    <Navbar/>
    {children}
    <WhatsAppButton  className="hidden lg:flex"  />
+    <ChatWidget />
    <MobileBottomNav />
    <Footer/>
    </>
