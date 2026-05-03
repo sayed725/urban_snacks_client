@@ -42,6 +42,7 @@ export interface IGetItemsParams {
   searchTerm?: string;
   search?: string; // Keep for backward compatibility if needed locally
   categoryId?: string;
+  categoryName?: string;
   isFeatured?: boolean;
   isSpicy?: boolean;
   isActive?: boolean;

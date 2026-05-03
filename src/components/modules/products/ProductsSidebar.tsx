@@ -21,7 +21,7 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const selectedCategory = searchParams.get("category") || ""
+  const selectedCategory = searchParams.get("categoryName") || ""
   const isSpicy = searchParams.get("isSpicy") === "true"
 
   const currentSort = searchParams.get("sortBy") || "createdAt"
@@ -36,11 +36,13 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
     router.push(`/products?${params.toString()}`, { scroll: false })
   }
 
-  const updateCategory = (id: string) => {
+  const updateCategory = (name: string) => {
     const params = new URLSearchParams(searchParams.toString())
-    if (id) {
-      params.set("category", id)
+    if (name) {
+      params.set("categoryName", name)
+      params.delete("category")
     } else {
+      params.delete("categoryName")
       params.delete("category")
     }
     router.push(`/products?${params.toString()}`, { scroll: false })
@@ -109,11 +111,11 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
               {categories.map((cat) => (
                 <div
                   key={cat.id}
-                  className={`cursor-pointer px-3 py-2 rounded-md transition-colors text-sm min-w-fit  ${selectedCategory === cat.id
+                  className={`cursor-pointer px-3 py-2 rounded-md transition-colors text-sm min-w-fit  ${selectedCategory === cat.name
                       ? "bg-primary text-secondary font-medium dark:text-white"
                       : "hover:bg-muted"
                     }`}
-                  onClick={() => updateCategory(cat.id)}
+                  onClick={() => updateCategory(cat.name)}
                 >
                   {cat.name}
                 </div>

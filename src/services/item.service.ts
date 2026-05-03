@@ -11,6 +11,7 @@ export const getItems = async (
       limit: params?.limit ?? 20,
       searchTerm: params?.searchTerm || params?.search,
       "category.id": params?.categoryId,
+      "category.name": params?.categoryName,
       isFeatured: params?.isFeatured,
       isSpicy: params?.isSpicy,
       isActive: params?.isActive,

@@ -162,7 +162,7 @@ export default function AdminCategories() {
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-primary text-secondary font-semibold hover:bg-primary/90">
+            <Button className="bg-primary text-white font-semibold hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
               Add Category
             </Button>

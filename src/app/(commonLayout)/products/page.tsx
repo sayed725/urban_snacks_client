@@ -52,6 +52,7 @@ function ProductsPageContent() {
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("searchTerm") || undefined;
   const categoryId = searchParams.get("category") || undefined;
+  const categoryName = searchParams.get("categoryName") || undefined;
   const isSpicy = searchParams.get("isSpicy") === "true";
   const sortBy = searchParams.get("sortBy") || "createdAt";
   const sortOrder = (searchParams.get("sortOrder") as "asc" | "desc") || "desc";
@@ -62,10 +63,11 @@ function ProductsPageContent() {
   });
 
   const { data: itemResponse, isLoading: isLoadingProducts } = useQuery({
-    queryKey: ["products", { searchTerm, categoryId, isSpicy, sortBy, sortOrder }],
+    queryKey: ["products", { searchTerm, categoryId, categoryName, isSpicy, sortBy, sortOrder }],
     queryFn: () => getItems({
       searchTerm,
       categoryId,
+      categoryName,
       isSpicy: isSpicy || undefined,
       sortBy,
       sortOrder,

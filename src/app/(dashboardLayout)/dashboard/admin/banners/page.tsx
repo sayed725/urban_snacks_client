@@ -223,7 +223,7 @@ export default function AdminBanners() {
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
             <Button
-              className="bg-primary text-secondary font-semibold hover:bg-primary/90"
+              className="bg-primary text-white font-semibold hover:bg-primary/90"
               onClick={() => setFormData({ ...defaultFormData })}
             >
               <Plus className="w-4 h-4 mr-2" />

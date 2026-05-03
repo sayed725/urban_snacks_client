@@ -35,13 +35,24 @@ import {
   ChevronRight,
   X,
   ShoppingCart,
+  BookOpen,
+  ClipboardListIcon,
+  Flame,
+  Candy,
+  Pizza,
+  Coffee,
+  ChevronDown,
 } from "lucide-react";
 import { ModeToggle } from "@/components/layout/ModeToggle";
 import { authClient } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "@/services/category.service";
+import Image from "next/image";
 
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
@@ -56,6 +67,30 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => getCategories({ limit: 6, sortOrder: "asc", isActive: true }),
+  });
+
+  const categories = categoriesData?.success && categoriesData?.data 
+    ? categoriesData.data.map(cat => {
+        const lowerName = cat.name.toLowerCase();
+        let Icon = Package;
+        if (lowerName.includes('spic') || lowerName.includes('hot')) Icon = Flame;
+        else if (lowerName.includes('sweet') || lowerName.includes('dessert') || lowerName.includes('cake')) Icon = Candy;
+        else if (lowerName.includes('drink') || lowerName.includes('beverage') || lowerName.includes('tea')) Icon = Coffee;
+        else if (lowerName.includes('pizza') || lowerName.includes('combo')) Icon = Pizza;
+        
+        return {
+          title: cat.name,
+          href: `/products?categoryName=${cat.name}`,
+          description: cat.subName || cat.description || `Explore our ${cat.name}`,
+          icon: Icon,
+          image: cat.image
+        };
+      })
+    : [];
+
   const {
     data: session,
     isPending,
@@ -66,7 +101,17 @@ export default function Navbar() {
 
   const menuItems = [
     { title: "Home", href: "/", icon: Home },
-    { title: "Products", href: "/products", icon: Package },
+    { 
+      title: "Products", 
+      href: "/products", 
+      icon: Package,
+      subItems: categories.length > 0 ? categories : [
+        { title: "Beef Jerky", href: "/products?categoryName=Beef Jerky", description: "The OG, Smoky Hot", icon: Flame, image: undefined },
+        { title: "Chicken Jerky", href: "/products?categoryName=Chicken Jerky", description: "", icon: Flame, image: undefined },
+      ]
+    },
+    { title: "Blog", href: "/blog", icon: BookOpen },
+    { title: "Contact Us", href: "/contact", icon: ClipboardListIcon },
     ...(userRole !== "ADMIN" ? [{ title: "Cart", href: "/cart", icon: ShoppingCart }] : []),
   ];
 
@@ -116,54 +161,114 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+          <div className="hidden lg:flex items-center gap-6 lg:gap-8 flex-1 justify-center">
             {menuItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== "/");
+              
+              if (item.subItems) {
+                return (
+                  <div key={item.title} className="relative group/navItem flex items-center h-full py-2">
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "relative flex items-center gap-1 text-sm font-medium transition-colors hover:text-orange-600 dark:hover:text-orange-400",
+                        isActive
+                          ? "text-orange-600 dark:text-orange-400"
+                          : "text-slate-600 dark:text-slate-300",
+                        "after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-orange-500 after:transition-all after:duration-300 hover:after:w-full",
+                        isActive && "after:w-full"
+                      )}
+                    >
+                      {item.title}
+                      <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/navItem:rotate-180" />
+                    </Link>
+
+                    {/* Mega Menu Dropdown */}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 translate-y-2 pointer-events-none group-hover/navItem:opacity-100 group-hover/navItem:translate-y-0 group-hover/navItem:pointer-events-auto transition-all duration-300 z-50">
+                      <div className="w-[450px] rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl shadow-xl overflow-hidden flex flex-col">
+                        <div className="p-4 bg-orange-50/50 dark:bg-orange-950/10 border-b border-orange-100 dark:border-slate-800">
+                          <p className="font-bold text-orange-600 dark:text-orange-400">Discover Snacks</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">Find the perfect bite for your craving</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 p-4">
+                          {item.subItems.map((sub) => {
+                            const SubIcon = sub.icon;
+                            return (
+                              <Link
+                                key={sub.title}
+                                href={sub.href}
+                                className="flex items-start gap-3 p-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors group/sub"
+                              >
+                                <div className="relative shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-orange-100 dark:border-orange-900/30">
+                                  {sub.image ? (
+                                    <Image 
+                                      src={sub.image} 
+                                      alt={sub.title} 
+                                      fill 
+                                      sizes="48px"
+                                      className="object-cover group-hover/sub:scale-110 transition-transform duration-500" 
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                                      <SubIcon className="w-5 h-5" />
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="font-bold text-sm text-slate-900 dark:text-white group-hover/sub:text-orange-600 dark:group-hover/sub:text-orange-400 transition-colors truncate">{sub.title}</p>
+                                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">{sub.description}</p>
+                                </div>
+                              </Link>
+                            )
+                          })}
+                        </div>
+                        <div className="p-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-center">
+                          <Link href="/products" className="flex items-center gap-2 text-sm font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 transition-colors">
+                            View All Products <ChevronRight className="w-4 h-4" />
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "relative text-sm font-semibold transition-all duration-300 px-5 py-2.5 rounded-xl group",
-                    isActive
-                      ? "text-orange-600 dark:text-orange-400"
-                      : "text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400",
-                  )}
-                >
-                  <span className="relative z-10">{item.title}</span>
-                  {isActive && (
-                    <div
-                      className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/15 rounded-xl"
-                    />
-                  )}
-                  {!isActive && (
-                    <div className="absolute inset-0 bg-transparent group-hover:bg-slate-100/80 dark:group-hover:bg-white/5 rounded-xl transition-colors duration-300" />
-                  )}
-                </Link>
+                <div key={item.href} className="flex items-center h-full py-2">
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "relative text-sm font-medium transition-colors hover:text-orange-600 dark:hover:text-orange-400",
+                      isActive
+                        ? "text-orange-600 dark:text-orange-400"
+                        : "text-slate-600 dark:text-slate-300",
+                      "after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-orange-500 after:transition-all after:duration-300 hover:after:w-full",
+                      isActive && "after:w-full"
+                    )}
+                  >
+                    {item.title}
+                  </Link>
+                </div>
               );
             })}
             {isPending || !mounted ? (
               <div className="h-8 w-24 bg-slate-200/50 dark:bg-slate-800/50 rounded-xl animate-pulse ml-2" />
             ) : isAuthenticated && (
-              <Link
-                href={userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders"}
-                className={cn(
-                  "relative text-sm font-semibold transition-all duration-300 px-5 py-2.5 rounded-xl group",
-                  pathname.startsWith(userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders")
-                    ? "text-orange-600 dark:text-orange-400"
-                    : "text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400",
-                )}
-              >
-                <span className="relative z-10">{userRole === "ADMIN" ? "Dashboard" : "My Orders"}</span>
-                {pathname.startsWith(userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders") && (
-                  <div
-                    className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/15 rounded-xl"
-                  />
-                )}
-                {!pathname.startsWith(userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders") && (
-                  <div className="absolute inset-0 bg-transparent group-hover:bg-slate-100/80 dark:group-hover:bg-white/5 rounded-xl transition-colors duration-300" />
-                )}
-              </Link>
+              <div className="flex items-center h-full py-2">
+                <Link
+                  href={userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders"}
+                  className={cn(
+                    "relative text-sm font-medium transition-colors hover:text-orange-600 dark:hover:text-orange-400",
+                    pathname.startsWith(userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders")
+                      ? "text-orange-600 dark:text-orange-400"
+                      : "text-slate-600 dark:text-slate-300",
+                    "after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-orange-500 after:transition-all after:duration-300 hover:after:w-full",
+                    pathname.startsWith(userRole === "ADMIN" ? "/dashboard/admin" : "/my-orders") && "after:w-full"
+                  )}
+                >
+                  {userRole === "ADMIN" ? "Dashboard" : "My Orders"}
+                </Link>
+              </div>
             )}
           </div>
 
@@ -272,26 +377,97 @@ export default function Navbar() {
                     <div className="space-y-1">
                       {menuItems.map((item) => {
                         const IconComp = item.icon;
-                        const isActive = pathname === item.href;
+                        const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== "/");
+                        const hasSubItems = !!item.subItems;
+                        const isExpanded = expandedMenu === item.title;
+
                         return (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            onClick={closeMobileMenu}
-                            className={cn(
-                              "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 group",
-                              isActive
-                                ? "bg-orange-500/10 text-orange-600 dark:text-orange-400 font-bold"
-                                : "text-foreground hover:bg-muted"
+                          <div key={item.href} className="flex flex-col">
+                            <div className="flex items-center w-full group">
+                              <Link
+                                href={item.href}
+                                onClick={closeMobileMenu}
+                                className={cn(
+                                  "relative flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 hover:text-orange-600 dark:hover:text-orange-400 flex-1",
+                                  isActive
+                                    ? "text-orange-600 dark:text-orange-400 font-bold"
+                                    : "text-slate-600 dark:text-slate-300 hover:bg-orange-50/50 dark:hover:bg-orange-950/20",
+                                  "after:absolute after:bottom-1 after:left-4 after:h-0.5 after:w-0 after:rounded-full after:bg-orange-500 after:transition-all after:duration-300 hover:after:w-[calc(100%-2rem)]",
+                                  isActive && "after:w-[calc(100%-2rem)]"
+                                )}
+                              >
+                                <IconComp className={cn(
+                                  "h-5 w-5 transition-colors relative z-10",
+                                  isActive ? "text-orange-500" : "text-slate-400 dark:text-slate-500 group-hover:text-orange-500"
+                                )} />
+                                <span className="text-base font-medium relative z-10">{item.title}</span>
+                              </Link>
+                              
+                              {hasSubItems && (
+                                <button 
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setExpandedMenu(isExpanded ? null : item.title);
+                                  }}
+                                  className="p-3.5 rounded-xl text-slate-400 hover:text-orange-500 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 transition-all flex-shrink-0"
+                                >
+                                  <ChevronDown className={cn("h-5 w-5 transition-transform duration-300", isExpanded && "rotate-180")} />
+                                </button>
+                              )}
+                              {!hasSubItems && (
+                                <div className="p-3.5 pointer-events-none flex-shrink-0">
+                                  <ChevronRight className="h-4 w-4 text-slate-300 dark:text-slate-600 transition-colors group-hover:text-orange-400" />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Sub-items accordion */}
+                            {hasSubItems && (
+                              <div 
+                                className={cn(
+                                  "overflow-hidden transition-all duration-300 ease-in-out pr-2",
+                                  isExpanded ? "max-h-96 opacity-100 mt-1 mb-2" : "max-h-0 opacity-0 m-0"
+                                )}
+                              >
+                                <div className="flex flex-col gap-1 border-l-2 border-orange-100 dark:border-slate-800 ml-8 pl-4 py-2">
+                                  {item.subItems.map(sub => {
+                                    const SubIcon = sub.icon;
+                                    const isSubActive = pathname === sub.href;
+                                    return (
+                                      <Link
+                                        key={sub.title}
+                                        href={sub.href}
+                                        onClick={closeMobileMenu}
+                                        className={cn(
+                                          "flex items-center gap-3 py-2 px-3 rounded-xl transition-colors",
+                                          isSubActive 
+                                            ? "bg-orange-50/80 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 font-bold" 
+                                            : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-orange-600 dark:hover:text-orange-400"
+                                        )}
+                                      >
+                                        <div className="relative shrink-0 w-8 h-8 rounded-lg overflow-hidden border border-orange-100 dark:border-orange-900/30">
+                                          {sub.image ? (
+                                            <Image 
+                                              src={sub.image} 
+                                              alt={sub.title} 
+                                              fill 
+                                              sizes="32px"
+                                              className="object-cover" 
+                                            />
+                                          ) : (
+                                            <div className="w-full h-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                                              <SubIcon className="w-4 h-4" />
+                                            </div>
+                                          )}
+                                        </div>
+                                        <span className="text-sm">{sub.title}</span>
+                                      </Link>
+                                    )
+                                  })}
+                                </div>
+                              </div>
                             )}
-                          >
-                            <IconComp className={cn(
-                              "h-5 w-5 transition-colors",
-                              isActive ? "text-orange-500" : "text-muted-foreground group-hover:text-orange-500"
-                            )} />
-                            <span className="text-base font-medium">{item.title}</span>
-                            <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground/50" />
-                          </Link>
+                          </div>
                         );
                       })}
 
@@ -302,18 +478,20 @@ export default function Navbar() {
                           href="/my-orders"
                           onClick={closeMobileMenu}
                           className={cn(
-                            "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 group",
+                            "relative flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 group hover:text-orange-600 dark:hover:text-orange-400",
                             pathname.startsWith("/my-orders")
-                              ? "bg-orange-500/10 text-orange-600 dark:text-orange-400 font-bold"
-                              : "text-foreground hover:bg-muted"
+                              ? "text-orange-600 dark:text-orange-400 font-bold"
+                              : "text-slate-600 dark:text-slate-300 hover:bg-orange-50/50 dark:hover:bg-orange-950/20",
+                            "after:absolute after:bottom-1 after:left-4 after:h-0.5 after:w-0 after:rounded-full after:bg-orange-500 after:transition-all after:duration-300 hover:after:w-[calc(100%-2rem)]",
+                            pathname.startsWith("/my-orders") && "after:w-[calc(100%-2rem)]"
                           )}
                         >
                           <ClipboardList className={cn(
-                            "h-5 w-5 transition-colors",
-                            pathname.startsWith("/my-orders") ? "text-orange-500" : "text-muted-foreground group-hover:text-orange-500"
+                            "h-5 w-5 transition-colors relative z-10",
+                            pathname.startsWith("/my-orders") ? "text-orange-500" : "text-slate-400 dark:text-slate-500 group-hover:text-orange-500"
                           )} />
-                          <span className="text-base font-medium">My Orders</span>
-                          <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground/50" />
+                          <span className="text-base font-medium relative z-10">My Orders</span>
+                          <ChevronRight className="h-4 w-4 ml-auto text-slate-300 dark:text-slate-600 relative z-10 group-hover:text-orange-400 transition-colors" />
                         </Link>
                       )}
                     </div>
