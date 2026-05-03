@@ -10,6 +10,7 @@ import SpecialOffers from "@/components/modules/home/SpecialOffers";
 import NewsletterCTA from "@/components/modules/home/NewsletterCTA";
 import FAQSection from "@/components/modules/home/FAQSection";
 import SnackTips from "@/components/modules/home/SnackTips";
+import ContactSection from "@/components/modules/home/ContactSection";
 
 export default function Home() {
   return (
@@ -52,6 +53,9 @@ export default function Home() {
 
       {/* 12. Newsletter CTA */}
       <NewsletterCTA />
+
+      {/* 13. Contact Section */}
+      <ContactSection />
     </div>
   );
 }

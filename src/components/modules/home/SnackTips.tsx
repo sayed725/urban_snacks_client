@@ -54,7 +54,7 @@ const itemVariants = {
 
 const SnackTips = () => {
   return (
-    <section className="py-16 bg-muted/30 relative overflow-hidden">
+    <section className="py-10 bg-muted/30 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/3 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-[120px]" />
       </div>

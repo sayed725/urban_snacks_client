@@ -1,123 +1,133 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, Send, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Facebook, ThumbsUp } from "lucide-react";
+import Link from "next/link";
+import SectionHeader from "@/components/shared/SectionHeader";
 
 const NewsletterCTA = () => {
   return (
-    <section className="relative py-20 overflow-hidden">
-      {/* Dark gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black" />
-
-      {/* Decorative elements */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-orange-500/5 rounded-full blur-[150px]" />
-
-        {/* Floating emojis */}
-        <motion.div
-          animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-16 left-[15%] text-4xl opacity-20"
-        >
-          🍿
-        </motion.div>
-        <motion.div
-          animate={{ y: [0, 15, 0], rotate: [0, -8, 0] }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
-          }}
-          className="absolute bottom-20 right-[20%] text-4xl opacity-20"
-        >
-          🌶️
-        </motion.div>
-        <motion.div
-          animate={{ y: [0, -12, 0], rotate: [0, 5, 0] }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2,
-          }}
-          className="absolute top-1/3 right-[10%] text-3xl opacity-15"
-        >
-          🥜
-        </motion.div>
+    <section 
+      className="py-10 relative bg-fixed bg-center bg-cover bg-no-repeat"
+      style={{ backgroundImage: "url('/assets/urban_paralax.jpg')" }}
+    >
+      {/* Semi-transparent overlay to ensure readability while letting the image shine through */}
+      <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/60 backdrop-blur-[2px] pointer-events-none" />
+      
+      {/* Accent glowing blobs for extra flavor */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden mix-blend-overlay">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-500/20 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#1877F2]/20 rounded-full blur-[150px]" />
       </div>
 
       <div className="container w-11/12 mx-auto relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-2xl mx-auto text-center"
+          className="text-center max-w-2xl mx-auto mb-8 md:mb-10"
         >
-          {/* Badge */}
+          <SectionHeader
+            badge="STAY CONNECTED"
+            title="Join the Community"
+            // description="Follow our official page for the latest crunch-tastic updates, or join our VIP group to connect with other snack lovers!"
+          />
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          
+          {/* Facebook Page Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/15 border border-orange-500/20 text-orange-400 text-sm font-bold tracking-wider uppercase mb-6"
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-2xl rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 relative overflow-hidden group"
           >
-            <Sparkles className="w-4 h-4" />
-            Join the Community
+            {/* Inner ambient glow */}
+            <div className="absolute -top-24 -right-24 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/30 transition-colors duration-500" />
+            
+            <div className="relative z-10 flex flex-col h-full">
+              <div className="w-12 h-12 rounded-2xl bg-white/60 dark:bg-amber-500/20 text-amber-600 flex items-center justify-center mb-6 shadow-sm backdrop-blur-md border border-white/50 dark:border-transparent">
+                <ThumbsUp className="w-6 h-6" />
+              </div>
+              
+              <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-3">
+                Follow our Official <br className="hidden md:block" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">Facebook Page</span>
+              </h3>
+              <p className="text-slate-800 dark:text-slate-300 mb-6 font-medium leading-relaxed text-sm md:text-base">
+                Stay in the loop with our latest product launches, flash sales, and mouth-watering behind-the-scenes content.
+              </p>
+
+              <div className="mt-auto pt-4">
+                <Link 
+                  href="https://www.facebook.com/Urbansnacks.store" 
+                  target="_blank" 
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white hover:shadow-lg hover:shadow-orange-500/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 font-bold text-sm md:text-base group/btn"
+                >
+                  <Facebook className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+                  Follow Page
+                </Link>
+              </div>
+            </div>
           </motion.div>
 
-          {/* Heading */}
-          <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
-            Never Miss a{" "}
-            <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-              Crunch!
-            </span>
-          </h2>
-          <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-lg mx-auto">
-            Subscribe to get exclusive deals, new arrivals, and snack tips delivered straight to your inbox.
-          </p>
-
-          {/* Email Form */}
-          <form
-            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <div className="relative flex-1">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                required
-                className="pl-12 h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-500 rounded-xl focus:border-orange-500 focus:ring-orange-500/20 transition-all text-base"
-              />
-            </div>
-            <Button
-              type="submit"
-              className="h-12 px-6 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl font-bold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-105 transition-all duration-300 border-0"
-            >
-              Subscribe
-              <Send className="w-4 h-4 ml-2" />
-            </Button>
-          </form>
-
-          {/* Social Proof */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+          {/* Facebook VIP Group Card */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="text-slate-500 text-sm mt-6"
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-2xl rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 relative overflow-hidden group"
           >
-            Join{" "}
-            <span className="text-orange-400 font-bold">2,500+</span>{" "}
-            subscribers • No spam, unsubscribe anytime
-          </motion.p>
-        </motion.div>
+            {/* Inner ambient glow */}
+            <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-[#1877F2]/10 rounded-full blur-3xl pointer-events-none group-hover:bg-[#1877F2]/30 transition-colors duration-500" />
+
+            <div className="relative z-10 flex flex-col h-full">
+              <div className="w-12 h-12 rounded-2xl bg-white/60 dark:bg-[#1877F2]/20 text-[#1877F2] flex items-center justify-center mb-6 shadow-sm backdrop-blur-md border border-white/50 dark:border-transparent">
+                <Facebook className="w-6 h-6" />
+              </div>
+              
+               <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-3">
+                 Urban Snacks VIP <br className="hidden md:block" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">Facebook Group</span>
+              </h3>
+              
+              <p className="text-slate-800 dark:text-slate-300 mb-6 font-medium leading-relaxed text-sm md:text-base">
+                Be part of our vibrant community! Secret menus, daily polls, crispy memes, and connect with other snack lovers.
+              </p>
+
+              <div className="mt-auto pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                
+                <div className="flex items-center gap-3">
+                  <div className="flex -space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 border-2 border-white dark:border-slate-950 flex items-center justify-center text-xs font-bold text-white shadow-sm">AJ</div>
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 border-2 border-white dark:border-slate-950 flex items-center justify-center text-xs font-bold text-white shadow-sm">SK</div>
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 border-2 border-white dark:border-slate-950 flex items-center justify-center text-xs font-bold text-white shadow-sm">MR</div>
+                    <div className="w-10 h-10 rounded-full bg-white/50 dark:bg-slate-800 border-2 border-white dark:border-slate-950 flex items-center justify-center text-xs font-bold text-slate-900 dark:text-slate-300 shadow-sm backdrop-blur-sm">+</div>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-base font-bold text-slate-900 dark:text-white leading-tight">12.5k+</span>
+                    <span className="text-[10px] font-bold text-slate-700 dark:text-slate-400 uppercase tracking-wide">Members</span>
+                  </div>
+                </div>
+
+                <Link 
+                  href="https://www.facebook.com/Urbansnacks.store" 
+                  target="_blank" 
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white hover:shadow-lg hover:shadow-orange-500/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 font-bold text-sm md:text-base group/btn"
+                >
+                  <Facebook className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+                  Join Group
+                </Link>
+                
+              </div>
+            </div>
+          </motion.div>
+
+        </div>
       </div>
     </section>
   );
