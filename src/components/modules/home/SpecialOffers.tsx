@@ -126,6 +126,36 @@ const CouponCard = ({ coupon, theme }: { coupon: ICoupon, theme: any }) => {
   );
 };
 
+const CouponCardSkeleton = () => {
+  return (
+    <div className="relative h-[320px] flex flex-col rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 overflow-hidden animate-pulse">
+      <div className="p-6 lg:p-8 flex-1 flex flex-col">
+        <div className="flex justify-between items-start mb-6">
+          <div className="w-14 h-14 rounded-2xl bg-slate-200 dark:bg-slate-800" />
+          <div className="w-20 h-6 rounded-full bg-slate-200 dark:bg-slate-800" />
+        </div>
+        <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-lg w-3/4 mb-4" />
+        <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full mb-2" />
+        <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-5/6" />
+      </div>
+
+      <div className="relative h-4 flex items-center">
+         <div className="absolute left-[-8px] w-4 h-4 rounded-full bg-slate-50 dark:bg-slate-950/50 border-r border-slate-200 dark:border-slate-800" />
+         <div className="absolute right-[-8px] w-4 h-4 rounded-full bg-slate-50 dark:bg-slate-950/50 border-l border-slate-200 dark:border-slate-800" />
+         <div className="w-full border-t-2 border-dashed border-slate-200 dark:border-slate-800 mx-4" />
+      </div>
+
+      <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between gap-4 mt-auto">
+         <div className="flex flex-col gap-2 w-1/2">
+           <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-16" />
+           <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded w-full" />
+         </div>
+         <div className="h-10 rounded-xl bg-slate-200 dark:bg-slate-800 w-[110px]" />
+      </div>
+    </div>
+  );
+};
+
 const SpecialOffers = () => {
   const { data: couponsResponse, isLoading } = useQuery({
     queryKey: ["coupons"],
@@ -165,9 +195,9 @@ const SpecialOffers = () => {
 
       <div className="container w-11/12 mx-auto relative z-10">
         <div className="text-center mb-12 max-w-2xl mx-auto flex flex-col items-center">
-          <div className="inline-flex items-center justify-center p-3 bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-2xl mb-6">
+          {/* <div className="inline-flex items-center justify-center p-3 bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-2xl mb-6">
             <TicketPercent className="w-8 h-8" />
-          </div>
+          </div> */}
           <SectionHeader
             title="Special Offers"
             description="Grab these exclusive deals before they're gone — your taste buds will thank you!"
@@ -176,8 +206,12 @@ const SpecialOffers = () => {
         </div>
 
         {isLoading ? (
-           <div className="flex justify-center py-10">
-             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-600"></div>
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+             {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-full">
+                  <CouponCardSkeleton />
+                </div>
+             ))}
            </div>
         ) : (
           <div 

@@ -28,12 +28,33 @@ const stats = [
   },
   {
     icon: TrendingUp,
-    value: 99,
+    value: 90,
     suffix: "%",
     label: "Satisfaction Rate",
     description: "5-star reviews",
   },
 ];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+    },
+  },
+};
 
 function AnimatedCounter({
   target,
@@ -80,70 +101,40 @@ const StatsCounter = () => {
   const isInView = useInView(ref, { once: true, margin: "-10%" });
 
   return (
-    <section className="relative py-16 overflow-hidden">
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-600" />
-      {/* Decorative elements */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-80 h-80 bg-white/10 rounded-full blur-2xl" />
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-white/10 rounded-full blur-2xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full" />
-      </div>
-
-      <div
-        ref={ref}
-        className="container w-11/12 mx-auto relative z-10"
-      >
+    <section className="bg-secondary text-secondary-foreground py-5 border-y overflow-hidden">
+      <div ref={ref} className="container mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-10%" }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-border"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-sm font-bold tracking-wider uppercase text-white/90 mb-4">
-            By The Numbers
-          </span>
-          <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight">
-            Trusted by Thousands
-          </h2>
-          <p className="text-white/80 text-lg mt-3 max-w-md mx-auto">
-            The numbers speak for themselves — here&apos;s our journey so far.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {stats.map((stat, i) => {
             const Icon = stat.icon;
             return (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="text-center group"
+                variants={itemVariants}
+                className="px-4"
               >
-                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 lg:p-8 hover:bg-white/15 transition-all duration-300 hover:scale-105">
-                  <div className="w-14 h-14 mx-auto rounded-xl bg-white/15 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Icon className="w-7 h-7 text-white" strokeWidth={1.8} />
-                  </div>
-                  <div className="text-3xl lg:text-4xl font-black text-white mb-1 tabular-nums">
-                    <AnimatedCounter
-                      target={stat.value}
-                      suffix={stat.suffix}
-                      inView={isInView}
-                    />
-                  </div>
-                  <p className="text-white font-bold text-sm">{stat.label}</p>
-                  <p className="text-white/60 text-xs mt-1">
-                    {stat.description}
-                  </p>
+                <div className="flex justify-center mb-2 text-primary">
+                  <Icon className="w-8 h-8" />
                 </div>
+                <h3 className="font-semibold tracking-tight">
+                  <AnimatedCounter
+                    target={stat.value}
+                    suffix={stat.suffix}
+                    inView={isInView}
+                  />
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {stat.label}
+                </p>
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
