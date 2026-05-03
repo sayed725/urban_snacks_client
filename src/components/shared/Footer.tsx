@@ -19,9 +19,12 @@ import {
 import { motion } from "framer-motion";
 
 const footerLinks = [
+  { title: "Products", href: "/products" },
+  { title: "Blog", href: "/blog" },
   { title: "Privacy Policy", href: "/privacy-policy" },
   { title: "Shipping Policy", href: "/shipping-policy" },
   { title: "Terms & Conditions", href: "/terms-conditions" },
+
 ];
 
 const socialLinks = [
@@ -139,15 +142,6 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link
-                  href="/products"
-                  className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-200"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-300 dark:bg-orange-700 group-hover:bg-orange-500 transition-colors" />
-                  All Products
-                </Link>
-              </li>
             </ul>
           </motion.div>
 

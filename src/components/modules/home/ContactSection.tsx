@@ -105,7 +105,7 @@ export default function ContactSection() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
           {/* Left: Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}

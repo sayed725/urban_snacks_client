@@ -206,7 +206,7 @@ const SpecialOffers = () => {
         </div>
 
         {isLoading ? (
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
              {[...Array(3)].map((_, i) => (
                 <div key={i} className="h-full">
                   <CouponCardSkeleton />
@@ -229,9 +229,9 @@ const SpecialOffers = () => {
               }}
               className="w-full"
             >
-              <CarouselContent className="-ml-4 pb-12 pt-4 px-2">
+              <CarouselContent className="-ml-3 pb-12 pt-4 px-2">
                 {coupons.map((coupon, index) => (
-                  <CarouselItem key={coupon.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={coupon.id} className="pl-3 md:basis-1/2 lg:basis-1/3">
                     <motion.div
                       variants={containerVariants}
                       initial="hidden"

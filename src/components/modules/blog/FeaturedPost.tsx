@@ -31,6 +31,7 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
                 src={post.coverImage}
                 alt={post.title}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 priority
               />
@@ -73,6 +74,7 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
                       src={post.author.avatar}
                       alt={post.author.name}
                       fill
+                      sizes="48px"
                       className="object-cover"
                     />
                   </div>
@@ -84,7 +86,9 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
 
                 {/* Read Button */}
                 <Link
-                  href={`/blog/${post.slug}`}
+                  href="https://www.facebook.com/Urbansnacks.store"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-50 dark:bg-orange-500/10 text-orange-600 hover:bg-orange-500 hover:text-white transition-all duration-300 font-bold text-sm group/btn"
                 >
                   Read Article

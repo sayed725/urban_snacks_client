@@ -48,7 +48,7 @@ const BlogGrid = ({ posts }: BlogGridProps) => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
           >
             {posts.map((post) => (
               <motion.div
@@ -63,6 +63,7 @@ const BlogGrid = ({ posts }: BlogGridProps) => {
                     src={post.coverImage}
                     alt={post.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute top-4 left-4 z-20">
@@ -80,6 +81,7 @@ const BlogGrid = ({ posts }: BlogGridProps) => {
                       src={post.author.avatar}
                       alt={post.author.name}
                       fill
+                      sizes="48px"
                       className="object-cover"
                     />
                   </div>
@@ -113,7 +115,9 @@ const BlogGrid = ({ posts }: BlogGridProps) => {
                     </div>
 
                     <Link
-                      href={`/blog/${post.slug}`}
+                      href="https://www.facebook.com/Urbansnacks.store"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-sm font-bold text-orange-600 group/link"
                     >
                       Read

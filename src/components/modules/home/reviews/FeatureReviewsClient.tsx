@@ -216,7 +216,7 @@ const FeatureReviewsClient = ({ reviews, isLoading }: { reviews: IReview[], isLo
                   repeat: Infinity,
                   ease: "linear",
                 }}
-                className="flex gap-4 w-max"
+                className="flex gap-3 w-max"
                 whileHover={{ animationPlayState: "paused" }}
               >
                 {marqueeReviews.map((review, idx) => (

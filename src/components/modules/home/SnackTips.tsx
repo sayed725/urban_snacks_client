@@ -73,7 +73,7 @@ const SnackTips = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-10%" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-3 gap-3"
         >
           {tips.map((tip) => (
             <motion.div

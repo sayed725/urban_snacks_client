@@ -8,7 +8,7 @@ import SectionHeader from "@/components/shared/SectionHeader";
 const NewsletterCTA = () => {
   return (
     <section 
-      className="py-10 relative bg-fixed bg-center bg-cover bg-no-repeat"
+      className="py-10 relative bg-fixed bg-center bg-cover bg-no-repeat overflow-hidden"
       style={{ backgroundImage: "url('/assets/urban_paralax.jpg')" }}
     >
       {/* Semi-transparent overlay to ensure readability while letting the image shine through */}
@@ -35,12 +35,12 @@ const NewsletterCTA = () => {
           />
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           
           {/* Facebook Page Card */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-2xl rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 relative overflow-hidden group"
@@ -76,8 +76,8 @@ const NewsletterCTA = () => {
 
           {/* Facebook VIP Group Card */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
             className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-2xl rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 relative overflow-hidden group"

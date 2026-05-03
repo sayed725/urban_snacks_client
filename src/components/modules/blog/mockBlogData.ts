@@ -82,7 +82,7 @@ export const blogPosts: BlogPost[] = [
     id: "post-3",
     title: "Coming Soon: The Urban Snacks Smoked Hickory Collection",
     slug: "smoked-hickory-collection-reveal",
-    excerpt: "Our team has been working for months to perfect the deep, woody notes of our upcoming hickory collection. Here is a sneak peek.",
+    excerpt: "Our team has been working for months to perfect the deep, woody notes of our upcoming hickory collection.",
     content: "Full content goes here...",
     coverImage: "https://images.unsplash.com/photo-1511910849309-0dffb8785146?q=80&w=2070&auto=format&fit=crop", 
     category: "New Arrivals",

@@ -4,13 +4,15 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MdHome, MdStorefront, MdShoppingCart } from "react-icons/md";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaBookOpen, FaWhatsapp } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/store/cart.store";
 
+
 const navItems = [
   { title: "Home", href: "/", icon: MdHome },
-  { title: "Shop", href: "/products", icon: MdStorefront },
+  { title: "Products", href: "/products", icon: MdStorefront },
+  { title: "Blogs", href: "/blog", icon: FaBookOpen },
   { title: "Cart", href: "/cart", icon: MdShoppingCart },
 ];
 
