@@ -111,7 +111,7 @@ export default function Navbar() {
       ]
     },
     { title: "Blog", href: "/blog", icon: BookOpen },
-    { title: "Contact Us", href: "/contact", icon: ClipboardListIcon },
+    { title: "Contact", href: "/contact", icon: ClipboardListIcon },
     ...(userRole !== "ADMIN" ? [{ title: "Cart", href: "/cart", icon: ShoppingCart }] : []),
   ];
 
@@ -135,7 +135,7 @@ export default function Navbar() {
         "relative lg:sticky top-0 z-50 w-full transition-all duration-500 border-b",
         isScrolled
           ? "bg-white/80 dark:bg-black/70 backdrop-blur-2xl border-slate-200/50 dark:border-white/10 shadow-lg shadow-black/[0.03] dark:shadow-black/20 py-2.5 lg:py-2.5"
-          : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-transparent py-3 lg:py-3"
+          : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-transparent py-2.5 lg:py-2.5"
       )}
     >
       {/* Subtle ambient gradient */}

@@ -230,7 +230,7 @@ const FeatureReviewsClient = ({ reviews, isLoading }: { reviews: IReview[], isLo
             </div>
 
             {/* Social Proof Footer */}
-            <motion.div variants={itemVariants} className="flex flex-col items-center gap-4 text-center">
+            {/* <motion.div variants={itemVariants} className="flex flex-col items-center gap-4 text-center">
               <div className="flex -space-x-3">
                 {[...Array(5)].map((_, i) => (
                   <div key={i} className="h-10 w-10 rounded-full border-2 border-background bg-slate-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
@@ -241,7 +241,7 @@ const FeatureReviewsClient = ({ reviews, isLoading }: { reviews: IReview[], isLo
               <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                 Join <span className="text-orange-600 font-bold">5,000+</span> happy snackers across the city 🍿
               </p>
-            </motion.div>
+            </motion.div> */}
           </motion.div>
         </div>
       </div>
