@@ -68,8 +68,8 @@ export default function Navbar() {
   }, []);
 
   const { data: categoriesData } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => getCategories({ limit: 6, sortOrder: "asc", isActive: true }),
+    queryKey: ["categories", "featured", "active"],
+    queryFn: () => getCategories({ limit: 6, sortOrder: "asc", isActive: true, isFeatured: true }),
   });
 
   const categories = categoriesData?.success && categoriesData?.data 
@@ -107,7 +107,7 @@ export default function Navbar() {
       icon: Package,
       subItems: categories.length > 0 ? categories : [
         { title: "Beef Jerky", href: "/products?categoryName=Beef Jerky", description: "The OG, Smoky Hot", icon: Flame, image: undefined },
-        { title: "Chicken Jerky", href: "/products?categoryName=Chicken Jerky", description: "", icon: Flame, image: undefined },
+        { title: "Chicken Jerky", href: "/products?categoryName=Chicken Jerky", description: "The OG, Smoky Hot", icon: Flame, image: undefined },
       ]
     },
     { title: "Blog", href: "/blog", icon: BookOpen },
@@ -180,17 +180,17 @@ export default function Navbar() {
                       )}
                     >
                       {item.title}
-                      <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/navItem:rotate-180" />
+                      {/* <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/navItem:rotate-180" /> */}
                     </Link>
 
                     {/* Mega Menu Dropdown */}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 translate-y-2 pointer-events-none group-hover/navItem:opacity-100 group-hover/navItem:translate-y-0 group-hover/navItem:pointer-events-auto transition-all duration-300 z-50">
-                      <div className="w-[450px] rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl shadow-xl overflow-hidden flex flex-col">
-                        <div className="p-4 bg-orange-50/50 dark:bg-orange-950/10 border-b border-orange-100 dark:border-slate-800">
+                      <div className="w-[750px] rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl shadow-xl overflow-hidden flex flex-col">
+                        {/* <div className="p-4 bg-orange-50/50 dark:bg-orange-950/10 border-b border-orange-100 dark:border-slate-800">
                           <p className="font-bold text-orange-600 dark:text-orange-400">Discover Snacks</p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">Find the perfect bite for your craving</p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 p-4">
+                        </div> */}
+                        <div className="grid grid-cols-3 gap-2 p-4">
                           {item.subItems.map((sub) => {
                             const SubIcon = sub.icon;
                             return (
@@ -222,11 +222,11 @@ export default function Navbar() {
                             )
                           })}
                         </div>
-                        <div className="p-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-center">
+                        {/* <div className="p-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-center">
                           <Link href="/products" className="flex items-center gap-2 text-sm font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 transition-colors">
                             View All Products <ChevronRight className="w-4 h-4" />
                           </Link>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>

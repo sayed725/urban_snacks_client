@@ -58,7 +58,7 @@ function ProductsPageContent() {
   const sortOrder = (searchParams.get("sortOrder") as "asc" | "desc") || "desc";
 
   const { data: catResponse, isLoading: isLoadingCategories } = useQuery({
-    queryKey: ["categories"],
+    queryKey: ["categories", "all-active"],
     queryFn: () => getCategories({ sortOrder: "asc", isActive: true }),
   });
 
