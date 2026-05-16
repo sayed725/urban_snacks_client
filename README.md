@@ -8,8 +8,10 @@
 [![Stripe](https://img.shields.io/badge/Stripe-Payments-635BFF?logo=stripe)](https://stripe.com/)
 [![Zustand](https://img.shields.io/badge/State-Zustand-443D38)](https://zustand-demo.pmnd.rs/)
 [![Shadcn/UI](https://img.shields.io/badge/UI-Shadcn%2FUI-000000)](https://ui.shadcn.com/)
+[![RAG AI](https://img.shields.io/badge/RAG-AI%20Chat-6366F1)](https://openrouter.ai/)
+[![Redis](https://img.shields.io/badge/Redis-Cached%20Responses-DC382D?logo=redis)](https://redis.io/)
 
-Urban Snacks is a modern, premium **platform for authentic Bangladeshi snacks**. This repository contains the **Frontend Client**, built for visual excellence, buttery-smooth interactions, and a complete shopping experience — from discovery to doorstep delivery. Features a full-featured admin dashboard with analytics, inventory management, and order processing.
+Urban Snacks is a modern, premium **platform for authentic Bangladeshi snacks**. This repository contains the **Frontend Client**, built for visual excellence, buttery-smooth interactions, and a complete shopping experience — from discovery to doorstep delivery. Features a full-featured admin dashboard with analytics, inventory management, and order processing. Includes an **AI-powered Chat Assistant** built on a **RAG (Retrieval-Augmented Generation)** pipeline with **Redis-cached responses** for instant, intelligent product discovery and natural-language Q&A.
 
 ---
 
@@ -24,12 +26,13 @@ Urban Snacks is a modern, premium **platform for authentic Bangladeshi snacks**.
 
 1. [Technical Architecture](#️-technical-architecture)
 2. [Feature Ecosystem](#-feature-ecosystem)
-3. [User Personas & Journeys](#-user-personas--journeys)
-4. [Data Flow Diagram](#-data-flow-diagram)
-5. [Core Development Principles](#️-core-development-principles)
-6. [Folder Architecture](#-folder-architecture)
-7. [Setup & Configuration](#-setup--configuration)
-8. [Key API Integrations](#-key-api-integrations)
+3. [AI Chat Assistant & RAG](#-ai-chat-assistant--rag)
+4. [User Personas & Journeys](#-user-personas--journeys)
+5. [Data Flow Diagram](#-data-flow-diagram)
+6. [Core Development Principles](#️-core-development-principles)
+7. [Folder Architecture](#-folder-architecture)
+8. [Setup & Configuration](#-setup--configuration)
+9. [Key API Integrations](#-key-api-integrations)
 
 ---
 
@@ -53,6 +56,8 @@ The application is architected using a **Modular Component Design** approach, le
 | **Carousel** | Embla Carousel | Hero slider & image gallery |
 | **PDF** | jsPDF + jsPDF-AutoTable | Client-side invoice generation |
 | **Payments** | Stripe + SSLCommerz | Dual payment gateway checkout |
+| **AI Chat** | RAG Pipeline (Server Actions) | Natural-language product Q&A via OpenRouter LLM |
+| **Caching** | Redis (via backend) | 30-min TTL cached RAG responses for instant repeat queries |
 | **UI Extras** | Lucide, React Icons, Sonner | Icon system, toast notifications |
 | **Image Upload** | ImgBB API | Server-side image hosting via API route |
 
@@ -70,6 +75,7 @@ The application is architected using a **Modular Component Design** approach, le
 - **Customer Reviews**: Verified purchase reviews displayed on the homepage.
 - **Cart Drawer**: Slide-out cart with quantity adjustments, dynamic pricing, and instant checkout access.
 - **Policy Pages**: Privacy, Shipping, and Terms & Conditions — fully dark-mode friendly.
+- **AI Chat Assistant**: Floating chat widget powered by RAG — ask questions about snacks in natural language and get AI-generated answers with match-percentage confidence badges.
 - **WhatsApp Integration**: Floating WhatsApp button for instant customer support.
 - **SEO Optimized**: Dynamic metadata, semantic HTML, and Open Graph tags for every page.
 
@@ -93,7 +99,57 @@ The application is architected using a **Modular Component Design** approach, le
 - **Banner Manager**: Dynamic hero slider content — create, reorder, and link banners to categories.
 - **Coupon Manager**: Create and manage promotional codes with discount rules, usage limits, and expiry dates.
 - **Review Moderation**: Approve, reject, or delete customer reviews before they appear publicly.
+- **RAG Data Sync**: One-click buttons in the AI Chat header to re-index items and categories into the vector store — admin only.
 - **Reusable Pagination**: Smart ellipsis pagination component across all data tables.
+
+---
+
+## 🤖 AI Chat Assistant & RAG
+
+Urban Snacks features a **floating AI Chat Widget** on every public page, powered by a full **Retrieval-Augmented Generation (RAG)** pipeline running on the backend with **Redis-cached responses**.
+
+### How It Works
+
+```mermaid
+flowchart LR
+    A["User types a question"] --> B["Server Action (rag.action.ts)"]
+    B --> C["Backend RAG Pipeline"]
+    C --> D["Redis Cache Check"]
+    D -->|"Cache Hit"| E["Return cached answer instantly"]
+    D -->|"Cache Miss"| F["pgvector Similarity Search"]
+    F --> G["LLM generates answer with context"]
+    G --> H["Cache result (30-min TTL)"]
+    H --> E
+    E --> I["ChatWidget renders response"]
+```
+
+### Features
+
+| Feature | Description |
+|---------|-------------|
+| **Natural Language Q&A** | Ask anything about snacks — ingredients, prices, spice levels, recommendations — and get an AI-generated answer with source documents. |
+| **Suggested Queries** | Pre-built query chips ("Spicy snacks", "Best Selling Snacks", "Beef Items") for quick discovery. |
+| **Match Confidence** | Every AI response displays a percentage-based match badge (e.g., "72% matched") derived from cosine similarity scores. |
+| **Redis Caching** | Identical queries are served from Redis cache (30-minute TTL) — no redundant LLM API calls, instant responses on repeat questions. |
+| **Structured JSON Responses** | The LLM returns structured item recommendations (name, price, description, reason) parsed and rendered as rich chat bubbles. |
+| **Error Recovery** | Failed queries show a retry button that re-sends the original question. |
+| **Admin Sync Controls** | Admins see additional header buttons to re-index items and categories into the vector store directly from the chat widget. |
+| **Typing Indicator** | Animated bouncing dots while the AI is processing the query. |
+| **Markdown Rendering** | Bold text (`**text**`) in AI responses is rendered as `<strong>` tags for readability. |
+
+### Client Architecture
+
+```text
+src/
+├── actions/
+│   └── rag.action.ts           # Server Actions — queryRagAction, ingestItemsAction, ingestCategoriesAction
+├── components/
+│   └── chat/
+│       └── ChatWidget.tsx       # Floating AI chat UI — message bubbles, suggested queries, admin sync, typing indicator
+```
+
+- **`rag.action.ts`**: Next.js Server Actions that call the backend RAG endpoints (`/api/v1/rag/query`, `/rag/ingest-items`, `/rag/ingest-categories`). Parses structured JSON from the LLM, extracts similarity scores, and formats responses for the chat UI.
+- **`ChatWidget.tsx`**: A self-contained floating chat component with Zustand-free local state, `useTransition` for non-blocking AI queries, role-based admin controls, and auto-scrolling message history.
 
 ---
 
@@ -132,7 +188,12 @@ graph TD
     A[User / Browser] -->|HTTP Request| B[Next.js App Router]
     B -->|Server Component| C[Service Layer]
     B -->|Client Component| D[Zustand Store / React Hook Form]
+    B -->|Server Action| G[RAG Action Layer]
     C -->|Fetch + Cookie Auth| E[Backend REST API]
+    G -->|RAG Query| E
+    E -->|Redis Cache / pgvector| H[AI Response]
+    H -->|JSON Response| G
+    G -->|Parsed Answer| B
     E -->|JSON Response| C
     C -->|Hydrated Props| B
     B -->|Rendered HTML| A
@@ -141,6 +202,8 @@ graph TD
 
     style A fill:#f59e0b,color:#fff
     style B fill:#0ea5e9,color:#fff
+    style G fill:#6366f1,color:#fff
+    style H fill:#dc382d,color:#fff
     style C fill:#10b981,color:#fff
     style D fill:#8b5cf6,color:#fff
     style E fill:#ef4444,color:#fff
@@ -271,6 +334,8 @@ src/
 │   │       └── reviews/              # Review moderation
 │   ├── api/                          # Next.js API routes (ImgBB proxy, auth)
 │   └── not-found.tsx                 # Custom 404 page
+├── actions/
+│   └── rag.action.ts                 # Server Actions for RAG query, item sync, category sync
 ├── components/
 │   ├── ui/                           # Shadcn base components (40+ components)
 │   ├── shared/                       # App-wide shared components
@@ -282,6 +347,8 @@ src/
 │   │   ├── USPagination.tsx          # Smart pagination component
 │   │   ├── WhatsAppButton.tsx        # Floating WhatsApp CTA
 │   │   └── form/                     # Shared form field components
+│   ├── chat/
+│   │   └── ChatWidget.tsx            # Floating AI chat widget (RAG-powered)
 │   ├── modules/                      # Page-level feature modules
 │   │   ├── home/                     # HeroSlider, FeatureCard, HowItWorks, categories, reviews
 │   │   ├── products/                 # Products sidebar, filters
@@ -395,6 +462,14 @@ All API calls are encapsulated in the **server-side service layer** located in `
 | **User** | `user.service.ts` | `getSession`, `updateUser`, `getAllUsers`, `updateUserStatus` |
 | **Stats** | `stats.service.ts` | `getAdminStats` |
 
+### RAG & AI Actions
+
+| Action | File | Key Operations |
+|---|---|---|
+| **RAG Query** | `rag.action.ts` | `queryRagAction` — sends natural-language query to the backend RAG pipeline, parses structured JSON responses, extracts similarity scores |
+| **Item Sync** | `rag.action.ts` | `ingestItemsAction` — triggers re-indexing of all active items into the pgvector store |
+| **Category Sync** | `rag.action.ts` | `ingestCategoriesAction` — triggers re-indexing of all active categories into the pgvector store |
+
 ### Service Design Patterns
 
 - **Cookie Forwarding**: All authenticated API calls use `next/headers` `cookies()` to securely forward session cookies to the backend — zero client-side token exposure.
@@ -402,6 +477,7 @@ All API calls are encapsulated in the **server-side service layer** located in `
 - **No-Store Caching**: All authenticated and mutable endpoints use `cache: "no-store"` to guarantee fresh data on every render.
 - **Schema Validation**: Outbound form data is validated with **Zod 4** schemas before submission via React Hook Form's `@hookform/resolvers`.
 - **Optimistic UI**: TanStack React Query powers cache invalidation and background refetching for seamless data updates.
+- **RAG Server Actions**: AI queries use Next.js Server Actions (`"use server"`) to securely call the backend RAG pipeline — no API keys or endpoints exposed to the client. Responses are cached by Redis on the backend with a 30-minute TTL for instant repeat queries.
 
 ---
 
