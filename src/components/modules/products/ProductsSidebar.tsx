@@ -23,10 +23,13 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
 
   const selectedCategory = searchParams.get("categoryName") || ""
   const isSpicy = searchParams.get("isSpicy") === "true"
+  const searchTerm = searchParams.get("searchTerm") || ""
 
   const currentSort = searchParams.get("sortBy") || "createdAt"
   const currentOrder = searchParams.get("sortOrder") || "desc"
   const currentSortOption = `${currentSort}-${currentOrder}`
+
+  const hasFilters = selectedCategory !== "" || isSpicy || currentSort !== "createdAt" || currentOrder !== "desc" || searchTerm !== ""
 
   const handleSortChange = (value: string) => {
     const [sortBy, sortOrder] = value.split("-")
@@ -70,10 +73,11 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
             <Filter className="w-5 h-5" /> Filters
           </div>
           <Button 
-            variant="default" 
+            variant="outline" 
             size="sm" 
             onClick={handleReset} 
-            className="h-8 px-2 tbg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white hover:text-white rounded-md transition-all duration-300 font-semibold border-0 text-xs"
+            disabled={!hasFilters}
+            className="h-8 px-3 text-xs font-medium"
           >
             Reset
           </Button>

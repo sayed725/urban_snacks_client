@@ -24,6 +24,7 @@ import {
   SheetDescription,
   SheetClose,
 } from "@/components/ui/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Menu,
   LogOut,
@@ -372,10 +373,17 @@ export default function Navbar() {
                     </SheetClose>
                   </SheetHeader>
 
-                  <nav className="flex flex-col flex-1 p-4">
-                    {/* Nav links */}
-                    <div className="space-y-1">
-                      {menuItems.map((item) => {
+                  <div className="flex flex-col flex-1  overflow-hidden">
+                    <Tabs defaultValue="menu" className="w-full flex flex-col flex-1 min-h-0">
+                      <TabsList className="flex  w-full bg-transparent mb-5 shrink-0  h-12 sm:h-14  rounded-xl">
+                        <TabsTrigger value="menu" className="flex-1 h-full text-sm sm:text-base font-bold rounded-lg text-slate-500 dark:text-slate-400 data-[state=active]:bg-transparent dark:data-[state=active]:bg-transparent data-[state=active]:text-orange-600 dark:data-[state=active]:text-orange-400 data-[state=active]:shadow-none border-transparent dark:data-[state=active]:border-transparent transition-all duration-300">Menu</TabsTrigger>
+                        <TabsTrigger value="categories" className="flex-1 h-full text-sm sm:text-base font-bold rounded-lg text-slate-500 dark:text-slate-400 data-[state=active]:bg-transparent dark:data-[state=active]:bg-transparent data-[state=active]:text-orange-600 dark:data-[state=active]:text-orange-400 data-[state=active]:shadow-none border-transparent dark:data-[state=active]:border-transparent transition-all duration-300">Categories</TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="menu" className="flex-1 mt-0 focus-visible:outline-none focus-visible:ring-0 overflow-y-auto pr-1">
+                        {/* Nav links */}
+                        <div className="space-y-1">
+                          {menuItems.map((item) => {
                         const IconComp = item.icon;
                         const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== "/");
                         const hasSubItems = !!item.subItems;
@@ -494,10 +502,50 @@ export default function Navbar() {
                           <ChevronRight className="h-4 w-4 ml-auto text-slate-300 dark:text-slate-600 relative z-10 group-hover:text-orange-400 transition-colors" />
                         </Link>
                       )}
-                    </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="categories" className="flex-1 mt-0 focus-visible:outline-none focus-visible:ring-0 overflow-y-auto pr-1">
+                        <div className="space-y-1">
+                          {categories.map((cat) => {
+                            const SubIcon = cat.icon;
+                            return (
+                              <Link
+                                key={cat.title}
+                                href={cat.href}
+                                onClick={closeMobileMenu}
+                                className="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 group"
+                              >
+                                <div className="relative shrink-0 w-10 h-10 rounded-lg overflow-hidden border border-orange-100 dark:border-orange-900/30">
+                                  {cat.image ? (
+                                    <Image 
+                                      src={cat.image} 
+                                      alt={cat.title} 
+                                      fill 
+                                      sizes="40px"
+                                      className="object-cover group-hover:scale-110 transition-transform duration-500" 
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                                      <SubIcon className="w-5 h-5 group-hover:scale-110 transition-transform duration-500" />
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                  <span className="text-base font-medium text-slate-700 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">{cat.title}</span>
+                                  {cat.description && (
+                                    <span className="text-xs text-slate-500 dark:text-slate-400 truncate">{cat.description}</span>
+                                  )}
+                                </div>
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      </TabsContent>
+                    </Tabs>
 
                     {/* Divider + Account Section */}
-                    <div className="mt-auto border-t pt-4 space-y-3">
+                    <div className="mt-auto border-t pt-4 space-y-3 shrink-0">
                       {isPending || !mounted ? (
                         <div className="space-y-3">
                           <div className="h-14 w-full bg-slate-200/50 dark:bg-slate-800/50 rounded-xl animate-pulse" />
@@ -560,7 +608,7 @@ export default function Navbar() {
                         </Button>
                       )}
                     </div>
-                  </nav>
+                  </div>
                 </SheetContent>
               </Sheet>
             )}
