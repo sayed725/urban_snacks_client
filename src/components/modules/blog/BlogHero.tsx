@@ -59,7 +59,7 @@ const BlogHero = ({ searchQuery, setSearchQuery, selectedTag, setSelectedTag, ta
             </div>
             <Input
               type="text"
-              placeholder="Search articles..."
+              placeholder="Search articles...name, title or tag..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 h-14 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 focus:border-orange-500 focus:ring-orange-500/20 shadow-xl text-base md:text-lg text-slate-900 dark:text-white placeholder:text-slate-400 transition-all"
