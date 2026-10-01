@@ -162,6 +162,7 @@ export default function ChatWidget() {
   const [isSyncing, startSyncTransition] = useTransition();
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -184,8 +185,24 @@ export default function ChatWidget() {
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 300);
+    } else {
+      // Abort active query when chat is closed
+      if (abortControllerRef.current) {
+        console.log("Chat widget closed, aborting active query.");
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
     }
   }, [isOpen]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   // ── Sync handlers ────────────────────────────────────────────────────────
   const handleSyncItems = () => {
@@ -219,6 +236,13 @@ export default function ChatWidget() {
     const text = (query ?? inputValue).trim();
     if (!text || isQuerying) return;
 
+    // Abort any existing query before starting a new one
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     const userMsg: Message = {
       id: `user-${Date.now()}`,
       role: "user",
@@ -229,22 +253,45 @@ export default function ChatWidget() {
     setInputValue("");
 
     startQueryTransition(async () => {
-      const result = await queryRagAction(text);
+      try {
+        const result = await queryRagAction(text, controller.signal);
 
-      const botMsg: Message = {
-        id: `bot-${Date.now()}`,
-        role: "bot",
-        content: result.success
-          ? result.answer!
-          : (result.error ?? "Something went wrong. Please try again."),
-        matchInfo: result.success && typeof result.sources === "string"
-          ? result.sources
-          : undefined,
-        isError: !result.success,
-        queryToRetry: !result.success ? text : undefined,
-      };
+        // If the request was aborted, ignore the result
+        if (controller.signal.aborted) return;
 
-      setMessages((prev) => [...prev, botMsg]);
+        const botMsg: Message = {
+          id: `bot-${Date.now()}`,
+          role: "bot",
+          content: result.success
+            ? result.answer!
+            : (result.error ?? "Something went wrong. Please try again."),
+          matchInfo: result.success && typeof result.sources === "string"
+            ? result.sources
+            : undefined,
+          isError: !result.success,
+          queryToRetry: !result.success ? text : undefined,
+        };
+
+        setMessages((prev) => [...prev, botMsg]);
+      } catch (err: any) {
+        if (err.name === "AbortError" || controller.signal.aborted) {
+          console.log("Query was aborted by user.");
+          return;
+        }
+
+        const errorMsg: Message = {
+          id: `bot-err-${Date.now()}`,
+          role: "bot",
+          content: err.message || "Something went wrong. Please try again.",
+          isError: true,
+          queryToRetry: text,
+        };
+        setMessages((prev) => [...prev, errorMsg]);
+      } finally {
+        if (abortControllerRef.current === controller) {
+          abortControllerRef.current = null;
+        }
+      }
     });
   };
 

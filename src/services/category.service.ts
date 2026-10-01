@@ -2,15 +2,18 @@ import { fetchApi } from "@/lib/fetch-api";
 import { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import { ICategory, ICategoryPayload } from "@/types/category.type";
 
-export const getCategories = async (params?: {
-  page?: number;
-  limit?: number;
-  searchTerm?: string;
-  isFeatured?: boolean;
-  isActive?: boolean;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}): Promise<PaginatedResponse<ICategory>> => {
+export const getCategories = async (
+  params?: {
+    page?: number;
+    limit?: number;
+    searchTerm?: string;
+    isFeatured?: boolean;
+    isActive?: boolean;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+  },
+  options?: RequestInit
+): Promise<PaginatedResponse<ICategory>> => {
   return fetchApi("/api/v1/categories", {
     params: {
       page: params?.page,
@@ -21,6 +24,7 @@ export const getCategories = async (params?: {
       sortBy: params?.sortBy,
       sortOrder: params?.sortOrder,
     },
+    ...options,
   });
 };
 

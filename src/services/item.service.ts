@@ -3,7 +3,8 @@ import { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import { IItem, IItemPayload, IGetItemsParams } from "@/types/item.type";
 
 export const getItems = async (
-  params?: IGetItemsParams
+  params?: IGetItemsParams,
+  options?: RequestInit
 ): Promise<PaginatedResponse<IItem>> => {
   return fetchApi("/api/v1/items", {
     params: {
@@ -18,6 +19,7 @@ export const getItems = async (
       sortBy: params?.sortBy,
       sortOrder: params?.sortOrder,
     },
+    ...options,
   });
 };
 

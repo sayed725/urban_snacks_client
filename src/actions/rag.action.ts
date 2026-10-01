@@ -1,12 +1,11 @@
-"use server";
-
 import { fetchApi } from "@/lib/fetch-api";
 
-export const queryRagAction = async (query: string) => {
+export const queryRagAction = async (query: string, signal?: AbortSignal) => {
   try {
     const response = await fetchApi<any>("/api/v1/rag/query", {
       method: "POST",
       body: JSON.stringify({ query }),
+      signal,
     });
 
     if (!response?.data?.answer) {

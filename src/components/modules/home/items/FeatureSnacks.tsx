@@ -1,19 +1,20 @@
-"use client";
-
-import React from 'react'
-import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import { getItems } from "@/services/item.service";
 import FeatureSnacksClient from "./FeatureSnacksClient";
 
-const FeatureSnacks = () => {
-    const { data: featuredResponse, isLoading } = useQuery({
-        queryKey: ["featuredItems"],
-        queryFn: () => getItems({ isFeatured: true, limit: 6 })
-    });
+const FeatureSnacks = async () => {
+  let featuredItems: any[] = [];
+  try {
+    const featuredResponse = await getItems(
+      { isFeatured: true, limit: 6 },
+      { next: { revalidate: 600 } }
+    );
+    featuredItems = featuredResponse?.data || [];
+  } catch (error) {
+    console.error("Failed to fetch featured snacks for SSG:", error);
+  }
 
-    const featuredItems = featuredResponse?.data || [];
+  return <FeatureSnacksClient featuredItems={featuredItems} isLoading={false} />;
+};
 
-    return <FeatureSnacksClient featuredItems={featuredItems} isLoading={isLoading} />
-}
-
-export default FeatureSnacks
+export default FeatureSnacks;

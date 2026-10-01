@@ -3,11 +3,12 @@ import { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import { fetchApi } from "@/lib/fetch-api";
 
 export const getBanners = async (
-  queries?: Record<string, any>
+  queries?: Record<string, any>,
+  options?: RequestInit
 ): Promise<PaginatedResponse<IBanner>> => {
   return fetchApi("/api/v1/banners", {
     params: queries,
-    cache: "no-store",
+    ...options,
   });
 };
 

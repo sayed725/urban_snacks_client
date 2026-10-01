@@ -42,12 +42,16 @@ export const fetchApi = async <T = unknown>(
     headers.set("Content-Type", "application/json");
   }
 
-  // Handle server-side cookie forwarding
-  if (isServer) {
-    const { headers: nextHeaders } = await import("next/headers");
-    const cookie = (await nextHeaders()).get("cookie");
-    if (cookie) {
-      headers.set("Cookie", cookie);
+  // Handle server-side cookie forwarding (skip during SSG revalidation)
+  if (isServer && !options?.next?.revalidate) {
+    try {
+      const { headers: nextHeaders } = await import("next/headers");
+      const cookie = (await nextHeaders()).get("cookie");
+      if (cookie) {
+        headers.set("Cookie", cookie);
+      }
+    } catch {
+      // Ignored in static generation context
     }
   }
 

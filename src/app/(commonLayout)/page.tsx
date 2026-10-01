@@ -12,6 +12,8 @@ import FAQSection from "@/components/modules/home/FAQSection";
 import SnackTips from "@/components/modules/home/SnackTips";
 import ContactSection from "@/components/modules/home/ContactSection";
 
+export const revalidate = 600; // SSG / ISR: Revalidate every 10 minutes
+
 export default function Home() {
   return (
     <div className="">
