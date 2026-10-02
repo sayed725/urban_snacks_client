@@ -82,7 +82,7 @@ export const FeatureCategorySkeleton = () => {
         {/* Items Skeleton */}
         <div className="flex gap-3 md:gap-4 overflow-hidden">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="shrink-0 w-[45%] sm:w-[45%] md:w-[28%] lg:w-[19%] h-36 sm:h-44 bg-slate-200/50 dark:bg-slate-800/50 rounded-2xl animate-pulse" />
+            <div key={i} className="shrink-0 w-[45%] sm:w-[45%] md:w-[28%] lg:w-[19%] h-32 sm:h-36 bg-slate-200/50 dark:bg-slate-800/50 rounded-2xl animate-pulse" />
           ))}
         </div>
       </section>
@@ -164,11 +164,11 @@ const FeatureCategoryClient = ({ categories, isLoading }: { categories: any[], i
               {categories.map((cat) => (
                 <CarouselItem key={cat.id} className="pl-3 basis-1/2 sm:basis-1/2 md:basis-[28%] lg:basis-1/5">
                   <motion.div variants={itemVariants}>
-                    <Link href={`/products?category=${cat.id}`} className="block group relative overflow-hidden rounded-2xl h-36 sm:h-44 bg-secondary border hover:shadow-xl transition-all">
+                    <Link href={`/products?category=${cat.id}`} className="block group relative overflow-hidden rounded-2xl h-32 sm:h-36 bg-secondary border hover:shadow-xl transition-all">
                       {cat.image && <img src={cat.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" alt={cat.name} />}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-3 sm:p-4">
-                        <h3 className="text-white font-bold text-base sm:text-lg leading-tight mb-1">{cat.name}</h3>
-                        <p className="text-white/80 text-[10px] sm:text-xs font-medium bg-black/40 w-fit px-2 py-0.5 rounded backdrop-blur-md">{cat._count?.items || 0} items</p>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-2.5 sm:p-3.5">
+                        <h3 className="text-white font-bold text-sm sm:text-base leading-tight truncate mb-1 group-hover:text-orange-300 transition-colors" title={cat.name}>{cat.name}</h3>
+                        <p className="text-white/90 text-[10px] sm:text-xs font-medium bg-black/50 w-fit px-2 py-0.5 rounded-md backdrop-blur-md shrink-0">{cat._count?.items || 0} items</p>
                       </div>
                     </Link>
                   </motion.div>

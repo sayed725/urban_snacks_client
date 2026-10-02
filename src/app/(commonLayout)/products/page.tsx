@@ -54,6 +54,12 @@ function ProductsPageContent() {
   const categoryId = searchParams.get("category") || undefined;
   const categoryName = searchParams.get("categoryName") || undefined;
   const isSpicy = searchParams.get("isSpicy") === "true";
+  const isFeatured = searchParams.get("isFeatured") === "true";
+  const minPriceStr = searchParams.get("minPrice");
+  const maxPriceStr = searchParams.get("maxPrice");
+  const minPrice = minPriceStr ? Number(minPriceStr) : undefined;
+  const maxPrice = maxPriceStr ? Number(maxPriceStr) : undefined;
+
   const sortBy = searchParams.get("sortBy") || "createdAt";
   const sortOrder = (searchParams.get("sortOrder") as "asc" | "desc") || "desc";
 
@@ -63,12 +69,15 @@ function ProductsPageContent() {
   });
 
   const { data: itemResponse, isLoading: isLoadingProducts } = useQuery({
-    queryKey: ["products", { searchTerm, categoryId, categoryName, isSpicy, sortBy, sortOrder }],
+    queryKey: ["products", { searchTerm, categoryId, categoryName, isSpicy, isFeatured, minPrice, maxPrice, sortBy, sortOrder }],
     queryFn: () => getItems({
       searchTerm,
       categoryId,
       categoryName,
       isSpicy: isSpicy || undefined,
+      isFeatured: isFeatured || undefined,
+      minPrice,
+      maxPrice,
       sortBy,
       sortOrder,
       isActive: true,
@@ -77,7 +86,15 @@ function ProductsPageContent() {
   });
 
   const categories = catResponse?.data || [];
-  const products = itemResponse?.data || [];
+  let products = itemResponse?.data || [];
+
+  if (minPrice !== undefined && !isNaN(minPrice)) {
+    products = products.filter((p: any) => Number(p.price) >= minPrice);
+  }
+
+  if (maxPrice !== undefined && !isNaN(maxPrice)) {
+    products = products.filter((p: any) => Number(p.price) <= maxPrice);
+  }
 
   return (
     <div className="container mx-auto py-10 px-4 min-h-screen">

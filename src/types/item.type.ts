@@ -45,6 +45,8 @@ export interface IGetItemsParams {
   categoryName?: string;
   isFeatured?: boolean;
   isSpicy?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
   isActive?: boolean;
   sortBy?: string;
   sortOrder?: "asc" | "desc";

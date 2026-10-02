@@ -6,19 +6,31 @@ export const getItems = async (
   params?: IGetItemsParams,
   options?: RequestInit
 ): Promise<PaginatedResponse<IItem>> => {
+  const queryParams: Record<string, any> = {
+    page: params?.page,
+    limit: params?.limit ?? 50,
+    searchTerm: params?.searchTerm || params?.search,
+    "category.id": params?.categoryId,
+    "category.name": params?.categoryName,
+    isFeatured: params?.isFeatured,
+    isSpicy: params?.isSpicy,
+    isActive: params?.isActive,
+    sortBy: params?.sortBy,
+    sortOrder: params?.sortOrder,
+  };
+
+  if (params?.minPrice !== undefined && !isNaN(params.minPrice)) {
+    queryParams.minPrice = params.minPrice;
+    queryParams["price[gte]"] = params.minPrice;
+  }
+
+  if (params?.maxPrice !== undefined && !isNaN(params.maxPrice)) {
+    queryParams.maxPrice = params.maxPrice;
+    queryParams["price[lte]"] = params.maxPrice;
+  }
+
   return fetchApi("/api/v1/items", {
-    params: {
-      page: params?.page,
-      limit: params?.limit ?? 20,
-      searchTerm: params?.searchTerm || params?.search,
-      "category.id": params?.categoryId,
-      "category.name": params?.categoryName,
-      isFeatured: params?.isFeatured,
-      isSpicy: params?.isSpicy,
-      isActive: params?.isActive,
-      sortBy: params?.sortBy,
-      sortOrder: params?.sortOrder,
-    },
+    params: queryParams,
     ...options,
   });
 };
