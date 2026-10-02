@@ -124,7 +124,7 @@ export default function HeroSliderClient({ initialSlides = [] }: HeroSliderProps
                 className="pt-2 sm:pt-4"
               >
                 <Button asChild className="group relative overflow-hidden bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-full shadow-xl shadow-orange-500/20 transition-all duration-300 font-bold text-sm sm:text-lg px-6 py-5 sm:px-8 sm:py-6 lg:px-10 lg:py-7 hover:scale-[1.02] border-0">
-                  <Link href={slides[current]?.categoryId ? `/products?category=${slides[current].categoryId}` : "/products"}>
+                  <Link href={slides[current]?.categoryId ? `/products?category=${slides[current].categoryId}${slides[current]?.category?.name ? `&categoryName=${encodeURIComponent(slides[current].category.name)}` : ""}` : "/products"}>
                     <span className="relative z-10 flex items-center gap-2">
                        {slides[current]?.buttonText || "Explore Collections"}
                        <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

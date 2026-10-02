@@ -23,7 +23,8 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const selectedCategory = searchParams.get("categoryName") || ""
+  const selectedCategoryName = searchParams.get("categoryName") || ""
+  const selectedCategoryId = searchParams.get("category") || ""
   const isSpicy = searchParams.get("isSpicy") === "true"
   const isFeatured = searchParams.get("isFeatured") === "true"
   const searchTerm = searchParams.get("searchTerm") || ""
@@ -44,7 +45,8 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
   const currentSortOption = `${currentSort}-${currentOrder}`
 
   const hasFilters = 
-    selectedCategory !== "" || 
+    selectedCategoryName !== "" || 
+    selectedCategoryId !== "" || 
     isSpicy || 
     isFeatured || 
     urlMinPrice !== "" || 
@@ -61,11 +63,11 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
     router.push(`/products?${params.toString()}`, { scroll: false })
   }
 
-  const updateCategory = (name: string) => {
+  const updateCategory = (cat?: ICategory) => {
     const params = new URLSearchParams(searchParams.toString())
-    if (name) {
-      params.set("categoryName", name)
-      params.delete("category")
+    if (cat) {
+      params.set("categoryName", cat.name)
+      params.set("category", cat.id)
     } else {
       params.delete("categoryName")
       params.delete("category")
@@ -191,26 +193,34 @@ export default function ProductsSidebar({ categories }: ProductsSidebarProps) {
             <h3 className="font-medium mb-3 text-sm text-muted-foreground">Category</h3>
             <div className="space-y-1 grid lg:grid-cols-1 gap-2 lg:gap-0">
               <div
-                className={`cursor-pointer px-3 py-2 rounded-md transition-colors text-sm min-w-fit ${selectedCategory === ""
-                  ? "bg-primary text-secondary dark:text-white font-medium"
-                  : "hover:bg-muted"
-                  }`}
-                onClick={() => updateCategory("")}
+                className={`cursor-pointer px-3 py-2 rounded-md transition-colors text-sm min-w-fit ${
+                  selectedCategoryName === "" && selectedCategoryId === ""
+                    ? "bg-primary text-secondary dark:text-white font-medium"
+                    : "hover:bg-muted"
+                }`}
+                onClick={() => updateCategory()}
               >
                 All Snacks
               </div>
-              {categories.map((cat) => (
-                <div
-                  key={cat.id}
-                  className={`cursor-pointer px-3 py-2 rounded-md transition-colors text-sm min-w-fit  ${selectedCategory === cat.name
-                      ? "bg-primary text-secondary font-medium dark:text-white"
-                      : "hover:bg-muted"
+              {categories.map((cat) => {
+                const isSelected =
+                  (selectedCategoryId && cat.id === selectedCategoryId) ||
+                  (selectedCategoryName && cat.name === selectedCategoryName)
+
+                return (
+                  <div
+                    key={cat.id}
+                    className={`cursor-pointer px-3 py-2 rounded-md transition-colors text-sm min-w-fit ${
+                      isSelected
+                        ? "bg-primary text-secondary font-medium dark:text-white"
+                        : "hover:bg-muted"
                     }`}
-                  onClick={() => updateCategory(cat.name)}
-                >
-                  {cat.name}
-                </div>
-              ))}
+                    onClick={() => updateCategory(cat)}
+                  >
+                    {cat.name}
+                  </div>
+                )
+              })}
             </div>
           </div>
 
