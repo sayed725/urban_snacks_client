@@ -1,6 +1,7 @@
 import { fetchApi } from "@/lib/fetch-api";
 import { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import { IItem, IItemPayload, IGetItemsParams } from "@/types/item.type";
+import { triggerOnDemandRevalidation } from "@/lib/revalidate";
 
 export const getItems = async (
   params?: IGetItemsParams,
@@ -31,6 +32,7 @@ export const getItems = async (
 
   return fetchApi("/api/v1/items", {
     params: queryParams,
+    next: { tags: ["items"] },
     ...options,
   });
 };
@@ -38,30 +40,44 @@ export const getItems = async (
 export const getItemById = async (
   id: string
 ): Promise<ApiResponse<IItem>> => {
-  return fetchApi(`/api/v1/items/${id}`);
+  return fetchApi(`/api/v1/items/${id}`, {
+    next: { tags: [`item-${id}`] },
+  });
 };
 
 export const createItem = async (
   payload: IItemPayload
 ): Promise<ApiResponse<IItem>> => {
-  return fetchApi("/api/v1/items", {
+  const result = await fetchApi<ApiResponse<IItem>>("/api/v1/items", {
     method: "POST",
     body: JSON.stringify(payload),
   });
+  triggerOnDemandRevalidation({ tags: ["items"], paths: ["/", "/products"] });
+  return result;
 };
 
 export const updateItem = async (
   id: string,
   payload: Partial<IItemPayload>
 ): Promise<ApiResponse<IItem>> => {
-  return fetchApi(`/api/v1/items/${id}`, {
+  const result = await fetchApi<ApiResponse<IItem>>(`/api/v1/items/${id}`, {
     method: "PATCH",
     body: JSON.stringify(payload),
   });
+  triggerOnDemandRevalidation({
+    tags: ["items", `item-${id}`],
+    paths: ["/", "/products", `/products/${id}`],
+  });
+  return result;
 };
 
 export const deleteItem = async (id: string): Promise<ApiResponse<IItem>> => {
-  return fetchApi(`/api/v1/items/${id}`, {
+  const result = await fetchApi<ApiResponse<IItem>>(`/api/v1/items/${id}`, {
     method: "DELETE",
   });
+  triggerOnDemandRevalidation({
+    tags: ["items", `item-${id}`],
+    paths: ["/", "/products", `/products/${id}`],
+  });
+  return result;
 };

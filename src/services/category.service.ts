@@ -1,6 +1,7 @@
 import { fetchApi } from "@/lib/fetch-api";
 import { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import { ICategory, ICategoryPayload } from "@/types/category.type";
+import { triggerOnDemandRevalidation } from "@/lib/revalidate";
 
 export const getCategories = async (
   params?: {
@@ -24,6 +25,7 @@ export const getCategories = async (
       sortBy: params?.sortBy,
       sortOrder: params?.sortOrder,
     },
+    next: { tags: ["categories"] },
     ...options,
   });
 };
@@ -31,26 +33,32 @@ export const getCategories = async (
 export const createCategory = async (
   payload: ICategoryPayload
 ): Promise<ApiResponse<ICategory>> => {
-  return fetchApi("/api/v1/categories", {
+  const result = await fetchApi<ApiResponse<ICategory>>("/api/v1/categories", {
     method: "POST",
     body: JSON.stringify(payload),
   });
+  triggerOnDemandRevalidation({ tags: ["categories"], paths: ["/", "/products"] });
+  return result;
 };
 
 export const updateCategory = async (
   id: string,
   payload: Partial<ICategoryPayload>
 ): Promise<ApiResponse<ICategory>> => {
-  return fetchApi(`/api/v1/categories/${id}`, {
+  const result = await fetchApi<ApiResponse<ICategory>>(`/api/v1/categories/${id}`, {
     method: "PATCH",
     body: JSON.stringify(payload),
   });
+  triggerOnDemandRevalidation({ tags: ["categories"], paths: ["/", "/products"] });
+  return result;
 };
 
 export const deleteCategory = async (
   id: string
 ): Promise<ApiResponse<ICategory>> => {
-  return fetchApi(`/api/v1/categories/${id}`, {
+  const result = await fetchApi<ApiResponse<ICategory>>(`/api/v1/categories/${id}`, {
     method: "DELETE",
   });
+  triggerOnDemandRevalidation({ tags: ["categories"], paths: ["/", "/products"] });
+  return result;
 };
