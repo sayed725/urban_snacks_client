@@ -8,6 +8,7 @@ export interface IItem {
   isSpicy?: boolean | null;
   weight: string;
   price: number;
+  discountPrice?: number | null;
   expiryDate?: string | null;
   isActive: boolean;
   mainImage?: string | null;
@@ -24,6 +25,7 @@ export interface IItemPayload {
   name: string;
   weight: string;
   price: number;
+  discountPrice?: number | null;
   categoryId: string;
   isFeatured?: boolean;
   packSize?: number;

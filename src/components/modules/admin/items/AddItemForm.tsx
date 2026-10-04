@@ -47,8 +47,13 @@ const AddItemForm = ({ formData, setFormData, categories, onSubmit, isPending, b
         </div>
 
         <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Price (৳) <span className="text-red-500">*</span></label>
+            <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Regular Price (৳) <span className="text-red-500">*</span></label>
             <Input type="number" step="0.01" required placeholder="99.00" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value === '' ? '' : parseFloat(e.target.value) })} className="rounded-xl border-slate-200" />
+        </div>
+
+        <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Discount Price (৳) <span className="text-xs text-muted-foreground">(Optional)</span></label>
+            <Input type="number" step="0.01" placeholder="79.00" value={formData.discountPrice ?? ''} onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value === '' ? '' : parseFloat(e.target.value) })} className="rounded-xl border-slate-200" />
         </div>
 
         <div className="space-y-2">

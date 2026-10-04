@@ -6,6 +6,7 @@ export interface IItem {
   id: string;
   name: string;
   price: number;
+  discountPrice?: number | null;
   mainImage?: string | null;
   image?: string[] | string | null;
   weight?: string | null;
@@ -67,7 +68,10 @@ export const useCartStore = create<CartState>()(
       totalItems: () =>
         get().items.reduce((acc, item) => acc + item.quantity, 0),
       totalPrice: () =>
-        get().items.reduce((acc, item) => acc + item.price * item.quantity, 0),
+        get().items.reduce((acc, item) => {
+          const effectivePrice = item.discountPrice && item.discountPrice > 0 && item.discountPrice < item.price ? item.discountPrice : item.price;
+          return acc + effectivePrice * item.quantity;
+        }, 0),
     }),
     {
       name: "urban-snacks-cart",

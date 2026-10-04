@@ -50,6 +50,7 @@ export default function AdminItems() {
     name: "",
     weight: "",
     price: 0,
+    discountPrice: "" as string | number,
     categoryId: "",
     mainImage: "",
     semiTitle: "",
@@ -132,6 +133,7 @@ export default function AdminItems() {
       name: "",
       weight: "",
       price: 0,
+      discountPrice: "",
       categoryId: "",
       mainImage: "",
       semiTitle: "",
@@ -143,13 +145,24 @@ export default function AdminItems() {
     });
   };
 
+  const preparePayload = (data: typeof formData) => {
+    const parsedDiscount = data.discountPrice !== "" && data.discountPrice !== null && data.discountPrice !== undefined
+      ? parseFloat(String(data.discountPrice))
+      : null;
+
+    return {
+      ...data,
+      discountPrice: parsedDiscount && !isNaN(parsedDiscount) ? parsedDiscount : null,
+    };
+  };
+
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.categoryId) {
       toast.error("Please select a category");
       return;
     }
-    createMutation.mutate(formData);
+    createMutation.mutate(preparePayload(formData));
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
@@ -158,7 +171,7 @@ export default function AdminItems() {
       toast.error("Please select a category");
       return;
     }
-    updateMutation.mutate({ id: selectedItem.id, payload: formData });
+    updateMutation.mutate({ id: selectedItem.id, payload: preparePayload(formData) });
   };
 
   const openEdit = (item: any) => {
@@ -167,6 +180,7 @@ export default function AdminItems() {
       name: item.name,
       weight: item.weight || "",
       price: item.price || 0,
+      discountPrice: item.discountPrice !== undefined && item.discountPrice !== null ? item.discountPrice : "",
       categoryId: item.categoryId || "",
       mainImage: item.mainImage || "",
       semiTitle: item.semiTitle || "",
@@ -408,7 +422,8 @@ export default function AdminItems() {
                 <th className="px-6 py-4 w-16">Image</th>
                 <th className="px-6 py-4">Name</th>
                 <th className="px-6 py-4">Category</th>
-                <th className="px-6 py-4 text-right">Price</th>
+                <th className="px-6 py-4 text-center">Regular Price</th>
+                <th className="px-6 py-4 text-center">Discount Price</th>
                 <th className="px-6 py-4 text-center">Featured</th>
                 <th className="px-6 py-4 text-center">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
@@ -431,7 +446,20 @@ export default function AdminItems() {
                     <div className="text-xs text-muted-foreground">{item.weight} {item.isSpicy && '🌶️'}</div>
                   </td>
                   <td className="px-6 py-4 text-muted-foreground">{item.category?.name || "-"}</td>
-                  <td className="px-6 py-4 text-right font-bold text-emerald-600">{formatPrice(item.price)}</td>
+                  <td className="px-6 py-4 text-center font-bold text-emerald-600">
+                    {item.discountPrice && item.discountPrice > 0 && item.discountPrice < item.price ? (
+                      <span className="line-through text-muted-foreground font-normal">{formatPrice(item.price)}</span>
+                    ) : (
+                      formatPrice(item.price)
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-center font-semibold">
+                    {item.discountPrice && item.discountPrice > 0 ? (
+                      formatPrice(item.discountPrice)
+                    ) : (
+                      <span className="text-muted-foreground font-normal text-xs">-</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-center">
                     <Switch 
                       checked={item.isFeatured}
@@ -489,7 +517,7 @@ export default function AdminItems() {
               ))}
               {items.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">
+                  <td colSpan={8} className="px-6 py-8 text-center text-muted-foreground">
                     No items found. Time to add some tasty snacks!
                   </td>
                 </tr>

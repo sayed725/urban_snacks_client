@@ -231,7 +231,23 @@ export default function ProductDetailPage() {
 
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-6">
-              <span className="text-4xl font-black text-emerald-600">{formatPrice(product.price)}</span>
+              {product.discountPrice && product.discountPrice > 0 && product.discountPrice < product.price ? (
+                <>
+                  <span className="text-4xl font-black text-emerald-600">
+                    {formatPrice(product.discountPrice)}
+                  </span>
+                  <span className="text-xl font-bold text-muted-foreground line-through">
+                    {formatPrice(product.price)}
+                  </span>
+                  <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 font-bold px-2.5 py-1 text-xs">
+                    Save {formatPrice(product.price - product.discountPrice)} ({Math.round(((product.price - product.discountPrice) / product.price) * 100)}% OFF)
+                  </Badge>
+                </>
+              ) : (
+                <span className="text-4xl font-black text-emerald-600">
+                  {formatPrice(product.price)}
+                </span>
+              )}
             </div>
 
             {/* Product Specs */}
@@ -313,7 +329,7 @@ export default function ProductDetailPage() {
                   </button>
                 </div>
                 <span className="text-sm text-muted-foreground ml-auto font-medium">
-                  Total: <span className="text-foreground font-bold text-lg">{formatPrice(product.price * quantity)}</span>
+                  Total: <span className="text-foreground font-bold text-lg">{formatPrice(((product.discountPrice && product.discountPrice > 0 && product.discountPrice < product.price) ? product.discountPrice : product.price) * quantity)}</span>
                 </span>
               </div>
 
@@ -325,7 +341,7 @@ export default function ProductDetailPage() {
                   onClick={() => addItem(product as any, quantity)}
                 >
                   <ShoppingCart className="w-5 h-5 mr-3" />
-                  Add to Cart — {formatPrice(product.price * quantity)}
+                  Add to Cart — {formatPrice(((product.discountPrice && product.discountPrice > 0 && product.discountPrice < product.price) ? product.discountPrice : product.price) * quantity)}
                 </Button>
               </motion.div>
             </div>
