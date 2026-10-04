@@ -47,11 +47,19 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
         {/* Badges */}
         {/* Badges */}
         <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
-          {product.discountPrice && product.discountPrice > 0 && product.discountPrice < product.price && (
-            <Badge className="bg-emerald-600/90 text-white backdrop-blur-md border-none px-2 py-1 text-[10px] font-bold tracking-wider uppercase shadow-lg shadow-emerald-600/20">
-              {Math.round(((product.price - product.discountPrice) / product.price) * 100)}% OFF
-            </Badge>
-          )}
+          {(() => {
+            const dPrice = product.discountPrice !== null && product.discountPrice !== undefined ? Number(product.discountPrice) : null;
+            const rPrice = Number(product.price);
+            if (dPrice !== null && !isNaN(dPrice) && dPrice > 0 && rPrice > dPrice) {
+              const pct = Math.round(((rPrice - dPrice) / rPrice) * 100);
+              return (
+                <Badge className="bg-emerald-600/90 text-white backdrop-blur-md border-none px-2 py-1 text-[10px] font-bold tracking-wider uppercase shadow-lg shadow-emerald-600/20">
+                  {pct}% OFF
+                </Badge>
+              );
+            }
+            return null;
+          })()}
           {product.isSpicy && (
             <Badge className="bg-red-500/90 text-white backdrop-blur-md border-none px-2 py-1 text-[10px] font-bold tracking-wider uppercase shadow-lg shadow-red-500/20">
               <Flame className="w-3 h-3" /> Spicy
@@ -86,21 +94,37 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{product.semiTitle?.slice(0, 50) + "..."}</p>
         </div>
         <div className="flex items-center justify-between mt-4 border-t pt-4">
-          <div className="flex items-baseline gap-2">
-            {product.discountPrice && product.discountPrice > 0 && product.discountPrice < product.price ? (
-              <>
+          <div className="flex items-center gap-2 flex-wrap">
+            {(() => {
+              const dPrice = product.discountPrice !== null && product.discountPrice !== undefined ? Number(product.discountPrice) : null;
+              const rPrice = Number(product.price);
+              const hasDiscount = dPrice !== null && !isNaN(dPrice) && dPrice > 0;
+
+              if (hasDiscount && dPrice) {
+                const percentOff = rPrice > dPrice ? Math.round(((rPrice - dPrice) / rPrice) * 100) : 0;
+                return (
+                  <>
+                    <span className="font-extrabold text-2xl tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">
+                      {formatPrice(rPrice)}
+                    </span>
+                    <span className="text-sm font-medium text-muted-foreground line-through tabular-nums">
+                      {formatPrice(dPrice)}
+                    </span>
+                    {percentOff > 0 && (
+                      <span className="text-[11px] font-extrabold bg-muted text-muted-foreground px-1.5 py-0.5 rounded-md border border-border">
+                        -{percentOff}%
+                      </span>
+                    )}
+                  </>
+                );
+              }
+
+              return (
                 <span className="font-extrabold text-2xl tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">
-                  {formatPrice(product.discountPrice)}
+                  {formatPrice(rPrice)}
                 </span>
-                <span className="text-sm font-medium text-muted-foreground line-through tabular-nums">
-                  {formatPrice(product.price)}
-                </span>
-              </>
-            ) : (
-              <span className="font-extrabold text-2xl tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">
-                {formatPrice(product.price)}
-              </span>
-            )}
+              );
+            })()}
           </div>
           <Button
             className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-md hover:shadow-orange-500/25 transition-all duration-300 font-semibold shrink-0 hover:scale-105 border-0 z-10 relative"
